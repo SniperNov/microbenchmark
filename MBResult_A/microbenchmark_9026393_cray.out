@@ -1,0 +1,43 @@
+
+Lmod is automatically replacing "craype-x86-rome" with "craype-x86-milan".
+
+There are  1 available devices
+Host device is -10
+Target region executed on device. Continue...
+Benchmark results:
+--------------------------------------------------------------------------------------
+| Method                                   | Estimated Offloading Time ± Error |
+--------------------------------------------------------------------------------------
+| target map(tofrom: a)                    |     39.815 ±   1.108 μs          |
+| target map(to: a)                        |     30.929 ±   0.858 μs          |
+| target map(from: a)                      |     26.330 ±   0.787 μs          |
+| target map(alloc: a)                     |     16.029 ±   0.768 μs          |
+| target                                   |     39.156 ±   0.831 μs          |
+| target teams                             |     42.966 ±   0.234 μs          |
+| target teams parallel                    |     40.500 ±   0.459 μs          |
+| target teams distribute parallel for     |     65.293 ±   0.161 μs          |
+| target nowait                            |     53.045 ±   3.032 μs          |
+| target map(to: a[0:N])                   |     31.011 ±   0.850 μs          |
+| target map(tofrom: a[0:N])               |     39.109 ±   0.819 μs          |
+| num_teams(8) thread_limit(256)           |     38.617 ±   0.185 μs          |
+--------------------------------------------------------------------------------------
+Finalizing benchmark.
+
+CPU
+Benchmark results:
+--------------------------------------------------------------------------------------
+| Method                                   | Estimated Offloading Time ± Error |
+--------------------------------------------------------------------------------------
+| target map(tofrom: a)                    |     -0.029 ±   0.262 μs          |
+| target map(to: a)                        |     -0.010 ±   0.467 μs          |
+| target map(from: a)                      |     -0.014 ±   0.786 μs          |
+| target map(alloc: a)                     |      0.039 ±   0.670 μs          |
+| target                                   |      0.016 ±   0.462 μs          |
+| target teams                             |      0.250 ±   0.384 μs          |
+| target teams parallel                    |     39.071 ±  55.094 μs          |
+| target teams distribute parallel for     |      0.671 ±   0.121 μs          |
+| target nowait                            |      0.076 ±   0.372 μs          |
+| target map(to: a[0:N])                   |      0.012 ±   0.119 μs          |
+| target map(tofrom: a[0:N])               |      0.021 ±   0.169 μs          |
+| num_teams(8) thread_limit(256)           |      9.230 ±   0.503 μs          |
+--------------------------------------------------------------------------------------

@@ -1,0 +1,30 @@
+
+Lmod is automatically replacing "cce/15.0.0" with "gcc/10.3.0".
+
+
+Due to MODULEPATH changes, the following have been reloaded:
+  1) cray-mpich/8.1.23
+
+Configured with: ../cpe-gcc-10.3.0-202104220029.0777bcc28ac1d/configure --prefix=/opt/cray/pe/gcc/10.3.0/snos --disable-nls --libdir=/opt/cray/pe/gcc/10.3.0/snos/lib --enable-languages=c,c++,fortran --with-gxx-include-dir=/opt/cray/pe/gcc/10.3.0/snos/include/g++ --with-slibdir=/opt/cray/pe/gcc/10.3.0/snos/lib --with-system-zlib --enable-shared --enable-__cxa_atexit --build=x86_64-suse-linux --with-ppl --with-cloog --disable-multilib
+.;
+gcc: error: unrecognized command-line option '--print-offload-defaults'
+gcc: fatal error: no input files
+compilation terminated.
+Benchmark results:
+--------------------------------------------------------------------------------------
+| Method                                   | Estimated Offloading Time ± Error |
+--------------------------------------------------------------------------------------
+| target map(tofrom: a)                    |      0.037 ±   0.002 μs          |
+| target map(to: a)                        |      0.037 ±   0.003 μs          |
+| target map(from: a)                      |      0.037 ±   0.004 μs          |
+| target map(alloc: a)                     |      0.037 ±   0.006 μs          |
+| target                                   |      0.037 ±   0.004 μs          |
+| target teams                             |      0.037 ±   0.004 μs          |
+| target teams parallel                    |    610.342 ±  16.119 μs          |
+| target teams distribute parallel for     |      0.036 ±   0.002 μs          |
+| target nowait                            |      0.082 ±   0.011 μs          |
+| target map(to: a[0:N])                   |      0.037 ±   0.010 μs          |
+| target map(tofrom: a[0:N])               |      0.038 ±   0.015 μs          |
+| num_teams(8) thread_limit(256)           |      0.058 ±   0.018 μs          |
+--------------------------------------------------------------------------------------
+Finalizing benchmark.

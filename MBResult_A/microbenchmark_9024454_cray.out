@@ -1,0 +1,38 @@
+Benchmark results:
+--------------------------------------------------------------------------------------
+| Method                                   | Estimated Offloading Time ± Error |
+--------------------------------------------------------------------------------------
+| target map(tofrom: a)                    |      0.009 ±   0.006 μs          |
+| target map(to: a)                        |      0.009 ±   0.007 μs          |
+| target map(from: a)                      |      0.010 ±   0.003 μs          |
+| target map(alloc: a)                     |      0.009 ±   0.003 μs          |
+| target                                   |      0.009 ±   0.005 μs          |
+| target teams                             |      0.098 ±   0.007 μs          |
+| target teams parallel                    |      9.851 ±   0.361 μs          |
+| target teams distribute parallel for     |      0.121 ±   0.002 μs          |
+| target nowait                            |      0.071 ±   0.025 μs          |
+| target map(to: a[0:N])                   |      0.009 ±   0.002 μs          |
+| target map(tofrom: a[0:N])               |      0.009 ±   0.006 μs          |
+| num_teams(8) thread_limit(256)           |      4.603 ±   0.189 μs          |
+--------------------------------------------------------------------------------------
+Finalizing benchmark.
+
+CPU
+Benchmark results:
+--------------------------------------------------------------------------------------
+| Method                                   | Estimated Offloading Time ± Error |
+--------------------------------------------------------------------------------------
+| target map(tofrom: a)                    |     -0.029 ±   0.262 μs          |
+| target map(to: a)                        |     -0.010 ±   0.467 μs          |
+| target map(from: a)                      |     -0.014 ±   0.786 μs          |
+| target map(alloc: a)                     |      0.039 ±   0.670 μs          |
+| target                                   |      0.016 ±   0.462 μs          |
+| target teams                             |      0.250 ±   0.384 μs          |
+| target teams parallel                    |     39.071 ±  55.094 μs          |
+| target teams distribute parallel for     |      0.671 ±   0.121 μs          |
+| target nowait                            |      0.076 ±   0.372 μs          |
+| target map(to: a[0:N])                   |      0.012 ±   0.119 μs          |
+| target map(tofrom: a[0:N])               |      0.021 ±   0.169 μs          |
+| num_teams(8) thread_limit(256)           |      9.230 ±   0.503 μs          |
+--------------------------------------------------------------------------------------
+Finalizing benchmark.

@@ -1,0 +1,22 @@
+
+Lmod is automatically replacing "cce/15.0.0" with "amd/5.2.3".
+
+
+Lmod is automatically replacing "PrgEnv-cray/8.3.3" with "PrgEnv-amd/8.3.3".
+
+
+Due to MODULEPATH changes, the following have been reloaded:
+  1) cray-mpich/8.1.23
+
+
+Lmod is automatically replacing "craype-x86-rome" with "craype-x86-milan".
+
+There are  1 available devices
+Host device is 1
+Target region executed on host. Terminating...
+There are  1 available devices
+Host device is 1
+Target region executed on host. Terminating...
+There are  1 available devices
+Host device is 1
+Target region executed on host. Terminating...
