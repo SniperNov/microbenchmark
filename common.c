@@ -3,6 +3,7 @@
 #include <math.h>
 #include <omp.h>
 #include "common.h"
+#include <sys/time.h>
 
 #define MAX_ARRAY_SIZE 1024 // Ensure it doesn't exceed the allowed memory section
 
@@ -25,10 +26,11 @@ void array_delay(int delaylength, double *array)
     }
 }
 
-// double getclock()
-// {
-//     return omp_get_wtime();
-// }
+double get_time_usec() {
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    return tv.tv_sec * 1e6 + tv.tv_usec;
+}
 
 void finalise()
 {
