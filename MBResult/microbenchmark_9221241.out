@@ -1,0 +1,34 @@
+Benchmark results:
+--------------------------------------------------------------------------------------
+| Method                                        | Estimated Offloading Time ± Error |
+--------------------------------------------------------------------------------------
+| 1: parallel loop copy                         |      0.000 ±   0.000 μs          |
+| 2: parallel loop copyin                       |      0.000 ±   0.000 μs          |
+| 3: parallel loop copyout                      |      0.000 ±   0.000 μs          |
+| 4: parallel loop create                       |      0.000 ±   0.000 μs          |
+--------------------------------------------------------------------------------------
+Finalizing benchmark.
+srun: Job 9221241 step creation temporarily disabled, retrying (Requested nodes are busy)
+srun: Step created for job 9221241
+Benchmark results:
+--------------------------------------------------------------------------------------
+| Method                                        | Estimated Offloading Time ± Error |
+--------------------------------------------------------------------------------------
+| 5: parallel loop (no data)                    |      0.000 ±   0.000 μs          |
+| 6: parallel loop gang                         |      0.000 ±   0.000 μs          |
+| 7: parallel loop gang vector                  |      0.000 ±   0.000 μs          |
+| 8: parallel loop num_gangs(64)                |      0.000 ±   0.000 μs          |
+--------------------------------------------------------------------------------------
+Finalizing benchmark.
+srun: Job 9221241 step creation temporarily disabled, retrying (Requested nodes are busy)
+srun: Step created for job 9221241
+Warning: Invalid method 11 skipped.
+Warning: Invalid method 12 skipped.
+Benchmark results:
+--------------------------------------------------------------------------------------
+| Method                                        | Estimated Offloading Time ± Error |
+--------------------------------------------------------------------------------------
+| 9: parallel loop async(1) + wait(1)           |      0.000 ±   0.000 μs          |
+| 10: parallel loop num_gangs(8) vector_length(256) |      0.000 ±   0.000 μs          |
+--------------------------------------------------------------------------------------
+Finalizing benchmark.

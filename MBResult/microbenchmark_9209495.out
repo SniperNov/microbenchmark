@@ -1,0 +1,9 @@
+slurmstepd: error: execve(): microbenchmark_clang: No such file or directory
+srun: error: nid200002: task 0: Exited with exit code 2
+srun: launch/slurm: _step_signal: Terminating StepId=9209495.0
+slurmstepd: error: execve(): microbenchmark_clang: No such file or directory
+srun: error: nid200002: task 0: Exited with exit code 2
+srun: launch/slurm: _step_signal: Terminating StepId=9209495.1
+srun: error: nid200002: task 0: Exited with exit code 2
+srun: launch/slurm: _step_signal: Terminating StepId=9209495.2
+slurmstepd: error: execve(): microbenchmark_clang: No such file or directory

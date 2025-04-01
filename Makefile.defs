@@ -1,0 +1,20 @@
+# Compiler and Flags for Cray Programming Environments
+
+# Detect PE Environment
+PE_ENV ?= $(shell echo $$PE_ENV)
+
+ifeq ($(PE_ENV),CRAY)
+    CC = cc
+    CFLAGS = -hacc -O0
+else ifeq ($(PE_ENV),GNU)
+    CC = cc
+    CFLAGS = -fopenacc -O0
+else ifeq ($(PE_ENV),NVHPC)
+    CC = nvc
+    CFLAGS = -acc -Minfo=accel -O0
+else
+    CC = nvc
+    CFLAGS = -acc -Minfo=accel -O0
+endif
+
+LDFLAGS =
