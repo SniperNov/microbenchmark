@@ -1,13 +1,10 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
-#include <math.h>
-#include <omp.h>
+#include <openacc.h>
 #include <string.h>
 #include "common.h"
-
 #define OUTPUT_FILE "overhead_distribution.txt"
-
 #define NUM_SAMPLES 50
 #define MIN_DELAYLENGTH 20
 #define MAX_DELAYLENGTH 1000
@@ -18,6 +15,23 @@
 #define BENCHMARK_SETS 20
 #define BENCHMARK_RUNS 20
 
+#define NUM_METHODS 10
+#define NUM_SIZES 14
+int sizes[NUM_SIZES] = {1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192};
+
+const char *method_names[] = {
+    "parallel loop copy(a[0:N])",
+    "parallel loop copyin(a[0:N])",
+    "parallel loop copyout(a[0:N])",
+    "parallel loop create(a[0:N])",
+    "parallel loop",
+    "parallel loop gang copy(a[0:N])",
+    "parallel loop gang vector copy(a[0:N])",
+    "parallel loop num_gangs(64) copy(a[0:N])",
+    "parallel loop async(1) copy(a[0:N]) + wait(1)",
+    "parallel loop num_gangs(8) vector_length(256) copy(a[0:N])"
+};
+
 double delays[NUM_SAMPLES];
 double execution_times[BENCHMARK_SETS][BENCHMARK_RUNS][NUM_SAMPLES];
 
@@ -27,213 +41,123 @@ void device_target(int offloading_method, int set, int run, double *a, int N);
 
 int main(int argc, char **argv)
 {
-    int hostdev, targetdev, num_devs;
+    int num_devs = acc_get_num_devices(acc_get_device_type());
+    int targetdev = -9999;
 
-    num_devs = omp_get_num_devices();
-    hostdev = omp_get_initial_device();
-    targetdev = -9999;
+    printf("OpenACC device type: %ld\n", acc_get_device_type());
+    printf("Number of available devices: %d\n", num_devs);
 
-#pragma omp target map(from : targetdev)
-    {
-        targetdev = omp_is_initial_device();
+    #pragma acc parallel present_or_create(targetdev)
+{
+    if (acc_on_device(acc_get_device_type())) {
+        targetdev = 0;
+    } else {
+        targetdev = 1;
     }
-
-    printf("There are  %d available devices\n", num_devs);
-    printf("Host device is %d\n", hostdev);
-
-    if (targetdev)
-    {
-        printf("Target region executed on host. Terminating...\n");
-        return 0;
-    }
-    else
-    {
-        printf("Target region executed on device. Continue...\n");
-    }
-
-    const char *method_names[] = {
-        "target map(tofrom: a)",
-        "target map(to: a)",
-        "target map(from: a)",
-        "target map(alloc: a)",
-        "target",
-        "target teams",
-        "target teams parallel",
-        "target teams distribute parallel for",
-        "target nowait",
-        "target map(to: a[0:N])",
-        "target map(tofrom: a[0:N])",
-        "num_teams(8) thread_limit(256)"};
-
-    int methods[12] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
-    int num_methods = 12;
-    int N = 1024; // Default size
-
-    if (argc > 1)
-    {
-        num_methods = argc - 1;
-        for (int i = 0; i < num_methods; i++)
-        {
-            methods[i] = atoi(argv[i + 1]);
-            if (methods[i] < 1 || methods[i] > 12)
-            {
-                printf("Invalid method %d. Ignoring.\n", methods[i]);
-                methods[i] = 0;
-            }
-        }
-    }
-
-    // Parse N if provided in the command line argument
-    if (argc > num_methods + 1)
-    {
-        N = atoi(argv[num_methods + 1]); // Set N from runtime argument
-    }
-
-    // Dynamically allocate array a based on N
-    double *a = (double *)malloc(N * sizeof(double));
-    if (a == NULL)
-    {
-        printf("Memory allocation for array a failed.\n");
-        return EXIT_FAILURE;
-    }
+}
+if (targetdev == 1) {
+    fprintf(stderr, "⚠️  Target region did NOT offload. Please ensure GPU is available!\n");
+    exit(EXIT_FAILURE);
+}
 
     init(argc, argv);
 
-    printf("Benchmark results:\n");
-    printf("--------------------------------------------------------------------------------------\n");
-    printf("| %-40s | Estimated Offloading Time ± Error |\n", "Method");
-    printf("--------------------------------------------------------------------------------------\n");
+    printf("Method/N");
+    for (int i = 0; i < NUM_SIZES; ++i) {
+        printf("\t%d", sizes[i]);
+    }
+    printf("\n");
 
-    for (int m = 0; m < num_methods; m++)
-    {
-        if (methods[m] == 0)
-            continue;
-
-        for (int set = 0; set < BENCHMARK_SETS; set++)
-        {
-            // warmup_cache();
-            device_target(methods[m], WARMUP_ITERATIONS, 1, a, N);
-            for (int run = 0; run < BENCHMARK_RUNS; run++)
-            {
-                device_target(methods[m], set, run, a, N);
+    for (int m = 0; m < NUM_METHODS; ++m) {
+        printf("%s", method_names[m]);
+        for (int nidx = 0; nidx < NUM_SIZES; ++nidx) {
+            int N = sizes[nidx];
+            double *a = (double *)malloc(N * sizeof(double));
+            if (!a) {
+                fprintf(stderr, "Allocation failed for N=%d\n", N);
+                exit(EXIT_FAILURE);
             }
-        }
 
-        double intercept_avg, error;
-        compute_offloading_time(&intercept_avg, &error);
-        // Print the method name using methods[m]-1 as the index into method_names
-        printf("| %-40s | %10.3f ± %7.3f μs          |\n", method_names[methods[m] - 1], intercept_avg, error);
+            for (int set = 0; set < BENCHMARK_SETS; ++set) {
+                device_target(m + 1, WARMUP_ITERATIONS, 1, a, N);
+                for (int run = 0; run < BENCHMARK_RUNS; ++run) {
+                    device_target(m + 1, set, run, a, N);
+                }
+            }
+
+            double avg, err;
+            compute_offloading_time(&avg, &err);
+            printf("\t%.1f\u00b1%.1f", avg, err);
+            free(a);
+        }
+        printf("\n");
     }
 
-    printf("--------------------------------------------------------------------------------------\n");
     finalise();
-
-    // Free allocated memory
-    free(a);
-
-    return EXIT_SUCCESS;
+    return 0;
 }
 
-void device_target(int offloading_method, int set, int run, double *a, int N)
-{
-    int j, i, num_devs;
-    double start, elapsed;
-    num_devs = omp_get_num_devices();
-    for (i = 0; i < NUM_SAMPLES; i++)
-    {
+void device_target(int offloading_method, int set, int run, double *a, int N) {
+    for (int i = 0; i < NUM_SAMPLES; i++) {
         int delaylength = MIN_DELAYLENGTH + i * (MAX_DELAYLENGTH - MIN_DELAYLENGTH) / (NUM_SAMPLES - 1);
         delays[i] = delaylength;
 
-        start = omp_get_wtime();
-        for (j = 0; j < INNERREPS; j++)
-        {
-            switch (offloading_method)
-            {
-            case 1:
-#pragma omp target map(tofrom : a[0 : N])
-                array_delay(delaylength, a);
-                break;
-            case 2:
-#pragma omp target map(to : a[0 : N])
-                array_delay(delaylength, a);
-                break;
-            case 3:
-#pragma omp target map(from : a[0 : N])
-                array_delay(delaylength, a);
-                break;
-            case 4:
-#pragma omp target map(alloc : a[0 : N])
-                array_delay(delaylength, a);
-                break;
-            case 5:
-#pragma omp target map(tofrom : a[0 : N])
-                array_delay(delaylength, a);
-                break;
-            case 6:
-#pragma omp target teams map(tofrom : a[0 : N])
-                array_delay(delaylength, a);
-                break;
-            case 7:
-#pragma omp target teams map(tofrom : a[0 : N])
-#pragma omp parallel num_threads(32)
-                array_delay(delaylength, a);
-                break;
-            case 8:
-#pragma omp target teams distribute parallel for num_teams(64 * num_devs) map(tofrom : a[0 : N])
-                for (int k = 0; k < 64 * num_devs; k++)
-                {
-                    array_delay(delaylength, a);
-                }
-                break;
-            case 9:
-#pragma omp target map(tofrom : a[0 : N]) nowait
-                array_delay(delaylength, a);
-#pragma omp taskwait 
-                break;
-            case 10:
-#pragma omp target map(to : a[0 : N])
-                array_delay(delaylength, a);
-                break;
-            case 11:
-#pragma omp target map(tofrom : a[0 : N])
-                array_delay(delaylength, a);
-                break;
-            case 12:
-#pragma omp target teams map(tofrom : a[0 : N]) num_teams(8) thread_limit(256)
-                array_delay(delaylength, a);
-            default:
-                array_delay(delaylength, a);
-                break;
-            }
+        double start = get_time_usec();
+        for (int j = 0; j < INNERREPS; j++) {
+            switch (offloading_method) {
+                case 1:
+#pragma acc parallel loop copy(a[0:N])
+                    for (int idx = 0; idx < delaylength; idx++) a[idx % N] += 1.0;
+                    break;
+                case 2:
+#pragma acc parallel loop copyin(a[0:N])
+                    for (int idx = 0; idx < delaylength; idx++) a[idx % N] += 1.0;
+                    break;
+                case 3:
+#pragma acc parallel loop copyout(a[0:N])
+                    for (int idx = 0; idx < delaylength; idx++) a[idx % N] += 1.0;
+                    break;
+                case 4:
+#pragma acc parallel loop create(a[0:N])
+                    for (int idx = 0; idx < delaylength; idx++) a[idx % N] += 1.0;
+                    break;
+                case 5:
+#pragma acc parallel loop
+                    for (int idx = 0; idx < delaylength; idx++) a[idx % N] += 1.0;
+                    break;
+                case 6:
+#pragma acc parallel loop gang copy(a[0:N])
+                    for (int idx = 0; idx < delaylength; idx++) a[idx % N] += 1.0;
+                    break;
+                case 7:
+#pragma acc parallel loop gang vector copy(a[0:N])
+                    for (int idx = 0; idx < delaylength; idx++) a[idx % N] += 1.0;
+                    break;
+                case 8:
+#pragma acc parallel loop num_gangs(64) copy(a[0:N])
+                    for (int idx = 0; idx < delaylength; idx++) a[idx % N] += 1.0;
+                    break;
+                case 9:
+#pragma acc parallel loop async(1) copy(a[0:N])
+                    for (int idx = 0; idx < delaylength; idx++) a[idx % N] += 1.0;
+#pragma acc wait(1)
+                    break;
+                case 10:
+#pragma acc parallel loop num_gangs(8) vector_length(256) copy(a[0:N])
+                    for (int idx = 0; idx < delaylength; idx++) a[idx % N] += 1.0;
+                    break;
+                default:
+#pragma acc parallel loop copy(a[0:N])
+                    for (int idx = 0; idx < delaylength; idx++) a[idx % N] += 1.0;
+                    break;
+            }                
             a[0] += 1;
             if (a[0] < 0)
             {
                 printf("%f \n", a[0]);
             }
         }
-        elapsed = (omp_get_wtime() - start) * 1.0e6 / INNERREPS;
-        execution_times[set][run][i] = elapsed;
-    }
-}
-
-void warmup_cache()
-{
-    double dummy_array[1000000];
-    for (int i = 0; i < WARMUP_ITERATIONS; i++)
-    {
-        dummy_array[i] = i * 0.01;
-    }
-    if (dummy_array[0] < 0)
-    {
-        printf("%f \n", dummy_array[0]);
-    }
-    for (int i = 0; i < WARMUP_ITERATIONS; i++)
-    {
-        dummy_array[i] += 1.0;
-    }
-    if (dummy_array[0] < 0)
-    {
-        printf("%f \n", dummy_array[0]);
+        execution_times[set][run][i] = (get_time_usec() - start) / INNERREPS;
     }
 }
 

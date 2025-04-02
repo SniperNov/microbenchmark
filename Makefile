@@ -1,4 +1,4 @@
-include Makefile.defs.clang
+include Makefile.defs.cray
 
 TARGET = microbenchmark
 SRCS = microbenchmark.c common.c
@@ -38,18 +38,16 @@ help:
 	@echo "  1 2 3       - Runs only the specified methods and outputs results in a table"
 	@echo ""
 	@echo "Available Methods:"
-	@echo "  1  - map(tofrom: a)"
-	@echo "  2  - map(to: a)"
-	@echo "  3  - map(from: a)"
-	@echo "  4  - map(alloc: a)"
-	@echo "  5  - target"
-	@echo "  6  - target teams"
-	@echo "  7  - target teams parallel"
-	@echo "  8  - target teams distribute parallel for"
-	@echo "  9  - target nowait"
-	@echo " 10  - target map(to: a[0:N])"
-	@echo " 11  - target map(tofrom: a[0:N])"
-	@echo " 12  - target teams num_teams(8) thread_limit(256)"
+	@echo "  1: #pragma acc parallel loop copy(a[0:N])"
+	@echo "  2: #pragma acc parallel loop copyin(a[0:N])"
+	@echo "  3: #pragma acc parallel loop copyout(a[0:N])"
+	@echo "  4: #pragma acc parallel loop create(a[0:N])"
+	@echo "  5: #pragma acc parallel loop"
+	@echo "  6: #pragma acc parallel loop gang copy(a[0:N])"
+	@echo "  7: #pragma acc parallel loop gang vector copy(a[0:N])"
+	@echo "  8: #pragma acc parallel loop num_gangs(64) copy(a[0:N])"
+	@echo "  9: #pragma acc parallel loop async(1) copy(a[0:N]) + wait(1)"
+	@echo " 10: #pragma acc parallel loop num_gangs(8) vector_length(256) copy(a[0:N])"
 	@echo ""
 	@echo "Example:"
 	@echo "  ./microbenchmark 1 2 4 12 $(N)"
