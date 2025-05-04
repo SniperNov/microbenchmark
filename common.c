@@ -26,11 +26,6 @@ void array_delay(int delaylength, double *array)
     }
 }
 
-double get_time_usec() {
-    struct timeval tv;
-    gettimeofday(&tv, NULL);
-    return tv.tv_sec * 1e6 + tv.tv_usec;
-}
 
 void finalise()
 {

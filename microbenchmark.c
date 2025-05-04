@@ -12,8 +12,8 @@
 #define IDA 27
 #define OUTERREPS 40
 #define WARMUP_ITERATIONS 10
-#define BENCHMARK_SETS 20
-#define BENCHMARK_RUNS 20
+#define BENCHMARK_SETS 2
+#define BENCHMARK_RUNS 2
 
 #define NUM_METHODS 12
 #define NUM_SIZES 14
@@ -25,7 +25,7 @@ const char *method_names[] = {
     "target map(from: a)",
     "target map(alloc: a)",
     "target",
-    "target teams",
+    "target te ams",
     "target teams parallel",
     "target teams distribute parallel for",
     "target nowait",
@@ -39,16 +39,58 @@ double execution_times[BENCHMARK_SETS][BENCHMARK_RUNS][NUM_SAMPLES];
 
 void compute_offloading_time(double *intercept_avg, double *error);
 void warmup_cache();
-void device_target(int offloading_method, int set, int run, double *a, int N);
+void device_target(int offloading_method, int set, int run, double *a, int N, int thread_count, int team_count);
 
 int main(int argc, char **argv) {
-    int num_devs = omp_get_num_devices();
-    int hostdev = omp_get_initial_device();
-    int targetdev = -9999;
+    int num_methods = 0;
+    int Ns[NUM_SIZES], thread_counts[NUM_SIZES], team_counts[NUM_SIZES], methods[NUM_METHODS];
+    int num_Ns = 0, num_threads = 0, num_teams = 0, specified_method = -1;
+    // 默认值
+    memcpy(Ns, sizes, sizeof(sizes));
+    num_Ns = NUM_SIZES;
+    thread_counts[0] = 32;
+    num_threads = 1;
+    team_counts[0] = 64 * omp_get_num_devices();
+    num_teams = 1;
 
+    // 解析命令行参数
+    for (int i = 1; i < argc; ++i) {
+    if (strncmp(argv[i], "Method=", 7) == 0) {
+        num_methods = 0;
+        char *token = strtok(argv[i] + 7, ",");
+        while (token != NULL && num_methods < NUM_METHODS) {
+            methods[num_methods++] = atoi(token);
+            token = strtok(NULL, ",");
+        }
+    } else if (strncmp(argv[i], "N=", 2) == 0) {
+        num_Ns = 0;
+        char *token = strtok(argv[i] + 2, ",");
+        while (token != NULL && num_Ns < NUM_SIZES) {
+            Ns[num_Ns++] = atoi(token);
+            token = strtok(NULL, ",");
+        }
+    } else if (strncmp(argv[i], "thread_count=", 13) == 0) {
+        num_threads = 0;
+        char *token = strtok(argv[i] + 13, ",");
+        while (token != NULL && num_threads < NUM_SIZES) {
+            thread_counts[num_threads++] = atoi(token);
+            token = strtok(NULL, ",");
+        }
+    } else if (strncmp(argv[i], "team_count=", 11) == 0) {
+        num_teams = 0;
+        char *token = strtok(argv[i] + 11, ",");
+        while (token != NULL && num_teams < NUM_SIZES) {
+            team_counts[num_teams++] = atoi(token);
+            token = strtok(NULL, ",");
+        }
+    }
+}
+
+
+    // 检查设备是否支持 target
+    int targetdev = -9999;
 #pragma omp target map(from : targetdev)
     targetdev = omp_is_initial_device();
-
     if (targetdev) {
         printf("Target region executed on host. Terminating...\n");
         return 0;
@@ -57,42 +99,51 @@ int main(int argc, char **argv) {
     init(argc, argv);
 
     printf("Method/N");
-    for (int i = 0; i < NUM_SIZES; ++i) {
-        printf("\t%d", sizes[i]);
+    for (int i = 0; i < num_Ns; ++i) {
+        printf("\t%d", Ns[i]);
     }
     printf("\n");
 
-    for (int m = 0; m < NUM_METHODS; ++m) {
-        printf("%s", method_names[m]);
-        for (int nidx = 0; nidx < NUM_SIZES; ++nidx) {
-            int N = sizes[nidx];
-            double *a = (double *)malloc(N * sizeof(double));
-            if (!a) {
-                fprintf(stderr, "Allocation failed for N=%d\n", N);
-                exit(EXIT_FAILURE);
-            }
-
-            for (int set = 0; set < BENCHMARK_SETS; ++set) {
-                device_target(m + 1, WARMUP_ITERATIONS, 1, a, N);
-                for (int run = 0; run < BENCHMARK_RUNS; ++run) {
-                    device_target(m + 1, set, run, a, N);
+    for (int midx = 0; midx < (num_methods == 0 ? NUM_METHODS : num_methods); ++midx) {
+        int m = (num_methods == 0 ? midx : methods[midx]) - 1;
+    
+        for (int t = 0; t < num_threads; ++t) {
+            for (int tm = 0; tm < num_teams; ++tm) {
+                printf("%s [threads=%d teams=%d]\n", method_names[m], thread_counts[t], team_counts[tm]);
+                for (int nidx = 0; nidx < num_Ns; ++nidx) {
+                    int N = Ns[nidx];
+                    double *a = (double *)malloc(N * sizeof(double));
+                    if (!a) {
+                        fprintf(stderr, "Allocation failed for N=%d\n", N);
+                        exit(EXIT_FAILURE);
+                    }
+    
+                    for (int set = 0; set < BENCHMARK_SETS; ++set) {
+                        //warmup
+                        device_target(m + 1, set, -1, a, N, thread_counts[t], team_counts[tm]);
+                        for (int run = 0; run < BENCHMARK_RUNS; ++run) {
+                            device_target(m + 1, set, run, a, N, thread_counts[t], team_counts[tm]);
+                        }
+                    }
+    
+                    double avg, err;
+                    compute_offloading_time(&avg, &err);
+                    printf("\t%.1f±%.1f", avg, err);
+                    free(a);
                 }
+                printf("\n"); // 每组 thread-team 输出完换行
             }
-
-            double avg, err;
-            compute_offloading_time(&avg, &err);
-            printf("\t%.1f\u00b1%.1f", avg, err);
-            free(a);
         }
-        printf("\n");
     }
+    
 
     finalise();
     return 0;
 }
 
-void device_target(int offloading_method, int set, int run, double *a, int N) {
-    int num_devs = omp_get_num_devices();
+
+void device_target(int offloading_method, int set, int run, double *a, int N, int thread_count, int team_count){
+
     for (int i = 0; i < NUM_SAMPLES; i++) {
         int delaylength = MIN_DELAYLENGTH + i * (MAX_DELAYLENGTH - MIN_DELAYLENGTH) / (NUM_SAMPLES - 1);
         delays[i] = delaylength;
@@ -125,13 +176,18 @@ void device_target(int offloading_method, int set, int run, double *a, int N) {
                     array_delay(delaylength, a);
                     break;
                 case 7:
-#pragma omp target teams map(tofrom : a[0 : N])
-#pragma omp parallel num_threads(32)
-                    array_delay(delaylength, a);
+// #pragma omp target teams map(tofrom : a[0 : N])
+// #pragma omp parallel num_threads(thread_count)
+//                     array_delay(delaylength, a);
+#pragma omp target teams distribute parallel for num_teams(team_count) thread_limit(thread_count) map(tofrom : a[0:N])
+                for (int i = 0; i < N; i++) {
+                    array_delay(delaylength, &a[i]);
+                }          
+                    
                     break;
                 case 8:
-#pragma omp target teams distribute parallel for num_teams(64 * num_devs) map(tofrom : a[0 : N])
-                    for (int k = 0; k < 64 * num_devs; k++)
+#pragma omp target teams distribute parallel for num_teams(team_count) thread_limit(thread_count) map(tofrom : a[0 : N])
+                    for (int k = 0; k < team_count; k++)
                     {
                         array_delay(delaylength, a);
                     }

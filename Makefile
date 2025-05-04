@@ -1,4 +1,4 @@
-include Makefile.defs.clang
+include Makefile.defs.gcc
 
 TARGET = microbenchmark
 SRCS = microbenchmark.c common.c
