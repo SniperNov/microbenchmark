@@ -17,7 +17,6 @@
 
 #define NUM_METHODS 12
 #define NUM_SIZES 14
-int sizes[NUM_SIZES] = {1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192};
 
 const char *method_names[] = {
     "target map(tofrom: a)",
@@ -44,10 +43,10 @@ void device_target(int offloading_method, int set, int run, double *a, int N, in
 int main(int argc, char **argv) {
     int num_methods = 0;
     int Ns[NUM_SIZES], thread_counts[NUM_SIZES], team_counts[NUM_SIZES], methods[NUM_METHODS];
-    int num_Ns = 0, num_threads = 0, num_teams = 0, specified_method = -1;
+    int num_Ns = 0, num_threads = 0, num_teams = 0;
     // 默认值
-    memcpy(Ns, sizes, sizeof(sizes));
-    num_Ns = NUM_SIZES;
+    Ns[0] = 1024;
+    num_Ns = 1;
     thread_counts[0] = 32;
     num_threads = 1;
     team_counts[0] = 64 * omp_get_num_devices();
