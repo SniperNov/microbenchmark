@@ -1,0 +1,10 @@
+Failing in Thread:1
+Accelerator Fatal Error: call to cuMemcpyDtoHAsync returned error 700 (CUDA_ERROR_ILLEGAL_ADDRESS): Illegal address during kernel execution
+ File: /mnt/lustre/e1000/home/d403/d403/weiyu2024/PhDProject/epcc-openmp-microbenchmarks/microbenchmark/microbenchmark.c
+ Function: device_target:144
+ Line: 184
+
+Method/N	1024	2048	4096	8192	16384	32768	65536	131072	262144	524288
+target teams parallel [threads=32 teams=16]
+	24.9±1.2	37.9±0.4	64.7±0.2	117.8±0.1	225.7±0.1	435.1±0.4	848.9±0.2	1684.0±7.9srun: error: r2i5n5: task 0: Exited with exit code 1
+srun: launch/slurm: _step_signal: Terminating StepId=7402771.0

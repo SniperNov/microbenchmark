@@ -1,0 +1,38 @@
+Method/N	1024
+target teams parallel [threads=32 teams=16]
+	603.2±1.1
+target teams parallel [threads=32 teams=32]
+	727.6±1.1
+target teams parallel [threads=32 teams=64]
+	5066.4±1.5
+target teams parallel [threads=128 teams=16]
+	601.6±0.5
+target teams parallel [threads=128 teams=32]
+	728.2±0.7
+target teams parallel [threads=128 teams=64]
+	5068.5±1.7
+target teams parallel [threads=512 teams=16]
+	601.4±0.4
+target teams parallel [threads=512 teams=32]
+	730.1±2.7
+target teams parallel [threads=512 teams=64]
+	5065.9±2.1
+target teams parallel [threads=2048 teams=16]
+	603.0±1.4
+target teams parallel [threads=2048 teams=32]
+	729.0±0.2
+target teams parallel [threads=2048 teams=64]
+	5067.5±2.8
+target teams parallel [threads=8192 teams=16]
+	601.9±0.9
+target teams parallel [threads=8192 teams=32]
+	729.2±0.4
+target teams parallel [threads=8192 teams=64]
+	5067.4±1.8
+target teams parallel [threads=32768 teams=16]
+	601.4±0.6
+target teams parallel [threads=32768 teams=32]
+	728.1±0.8
+target teams parallel [threads=32768 teams=64]
+	5065.9±3.5
+Finalizing benchmark.

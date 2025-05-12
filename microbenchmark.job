@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --account=d403-wt
-#SBATCH --job-name=NVC_TeamThread
+#SBATCH --job-name=NVC_arraysize
 #SBATCH --time=8:00:00
 #SBATCH --nodes=1
 #SBATCH --partition=gpu
@@ -9,10 +9,11 @@
 #SBATCH --exclusive
 #SBATCH --output=MBResult/%x_%j.out
 
-# module load gcc/10.3.0 
 # gcc -fopenmp -fopenmp-targets=nvptx-none -### /dev/null 2>&1 | grep "Configured with"
 # echo | gcc -fopenmp -dM -E - | grep _OPENMP
 module load gcc/12.3.0-offload
+# export NV_ACC_CUDA_HEAPSIZE=4GB
+export OMP_TARGET_OFFLOAD=mandatory
 # module load intel-license
 # module load intel-20.4/cc
 # module load intel-20.4/fc
@@ -20,6 +21,9 @@ module load gcc/12.3.0-offload
 # module load mpt
 # module load nvidia/nvhpc
 
-# srun ./microbenchmark Method=1,2,3,4,5,6,9,10,11,12 N=1024,2048,4096,8192,16384,32768,65536,131072,262144,524288
-# srun ./microbenchmark Method=7 thread_count=32,64,128,256,512,1024,2048,4096,8192,16384,32768
-srun ./microbenchmark Method=8 team_count=16,32,64,128,256,512,1024,2048,4096
+# srun ./microbenchmark Method=1,2,3,4,5,6,9,10,11,12 N=1024,2048,4096,8192,16384,32768,65536,131072
+# srun ./microbenchmark Method=7 thread_count=32,64,128,256,512,1024,2048,4096,8192,16384,32768 N=1024,2048,4096,8192,16384,32768,65536,131072
+# srun ./microbenchmark Method=7 team_count=16,32,64,128,256,512,1024,2048,4096 N=1024,2048,4096,8192,16384,32768,65536,131072
+# srun ./microbenchmark Method=7 team_count=16,32,64 thread_count=32,128,512,2048,8192,32768 N=131072
+
+srun ./microbenchmark Method=7 team_count=16,32,64 thread_count=32,128,512,2048,8192,32768 N=1024,2048,4096,8192,16384,32768,65536,131072
