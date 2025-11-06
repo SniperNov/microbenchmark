@@ -1,3 +1,4 @@
+// common.c
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -5,29 +6,28 @@
 #include "common.h"
 #include <sys/time.h>
 
-#define MAX_ARRAY_SIZE 1024 // Ensure it doesn't exceed the allowed memory section
+// #define MAX_ARRAY_SIZE 16384
+// double a[MAX_ARRAY_SIZE];  // 仅供 host 侧 init()/finalise() 使用
 
-double a[MAX_ARRAY_SIZE]; // Define an array with a proper size
+void init(int argc, char **argv) {
+    // for (int i = 0; i < MAX_ARRAY_SIZE; ++i) a[i] = 0.0;
+    printf("Initializing benchmark runtime environment...\n");
 
-void init(int argc, char **argv)
-{
-    for (int i = 0; i < MAX_ARRAY_SIZE; i++)
-    {
-        a[i] = 0.0;
-    }
 }
 
+#pragma omp declare target
 void array_delay(int delaylength, double *array)
 {
-    // write initial values here
-    for (int i = 0; i < delaylength; i++)
-    {
-        array[i % MAX_ARRAY_SIZE] += 1.0; // Ensure access stays within array bounds
+    // Simple delay loop performing non-optimizable accumulation
+    array[0]=1.0;
+    for (int i = 0; i < delaylength; i++) {
+        array[0] += i;
     }
+    if (array[0] < 0)
+	printf("%f \n", array[0]);
 }
+#pragma omp end declare target
 
-
-void finalise()
-{
+void finalise(void) {
     printf("Finalizing benchmark.\n");
 }
