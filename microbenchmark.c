@@ -7,13 +7,12 @@
 
 #define OUTPUT_FILE "overhead_distribution.txt"
 #define N_DEF 16382
-#define NUM_SAMPLES 10 //If all methods outputs same value, we should enlarge the interval of [MIN_D,MAX_D]
-#define MIN_DELAYLENGTH 512 //Too small introduces noise.
-#define MAX_DELAYLENGTH 262144 //Log scale sampling across magnitudes, cover launches and execution.
+#define NUM_SAMPLES 10         // If all methods outputs same value, we should enlarge the interval of [MIN_D,MAX_D]
+#define MIN_DELAYLENGTH 512    // Too small introduces noise.
+#define MAX_DELAYLENGTH 262144 // Log scale sampling across magnitudes, cover launches and execution.
 #define INNERREPS 20
-#define MAX_ITER_DEF 4096 //total mapping and iteration space (equivalent to MAX_ARRAY_SIZE)
+#define MAX_ITER_DEF 4096 // total mapping and iteration space (equivalent to MAX_ARRAY_SIZE)
 #define MAX_ARRAY_SIZE_DEF 65536
-
 
 #define OUTERREPS 40
 #define WARMUP_ITERATIONS 10
@@ -22,11 +21,10 @@
 #define NUM_METHODS 11
 #define NUM_SIZES 16
 // 覆盖区间的可变全局，默认等于宏
-static int g_max_iter = MAX_ITER_DEF;         // fixed kernel workload
+static int g_max_iter = MAX_ITER_DEF;             // fixed kernel workload
 static int g_max_array_size = MAX_ARRAY_SIZE_DEF; // mapping / memory size
 static int g_min_delaylength = MIN_DELAYLENGTH;
 static int g_max_delaylength = MAX_DELAYLENGTH;
-
 
 const char *method_names[] = {
     "map(tofrom: a)",
@@ -39,13 +37,13 @@ const char *method_names[] = {
     "teams atomic",
     "teams reduction",
     "teams parallel",
-    "teams + parallel inside"
-    };
+    "teams + parallel inside"};
 
 double delays[NUM_SAMPLES];
 double execution_times[BENCHMARK_SETS][BENCHMARK_RUNS][NUM_SAMPLES];
 
-void delay_kernel(int delay, double *ptr) {
+void delay_kernel(int delay, double *ptr)
+{
     array_delay(delay, ptr);
 }
 // void compute_offloading_time(double *intercept_avg, double *slope_avg, double *error);
@@ -54,7 +52,8 @@ void compute_offloading_time(double *intercept_avg, double *error,
 void warmup_cache();
 void device_target(int offloading_method, int set, int run, double *a, int N, int thread_count, int team_count);
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
     int num_methods = 0;
     int Ns[NUM_SIZES], thread_counts[NUM_SIZES], team_counts[NUM_SIZES], methods[NUM_METHODS];
     int num_Ns = 0, num_threads = 0, num_teams = 0;
@@ -67,169 +66,214 @@ int main(int argc, char **argv) {
     num_teams = 1;
 
     // 解析命令行参数
-    for (int i = 1; i < argc; ++i) {
+    for (int i = 1; i < argc; ++i)
+    {
 
-    // 解析 Method=
-    if (strncasecmp(argv[i], "Method=", 7) == 0) {
-        num_methods = 0;
-        char *token = strtok(argv[i] + 7, ",");
-        while (token != NULL && num_methods < NUM_METHODS) {
-            methods[num_methods++] = atoi(token);
-            token = strtok(NULL, ",");
-        }
-
-    // 解析 Delay=
-    } else if (strncasecmp(argv[i], "Delay=", 6) == 0) {
-        int delays[4] = {0};
-        int num_delays = 0;
-        char *token = strtok(argv[i] + 6, ",");
-        while (token != NULL && num_delays < 4) {
-            delays[num_delays++] = atoi(token);
-            token = strtok(NULL, ",");
-        }
-
-        if (num_delays == 0) {
-            g_min_delaylength = MIN_DELAYLENGTH;
-            g_max_delaylength = MAX_DELAYLENGTH;
-            // printf("Delaylength: [%d, %d]\n", g_min_delaylength, g_max_delaylength);
-        } else if (num_delays == 1) {
-            g_min_delaylength = MIN_DELAYLENGTH;
-            g_max_delaylength = delays[0];
-            // printf("Delaylength: MIN=%d (default), MAX=%d\n", g_min_delaylength, g_max_delaylength);
-        } else {
-            int a = delays[0], b = delays[1];
-            if (a > b) { int tmp = a; a = b; b = tmp; }
-            g_min_delaylength = a;
-            g_max_delaylength = b;
-            if (num_delays > 2){
-                printf("Warning: extra Delay values ignored.\n");
+        // 解析 Method=
+        if (strncasecmp(argv[i], "Method=", 7) == 0)
+        {
+            num_methods = 0;
+            char *token = strtok(argv[i] + 7, ",");
+            while (token != NULL && num_methods < NUM_METHODS)
+            {
+                methods[num_methods++] = atoi(token);
+                token = strtok(NULL, ",");
             }
-            // printf("Delaylength: MIN=%d, MAX=%d\n", g_min_delaylength, g_max_delaylength);
-        }
 
-    // 解析 N=
-    } else if (strncmp(argv[i], "N=", 2) == 0) {
-        num_Ns = 0;
-        char *token = strtok(argv[i] + 2, ",");
-        while (token != NULL && num_Ns < NUM_SIZES) {
-            Ns[num_Ns++] = atoi(token);
-            token = strtok(NULL, ",");
+            // 解析 Delay=
         }
+        else if (strncasecmp(argv[i], "Delay=", 6) == 0)
+        {
+            int delays[4] = {0};
+            int num_delays = 0;
+            char *token = strtok(argv[i] + 6, ",");
+            while (token != NULL && num_delays < 4)
+            {
+                delays[num_delays++] = atoi(token);
+                token = strtok(NULL, ",");
+            }
 
-        if (num_Ns == 0) {
-            printf("No N specified. Using default N=16384\n");
+            if (num_delays == 0)
+            {
+                g_min_delaylength = MIN_DELAYLENGTH;
+                g_max_delaylength = MAX_DELAYLENGTH;
+                // printf("Delaylength: [%d, %d]\n", g_min_delaylength, g_max_delaylength);
+            }
+            else if (num_delays == 1)
+            {
+                g_min_delaylength = MIN_DELAYLENGTH;
+                g_max_delaylength = delays[0];
+                // printf("Delaylength: MIN=%d (default), MAX=%d\n", g_min_delaylength, g_max_delaylength);
+            }
+            else
+            {
+                int a = delays[0], b = delays[1];
+                if (a > b)
+                {
+                    int tmp = a;
+                    a = b;
+                    b = tmp;
+                }
+                g_min_delaylength = a;
+                g_max_delaylength = b;
+                if (num_delays > 2)
+                {
+                    printf("Warning: extra Delay values ignored.\n");
+                }
+                // printf("Delaylength: MIN=%d, MAX=%d\n", g_min_delaylength, g_max_delaylength);
+            }
+
+            // 解析 N=
         }
+        else if (strncmp(argv[i], "N=", 2) == 0)
+        {
+            num_Ns = 0;
+            char *token = strtok(argv[i] + 2, ",");
+            while (token != NULL && num_Ns < NUM_SIZES)
+            {
+                Ns[num_Ns++] = atoi(token);
+                token = strtok(NULL, ",");
+            }
 
-        for (int ni = 0; ni < num_Ns; ++ni) {
-            if (Ns[ni] > g_max_delaylength) {
-                printf("Warning: N=%d exceeds current delay upper bound (%d), resetting to 16384\n",
-                       Ns[ni], g_max_delaylength);
-                Ns[ni] = N_DEF;
+            if (num_Ns == 0)
+            {
+                printf("No N specified. Using default N=16384\n");
+            }
+
+            for (int ni = 0; ni < num_Ns; ++ni)
+            {
+                if (Ns[ni] > g_max_delaylength)
+                {
+                    printf("Warning: N=%d exceeds current delay upper bound (%d), resetting to 16384\n",
+                           Ns[ni], g_max_delaylength);
+                    Ns[ni] = N_DEF;
+                }
+            }
+
+            // 解析 thread_count=
+        }
+        else if (strncasecmp(argv[i], "thread_count=", 13) == 0)
+        {
+            num_threads = 0;
+            char *token = strtok(argv[i] + 13, ",");
+            while (token != NULL && num_threads < NUM_SIZES)
+            {
+                thread_counts[num_threads++] = atoi(token);
+                token = strtok(NULL, ",");
+            }
+
+            // 解析 team_count=
+        }
+        else if (strncasecmp(argv[i], "team_count=", 11) == 0)
+        {
+            num_teams = 0;
+            char *token = strtok(argv[i] + 11, ",");
+            while (token != NULL && num_teams < NUM_SIZES)
+            {
+                team_counts[num_teams++] = atoi(token);
+                token = strtok(NULL, ",");
             }
         }
-
-
-    // 解析 thread_count=
-    } else if (strncasecmp(argv[i], "thread_count=", 13) == 0) {
-        num_threads = 0;
-        char *token = strtok(argv[i] + 13, ",");
-        while (token != NULL && num_threads < NUM_SIZES) {
-            thread_counts[num_threads++] = atoi(token);
-            token = strtok(NULL, ",");
+        else if (strncasecmp(argv[i], "MAX_ITER=", 9) == 0)
+        {
+            g_max_iter = atoi(argv[i] + 9);
+            printf("MAX_ITER set to %d\n", g_max_iter);
         }
-
-    // 解析 team_count=
-    } else if (strncasecmp(argv[i], "team_count=", 11) == 0) {
-        num_teams = 0;
-        char *token = strtok(argv[i] + 11, ",");
-        while (token != NULL && num_teams < NUM_SIZES) {
-            team_counts[num_teams++] = atoi(token);
-            token = strtok(NULL, ",");
-        }
-    } else if (strncasecmp(argv[i], "MAX_ITER=", 9) == 0) {
-        g_max_iter = atoi(argv[i] + 9);
-        printf("MAX_ITER set to %d\n", g_max_iter);
-
-    } else if (strncasecmp(argv[i], "MAX_ARRAY_SIZE=", 15) == 0) {
-        g_max_array_size = atoi(argv[i] + 15);
-        printf("MAX_ARRAY_SIZE set to %d\n", g_max_array_size);
+        else if (strncasecmp(argv[i], "MAX_ARRAY_SIZE=", 15) == 0)
+        {
+            g_max_array_size = atoi(argv[i] + 15);
+            printf("MAX_ARRAY_SIZE set to %d\n", g_max_array_size);
         }
     }
 
     int maxN = 0;
     for (int ni = 0; ni < num_Ns; ++ni)
-        if (Ns[ni] > maxN) maxN = Ns[ni];
+        if (Ns[ni] > maxN)
+            maxN = Ns[ni];
 
-    if (g_max_array_size < maxN) {
+    if (g_max_array_size < maxN)
+    {
         fprintf(stderr, "Warning: MAX_ARRAY_SIZE (%d) < max(N) (%d). "
-            "Adjusting to %d to avoid out-of-bounds mapping.\n", g_max_array_size, maxN, maxN);
+                        "Adjusting to %d to avoid out-of-bounds mapping.\n",
+                g_max_array_size, maxN, maxN);
         g_max_array_size = maxN;
     }
 
     printf("========== Runtime Configuration ==========\n");
     printf("Delay range   : [%d, %d]\n", g_min_delaylength, g_max_delaylength);
     printf("Array size(s) : ");
-    for (int ni = 0; ni < num_Ns; ++ni) printf("%d%s", Ns[ni], (ni < num_Ns - 1) ? ", " : "\n");
-    printf("Threads/Teams : %d / %d\n", thread_counts, team_counts);
+    for (int ni = 0; ni < num_Ns; ++ni)
+        printf("%d%s", Ns[ni], (ni < num_Ns - 1) ? ", " : "\n");
+    printf("Threads/Teams : %d / %d\n", thread_counts[0], team_counts[0]);
     printf("MAX_ITER      : %d  (kernel workload)\n", g_max_iter);
     printf("MAX_ARRAY_SIZE: %d  (mapping/memory space)\n", g_max_array_size);
     printf("NUM_SAMPLES   : %d\n", NUM_SAMPLES);
     printf("==========================================\n");
 
-
-
-
     // ---- Check target device ----
-    int targetdev = -9999;
-    #pragma omp target map(from : targetdev)
-    targetdev = omp_is_initial_device();
-    if (targetdev) {
-        printf("Target region executed on host. Terminating...\n");
-        fflush(stdout);
-        return 0;
-    }
+//     int targetdev = -9999;
+// #pragma omp target map(from : targetdev)
+//     targetdev = omp_is_initial_device();
+//     if (targetdev)
+//     {
+//         printf("Target region executed on host. Terminating...\n");
+//         fflush(stdout);
+//         return 0;
+//     }
 
     init(argc, argv);
 
     // ---- Print table header ----
     printf("\n========== Benchmark Execution ==========\n");
     printf("%-35s", "Method/N");
-    for (int i = 0; i < num_Ns; ++i) {
+    for (int i = 0; i < num_Ns; ++i)
+    {
         printf("%28d", Ns[i]);
     }
     printf("\n");
     fflush(stdout);
 
     // ---- Print method results ----
-    for (int midx = 0; midx < (num_methods == 0 ? NUM_METHODS : num_methods); ++midx) {
+    for (int midx = 0; midx < (num_methods == 0 ? NUM_METHODS : num_methods); ++midx)
+    {
         int m = (num_methods == 0 ? midx : methods[midx] - 1);
-        if (m < 0 || m >= NUM_METHODS) continue;
+        if (m < 0 || m >= NUM_METHODS)
+            continue;
 
         printf("%-35s", method_names[m]);
         fflush(stdout);
 
-        for (int t = 0; t < num_threads; ++t) {
-            for (int tm = 0; tm < num_teams; ++tm) {
-                for (int nidx = 0; nidx < num_Ns; ++nidx) {
+        for (int t = 0; t < num_threads; ++t)
+        {
+            for (int tm = 0; tm < num_teams; ++tm)
+            {
+                for (int nidx = 0; nidx < num_Ns; ++nidx)
+                {
                     int N = Ns[nidx];
-                    if (thread_counts[t] * team_counts[tm] > N) {
+                    if (thread_counts[t] * team_counts[tm] > N)
+                    {
                         printf("%20s", "NA");
                         continue;
                     }
 
                     // double *a = (double *)malloc(N * sizeof(double));
                     double *a = (double *)malloc(g_max_array_size * sizeof(double));
-                    if (!a) { fprintf(stderr, "Allocation failed for N=%d\n", N); exit(EXIT_FAILURE); }
+                    if (!a)
+                    {
+                        fprintf(stderr, "Allocation failed for N=%d\n", N);
+                        exit(EXIT_FAILURE);
+                    }
 
-                    for (int set = 0; set < BENCHMARK_SETS; ++set) {
+                    for (int set = 0; set < BENCHMARK_SETS; ++set)
+                    {
                         device_target(m + 1, set, -1, a, N, thread_counts[t], team_counts[tm]);
                         for (int run = 0; run < BENCHMARK_RUNS; ++run)
                             device_target(m + 1, set, run, a, N, thread_counts[t], team_counts[tm]);
                     }
 
                     double intercept, err;
-                    compute_offloading_time(&intercept, &err, m+1, method_names[m], N);
-                
+                    compute_offloading_time(&intercept, &err, m + 1, method_names[m], N);
+
                     printf("%20.6f±%-10.6f", intercept, err);
                     free(a);
                 }
@@ -239,24 +283,30 @@ int main(int argc, char **argv) {
     }
     printf("==========================================\n");
 
-finalise();
-return 0;
-
+    finalise();
+    return 0;
 }
 
-void device_target(int method, int set, int run, double *a, int N, int thread_count, int team_count) {
+void device_target(int method, int set, int run, double *a, int N, int thread_count, int team_count)
+{
 
     double start = 0;
     double end = 0;
-    //data movement group
-    for (int sidx = 0; sidx < NUM_SAMPLES; sidx++) {
+    // data movement group
+    for (int sidx = 0; sidx < NUM_SAMPLES; sidx++)
+    {
         // int delay = g_min_delaylength + sidx * (g_max_delaylength - g_min_delaylength) / (NUM_SAMPLES - 1);
         double delay;
-        if (sidx == 0) {
+        if (sidx == 0)
+        {
             delay = g_min_delaylength;
-        } else if (sidx == NUM_SAMPLES - 1) {
+        }
+        else if (sidx == NUM_SAMPLES - 1)
+        {
             delay = g_max_delaylength;
-        } else {
+        }
+        else
+        {
             double log_min = log2((double)g_min_delaylength);
             double log_max = log2((double)g_max_delaylength);
             double ratio = (double)sidx / (NUM_SAMPLES - 1);
@@ -264,185 +314,163 @@ void device_target(int method, int set, int run, double *a, int N, int thread_co
             delay = pow(2.0, log_val);
         }
         delays[sidx] = delay;
-        if((method >= 1 && method <= 4) ||method == 11){
+        if (method >= 1 && method <= 4)
+        {
             start = omp_get_wtime();
-            for (int rep = 0; rep < INNERREPS; rep++) {
-                switch (method) {
-                    case 1:
-                        #pragma omp target map(tofrom: a[0:N])
-                        delay_kernel(delay, a);
-                        break;
-                    case 2:
-                        #pragma omp target map(to: a[0:N])
-                        delay_kernel(delay, a);
-                        break;
-                    case 3:
-                        #pragma omp target map(from: a[0:N])
-                        delay_kernel(delay, a);
-                        break;
-                    case 4:
-                        #pragma omp target map(alloc: a[0:N])
-                        delay_kernel(delay, a);
-                        break;
-                    case 11:
-                        #pragma omp target teams
-                        for (int r = 0; r < INNERREPS; r++) {
-                        #pragma omp parallel
-                            delay_kernel(delay, a);
-                        }
-                        break;
-                /* 对标保持一致性 */
+            for (int rep = 0; rep < INNERREPS; rep++)
+            {
+                switch (method)
+                {
+                case 1:
+#pragma omp target map(tofrom : a[0 : N])
+                    delay_kernel(delay, a);
+                    break;
+                case 2:
+#pragma omp target map(to : a[0 : N])
+                    delay_kernel(delay, a);
+                    break;
+                case 3:
+#pragma omp target map(from : a[0 : N])
+                    delay_kernel(delay, a);
+                    break;
+                case 4:
+#pragma omp target map(alloc : a[0 : N])
+                    delay_kernel(delay, a);
+                    break;
+                    /* 对标保持一致性 */
                 }
                 a[0] += 1;
-                if (a[0] < 0) 
-                    {
+                if (a[0] < 0)
+                {
                     printf("%f \n", a[0]);
-                    }
                 }
+            }
             end = omp_get_wtime();
         }
-        else if(method >= 5 && method <=10){
+        else if (method >= 5 && method <= 11)
+        {
             double *tmp = (double *)malloc(N * sizeof(double));
 
-            if (!tmp) {
+            if (!tmp)
+            {
                 fprintf(stderr, "Allocation failed for tmp[N=%d]\n", N);
                 exit(EXIT_FAILURE);
             }
-            for (int i = 0; i < N; i++) tmp[i] = 0.0;
+            for (int i = 0; i < N; i++)
+                tmp[i] = 0.0;
 
-            #pragma omp target data map(tofrom: a[0:g_max_array_size], tmp[0:N])
+#pragma omp target data map(tofrom : a[0 : g_max_array_size], tmp[0 : N])
             {
-            start = omp_get_wtime();
-            for (int rep = 0; rep < INNERREPS; rep++) {
-                switch(method){
+                start = omp_get_wtime();
+                for (int rep = 0; rep < INNERREPS; rep++)
+                {
+                    switch (method)
+                    {
                     case 5:
-                        #pragma omp target teams
-                        {
+#pragma omp target teams
+                    {
                         int team_id = omp_get_team_num();
                         delay_kernel(delay, &a[team_id % N]);
-                        }
-                        break;   
-                    case 6:// teams_id * threads_id
-                        #pragma omp target teams distribute parallel for num_teams(team_count) thread_limit(thread_count)
-                        for (int i = 0; i < g_max_iter; i++)
-                            delay_kernel(delay, &a[i%N]);
+                    }
+                    break;
+                    case 6: // teams_id * threads_id
+#pragma omp target teams distribute parallel for num_teams(team_count) thread_limit(thread_count)
+                    {
+                    for (int i = 0; i < g_max_iter; i++)
+                        delay_kernel(delay, &a[i % N]);
+                    
+                    }
                         break;
-                    case 7:
-                        #pragma omp target nowait
+case 7:
+#pragma omp target nowait
                         delay_kernel(delay, a);
-                        #pragma omp taskwait
+#pragma omp taskwait
                         break;
                     case 8:
-                        #pragma omp target teams distribute parallel for
-                        for (int i = 0; i < g_max_iter; i++) {
-                            delay_kernel(delay, &a[i%N]);
-                        #pragma omp atomic
-                            tmp[i%N] += 1.0;
+#pragma omp target teams distribute parallel for
+                        for (int i = 0; i < g_max_iter; i++)
+                        {
+                            delay_kernel(delay, &a[i % N]);
+#pragma omp atomic
+                            tmp[i % N] += 1.0;
                         }
                         break;
+//                     case 9:
+// #pragma omp target teams distribute parallel for reduction(+ : tmp[0 : N])
+//                         for (int i = 0; i < g_max_iter; i++)
+//                         {
+//                             delay_kernel(delay, &a[i % N]);
+//                             tmp[i % N] += 1.0;
+//                         }
+//                         break;
                     case 9:
-                        #pragma omp target teams distribute parallel for reduction(+:tmp[0:N])
-                        for (int i = 0; i < g_max_iter; i++) {
-                            delay_kernel(delay, &a[i%N]);
-                            tmp[i%N] += 1.0;
+#ifdef __AMDGCN__
+                        /* Reduction disabled on Cray CCE (gfx90a) due to unsupported dynamic alloca */
+                        printf("Skipping teams reduction (unsupported on this compiler)\n");
+                        fflush(stdout);
+#else
+// #pragma omp target teams distribute parallel for reduction(+ : tmp[0 : N]) \
+//     num_teams(team_count) thread_limit(thread_count)
+#pragma omp target
+#pragma teams distribute reduction(+ : tmp[0 : N])
+#pragma parallel for reduction(+ : tmp[0 : N])
+
+                        for (int i = 0; i < g_max_iter; i++)
+                        {
+                            delay_kernel(delay, &a[i % N]);
+                            tmp[i % N] += 1.0;
                         }
+#endif
                         break;
+
                     case 10:
-                        #pragma omp target teams parallel
+#pragma omp target teams parallel
                         delay_kernel(delay, a);
                         break;
-                }
-                /* 对标保持一致性 */
-                a[0] += 1.0;
-                if (a[0] < 0.0)
-                    {
-                    printf("%f \n", a[0]);
-                    fflush(stdout);
+                    case 11:
+#pragma omp target teams
+{
+                        for (int r = 0; r < INNERREPS; r++)
+                        {
+#pragma omp parallel
+{
+                            delay_kernel(delay, a);
+}
+                        }
+}
+                        break;
                     }
+                    /* 对标保持一致性 */
+                    a[0] += 1.0;
+                    if (a[0] < 0.0)
+                    {
+                        printf("%f \n", a[0]);
+                        fflush(stdout);
+                    }
+                }
+                end = omp_get_wtime();
             }
-            end = omp_get_wtime();
+            free(tmp);
         }
-        free(tmp);
-        }
-    
-    execution_times[set][run][sidx] = (end - start) * 1.0e6 / INNERREPS;
-}
+
+        execution_times[set][run][sidx] = (end - start) * 1.0e6 / INNERREPS;
+    }
 }
 
-// Compute averaged intercept with error bar
-// void compute_offloading_time(double *intercept_avg,double *slope_avg, double *error)
 
-// {
-//     FILE *file = fopen(OUTPUT_FILE, "a");  // append mode
-//     if (file == NULL) {
-//         fprintf(stderr, "Error opening output file.\n");
-//         fflush(stdout);
-//         return;
-//     }
-
-
-//     double intercepts[BENCHMARK_SETS * BENCHMARK_RUNS];
-//     double slopes[BENCHMARK_SETS * BENCHMARK_RUNS];
-//     double sum_intercept = 0.0, sum_sq_intercept = 0.0, sum_slope = 0.0;
-//     int total_runs = BENCHMARK_SETS * BENCHMARK_RUNS;
-
-//     int idx = 0;
-//     for (int set = 0; set < BENCHMARK_SETS; set++)
-//     {
-//         for (int run = 0; run < BENCHMARK_RUNS; run++)
-//         {
-//             double sum_x = 0, sum_y = 0, sum_xx = 0, sum_xy = 0;
-//             for (int i = 0; i < NUM_SAMPLES; i++)
-//             {
-//                 sum_x += delays[i];
-//                 sum_y += execution_times[set][run][i];
-//                 sum_xx += delays[i] * delays[i];
-//                 sum_xy += delays[i] * execution_times[set][run][i];
-//             }
-//             double slope = (NUM_SAMPLES * sum_xy - sum_x * sum_y) / (NUM_SAMPLES * sum_xx - sum_x * sum_x);
-//             double intercept = (sum_y - slope * sum_x) / NUM_SAMPLES;
-//             intercepts[idx] = intercept;
-//             slopes[idx] = slope;
-//             sum_intercept += intercept;
-//             sum_slope += slope;
-
-// #ifdef PRINT_DISTRIBUTION
-//             fprintf(file, "%d %d %.9e %.9e\n", set, run, slope, intercept);
-//             fflush(file);
-// #endif
-//             idx++;
-//         }
-//     }
-//     *intercept_avg = sum_intercept / total_runs;
-//     *slope_avg = sum_slope / total_runs;
-
-
-//     for (int i = 0; i < total_runs; i++)
-//     {
-//         sum_sq_intercept += (intercepts[i] - *intercept_avg) * (intercepts[i] - *intercept_avg);
-//     }
-//     *error = sqrt(sum_sq_intercept / (total_runs - 1));
-
-// #ifdef PRINT_DISTRIBUTION
-//     fprintf(file, "Average intercept = %.9e ± %.9e μs, Average slope = %.9e μs per delay unit\n\n",
-//             *intercept_avg, *error, *slope_avg);
-//     fflush(file);
-// #endif
-
-//     fclose(file);
-// }
 void compute_offloading_time(double *intercept_avg, double *error,
                              int method_id, const char *method_name, int N)
 {
-    FILE *file = fopen(OUTPUT_FILE, "a"); 
-    if (!file) {
+    FILE *file = fopen(OUTPUT_FILE, "a");
+    if (!file)
+    {
         perror("open BIC summary");
         return;
     }
 
 #ifdef PRINT_DISTRIBUTION
     // ---- 打印方法头 ----
-    fprintf(file, "\n[Method=%d %s N=%d]\n", method_id, method_name, N );
+    fprintf(file, "\n[Method=%d %s N=%d]\n", method_id, method_name, N);
 #endif
 
     int total_runs = BENCHMARK_SETS * BENCHMARK_RUNS;
@@ -450,8 +478,10 @@ void compute_offloading_time(double *intercept_avg, double *error,
     double sum_intercept = 0, sum_sq = 0;
     int idx = 0;
 
-    for (int set = 0; set < BENCHMARK_SETS; ++set) {
-        for (int run = 0; run < BENCHMARK_RUNS; ++run) {
+    for (int set = 0; set < BENCHMARK_SETS; ++set)
+    {
+        for (int run = 0; run < BENCHMARK_RUNS; ++run)
+        {
 
             double best_BIC = INFINITY;
             int best_k = 0;
@@ -460,37 +490,43 @@ void compute_offloading_time(double *intercept_avg, double *error,
             // ----------- 自动扫描 L_min by BIC -----------
             // 枚举不同的delaylength起点𝐿_𝑘
             // 不停去掉第一个点，直到只剩最后五个不能再少了
-            for (int k = 0; k < NUM_SAMPLES - 5; ++k) {
+            for (int k = 0; k < NUM_SAMPLES - 5; ++k)
+            {
                 int n = NUM_SAMPLES - k;
-                double sum_x=0,sum_y=0,sum_xx=0,sum_xy=0;
-                for (int i = k; i < NUM_SAMPLES; ++i) {
+                double sum_x = 0, sum_y = 0, sum_xx = 0, sum_xy = 0;
+                for (int i = k; i < NUM_SAMPLES; ++i)
+                {
                     sum_x += delays[i];
                     sum_y += execution_times[set][run][i];
-                    sum_xx += delays[i]*delays[i];
-                    sum_xy += delays[i]*execution_times[set][run][i];
-                }//线性回归基础统计量
-                double denom = n*sum_xx - sum_x*sum_x;//最小二乘法OLS
-                if (denom <= 0) continue;
+                    sum_xx += delays[i] * delays[i];
+                    sum_xy += delays[i] * execution_times[set][run][i];
+                } // 线性回归基础统计量
+                double denom = n * sum_xx - sum_x * sum_x; // 最小二乘法OLS
+                if (denom <= 0)
+                    continue;
 
-                double b = (n*sum_xy - sum_x*sum_y)/denom;
-                double a = (sum_y - b*sum_x)/n;
+                double b = (n * sum_xy - sum_x * sum_y) / denom;
+                double a = (sum_y - b * sum_x) / n;
 
                 // compute RSS and R² 计算样本拟合质量
-                double rss = 0, tss = 0, mean_y = sum_y/n;
-                for (int i = k; i < NUM_SAMPLES; ++i) {
-                    double yhat = a + b*delays[i];
-                    double e = execution_times[set][run][i] - yhat; //每个点的误差
-                    rss += e*e;
-                    tss += (execution_times[set][run][i]-mean_y)*(execution_times[set][run][i]-mean_y);
+                double rss = 0, tss = 0, mean_y = sum_y / n;
+                for (int i = k; i < NUM_SAMPLES; ++i)
+                {
+                    double yhat = a + b * delays[i];
+                    double e = execution_times[set][run][i] - yhat; // 每个点的误差
+                    rss += e * e;
+                    tss += (execution_times[set][run][i] - mean_y) * (execution_times[set][run][i] - mean_y);
                 }
-                if (rss <= 0) continue;
-                double R2 = 1.0 - rss/tss; //R^2用来衡量拟合的优度
+                if (rss <= 0)
+                    continue;
+                double R2 = 1.0 - rss / tss; // R^2用来衡量拟合的优度
 
                 // compute BIC
                 int p = 2;
-                double BIC = n * log(rss/n) + p * log((double)n);
-                //每次算出一个BIC 保存当前最优
-                if (BIC < best_BIC) {
+                double BIC = n * log(rss / n) + p * log((double)n);
+                // 每次算出一个BIC 保存当前最优
+                if (BIC < best_BIC)
+                {
                     best_BIC = BIC;
                     best_k = k;
                     best_a = a;
@@ -511,7 +547,7 @@ void compute_offloading_time(double *intercept_avg, double *error,
 
     *intercept_avg = sum_intercept / idx;
     for (int i = 0; i < idx; i++)
-        sum_sq += (intercepts[i] - *intercept_avg)*(intercepts[i] - *intercept_avg);
+        sum_sq += (intercepts[i] - *intercept_avg) * (intercepts[i] - *intercept_avg);
     *error = sqrt(sum_sq / (idx - 1));
 #ifdef PRINT_DISTRIBUTION
     fprintf(file, "Average Intercept=%.6f ± %.6f μs\n", *intercept_avg, *error);
