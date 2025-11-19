@@ -1,5 +1,5 @@
-CC = cc
-CFLAGS = -fopenmp -O0 
-LDFLAGS = -fopenmp -lm
+CC=/opt/rocm/bin/amdclang
+CFLAGS= -O0 -fopenmp -fopenmp-targets=amdgcn-amd-amdhsa -Xopenmp-target=amdgcn-amd-amdhsa -march=gfx90a
+LDFLAGS = -fopenmp
 CPPFLAGS = -E -O0
 LIBS = -lm

@@ -1,17 +1,17 @@
 #include <stdio.h>
+#include <omp.h>
 #include <math.h>
 #include <stdlib.h>
-#include <omp.h>
 #include <string.h>
 #include "common.h"
 
 #define OUTPUT_FILE "overhead_distribution.txt"
 #define N_DEF 16382
-#define NUM_SAMPLES 10         // If all methods outputs same value, we should enlarge the interval of [MIN_D,MAX_D]
+#define NUM_SAMPLES 20         // If all methods outputs same value, we should enlarge the interval of [MIN_D,MAX_D]
 #define MIN_DELAYLENGTH 512    // Too small introduces noise.
 #define MAX_DELAYLENGTH 262144 // Log scale sampling across magnitudes, cover launches and execution.
 #define INNERREPS 20
-#define MAX_ITER_DEF 4096 // total mapping and iteration space (equivalent to MAX_ARRAY_SIZE)
+#define MAX_ITER_DEF 6656 // total mapping and iteration space (equivalent to MAX_ARRAY_SIZE)
 #define MAX_ARRAY_SIZE_DEF 65536
 
 #define OUTERREPS 40
@@ -49,7 +49,7 @@ void delay_kernel(int delay, double *ptr)
 // void compute_offloading_time(double *intercept_avg, double *slope_avg, double *error);
 void compute_offloading_time(double *intercept_avg, double *error,
                              int method_id, const char *method_name, int N);
-void warmup_cache();
+void warmup_cache(int N, int thread_count, int team_count);
 void device_target(int offloading_method, int set, int run, double *a, int N, int thread_count, int team_count);
 
 int main(int argc, char **argv)
@@ -211,15 +211,23 @@ int main(int argc, char **argv)
     printf("==========================================\n");
 
     // ---- Check target device ----
-//     int targetdev = -9999;
-// #pragma omp target map(from : targetdev)
-//     targetdev = omp_is_initial_device();
-//     if (targetdev)
-//     {
-//         printf("Target region executed on host. Terminating...\n");
-//         fflush(stdout);
-//         return 0;
-//     }
+    int numdevs = omp_get_num_devices();
+    int hostdev = omp_get_initial_device();
+
+    int targetdev = -9999;
+#pragma omp target map(from : targetdev)
+{
+    targetdev = omp_is_initial_device();
+}
+    printf("There are  %d available devices\n", numdevs);
+    printf("Host device is %d\n", hostdev);
+
+    if (targetdev)
+    {
+        printf("Target region executed on host. Terminating...\n");
+        fflush(stdout);
+        return 0;
+    }
 
     init(argc, argv);
 
@@ -250,7 +258,7 @@ int main(int argc, char **argv)
                 for (int nidx = 0; nidx < num_Ns; ++nidx)
                 {
                     int N = Ns[nidx];
-                    if (thread_counts[t] * team_counts[tm] > N)
+                    if (thread_counts[t] * team_counts[tm] > g_max_iter)
                     {
                         printf("%20s", "NA");
                         continue;
@@ -263,6 +271,8 @@ int main(int argc, char **argv)
                         fprintf(stderr, "Allocation failed for N=%d\n", N);
                         exit(EXIT_FAILURE);
                     }
+
+                    warmup_cache(Ns[num_Ns - 1], thread_counts[num_threads - 1], team_counts[num_teams - 1]);
 
                     for (int set = 0; set < BENCHMARK_SETS; ++set)
                     {
@@ -381,7 +391,7 @@ void device_target(int method, int set, int run, double *a, int N, int thread_co
                     
                     }
                         break;
-case 7:
+                    case 7:
 #pragma omp target nowait
                         delay_kernel(delay, a);
 #pragma omp taskwait
@@ -390,42 +400,29 @@ case 7:
 #pragma omp target teams distribute parallel for
                         for (int i = 0; i < g_max_iter; i++)
                         {
-                            delay_kernel(delay, &a[i % N]);
+                            delay_kernel(delay, &a[i]);
 #pragma omp atomic
                             tmp[i % N] += 1.0;
                         }
                         break;
-//                     case 9:
-// #pragma omp target teams distribute parallel for reduction(+ : tmp[0 : N])
-//                         for (int i = 0; i < g_max_iter; i++)
-//                         {
-//                             delay_kernel(delay, &a[i % N]);
-//                             tmp[i % N] += 1.0;
-//                         }
-//                         break;
                     case 9:
-#ifdef __AMDGCN__
-                        /* Reduction disabled on Cray CCE (gfx90a) due to unsupported dynamic alloca */
-                        printf("Skipping teams reduction (unsupported on this compiler)\n");
-                        fflush(stdout);
-#else
-// #pragma omp target teams distribute parallel for reduction(+ : tmp[0 : N]) \
-//     num_teams(team_count) thread_limit(thread_count)
 #pragma omp target
 #pragma teams distribute reduction(+ : tmp[0 : N])
 #pragma parallel for reduction(+ : tmp[0 : N])
 
                         for (int i = 0; i < g_max_iter; i++)
                         {
-                            delay_kernel(delay, &a[i % N]);
+                            delay_kernel(delay, &a[i]);
                             tmp[i % N] += 1.0;
                         }
-#endif
                         break;
 
                     case 10:
-#pragma omp target teams parallel
+#pragma omp target teams
+{
+#pragma omp parallel
                         delay_kernel(delay, a);
+}
                         break;
                     case 11:
 #pragma omp target teams
@@ -553,4 +550,21 @@ void compute_offloading_time(double *intercept_avg, double *error,
     fprintf(file, "Average Intercept=%.6f ± %.6f μs\n", *intercept_avg, *error);
 #endif
     fclose(file);
+}
+
+void warmup_cache(int N, int thread_count, int team_count)
+{
+    double *a = (double *)malloc(g_max_array_size * sizeof(double));
+    if (!a)
+    {
+        perror("warmup malloc");
+        exit(EXIT_FAILURE);
+    }
+
+    int dummy_set = 0;
+    int dummy_run = -1;
+
+    device_target(1, dummy_set, dummy_run, a, N, thread_count, team_count);
+
+    free(a);
 }
