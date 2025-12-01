@@ -1,5 +1,2 @@
-CC=cc
-CFLAGS = -fopenmp -O0 
-LDFLAGS = -fopenmp 
-CPPFLAGS = -E -O0
-LIBS = -lm  
+CFLAGS = -h omp -O0
+LDFLAGS = -h omp
