@@ -6,18 +6,19 @@
 #include "common.h"
 
 #define OUTPUT_FILE "overhead_distribution.txt"
+#define RAW_OUTPUT_FILE "raw_times.csv"
 #define N_DEF 16382
 #define NUM_SAMPLES 20         // If all methods outputs same value, we should enlarge the interval of [MIN_D,MAX_D]
 #define MIN_DELAYLENGTH 512    // Too small introduces noise.
 #define MAX_DELAYLENGTH 262144 // Log scale sampling across magnitudes, cover launches and execution.
-#define INNERREPS 20
+#define INNERREPS 1
 #define MAX_ITER_DEF 6656 // total mapping and iteration space (equivalent to MAX_ARRAY_SIZE)
 #define MAX_ARRAY_SIZE_DEF 65536
 
-#define OUTERREPS 40
+#define OUTERREPS 1
 #define WARMUP_ITERATIONS 10
-#define BENCHMARK_SETS 2
-#define BENCHMARK_RUNS 2
+#define BENCHMARK_SETS 20
+#define BENCHMARK_RUNS 20
 #define NUM_METHODS 11
 #define NUM_SIZES 16
 // 覆盖区间的可变全局，默认等于宏
@@ -216,9 +217,9 @@ int main(int argc, char **argv)
 
     int targetdev = -9999;
 #pragma omp target map(from : targetdev)
-{
-    targetdev = omp_is_initial_device();
-}
+    {
+        targetdev = omp_is_initial_device();
+    }
     printf("There are  %d available devices\n", numdevs);
     printf("Host device is %d\n", hostdev);
 
@@ -230,6 +231,18 @@ int main(int argc, char **argv)
     }
 
     init(argc, argv);
+
+    // New or rewrite the csv recording all the raw execution_times
+    FILE *raw = fopen(RAW_OUTPUT_FILE, "w");
+    if (raw)
+    {
+        fprintf(raw, "method_id, method_name, N, thread_count, team_count, set, run, delaylength, exec_time_us\n");
+        fclose(raw);
+    }
+    else
+    {
+        perror("open raw data file.");
+    }
 
     // ---- Print table header ----
     printf("\n========== Benchmark Execution ==========\n");
@@ -386,11 +399,10 @@ void device_target(int method, int set, int run, double *a, int N, int thread_co
                     case 6: // teams_id * threads_id
 #pragma omp target teams distribute parallel for num_teams(team_count) thread_limit(thread_count)
                     {
-                    for (int i = 0; i < g_max_iter; i++)
-                        delay_kernel(delay, &a[i % N]);
-                    
+                        for (int i = 0; i < g_max_iter; i++)
+                            delay_kernel(delay, &a[i % N]);
                     }
-                        break;
+                    break;
                     case 7:
 #pragma omp target nowait
                         delay_kernel(delay, a);
@@ -419,23 +431,23 @@ void device_target(int method, int set, int run, double *a, int N, int thread_co
 
                     case 10:
 #pragma omp target teams
-{
+                    {
 #pragma omp parallel
                         delay_kernel(delay, a);
-}
-                        break;
+                    }
+                    break;
                     case 11:
 #pragma omp target teams
-{
+                    {
                         for (int r = 0; r < INNERREPS; r++)
                         {
 #pragma omp parallel
-{
-                            delay_kernel(delay, a);
-}
+                            {
+                                delay_kernel(delay, a);
+                            }
                         }
-}
-                        break;
+                    }
+                    break;
                     }
                     /* 对标保持一致性 */
                     a[0] += 1.0;
@@ -450,10 +462,23 @@ void device_target(int method, int set, int run, double *a, int N, int thread_co
             free(tmp);
         }
 
-        execution_times[set][run][sidx] = (end - start) * 1.0e6 / INNERREPS;
+        // execution_times[set][run][sidx] = (end - start) * 1.0e6 / INNERREPS;
+        double elapsed_us = (end - start) * 1.0e6 / INNERREPS;
+        //--
+        if (run >= 0)
+        {
+            execution_times[set][run][sidx] = elapsed_us;
+            FILE *raw = fopen(RAW_OUTPUT_FILE, "a");
+            if (raw)
+            {
+                const char *mname = (method >= 1 && method <= NUM_METHODS) ? method_names[method - 1] : "UNKNOWN";
+                fprintf(raw, "%d,\"%s\",%d,%d,%d,%d,%d,%.0f,%.9f\n", method, mname, N, thread_count, team_count, set, run, delays[sidx], elapsed_us);
+            }
+            fclose(raw);
+        }
+        //__
     }
 }
-
 
 void compute_offloading_time(double *intercept_avg, double *error,
                              int method_id, const char *method_name, int N)
