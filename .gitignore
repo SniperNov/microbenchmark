@@ -1,0 +1,10 @@
+# experiment outputs
+MBResult/
+Output/
+*.png
+microbenchmark_distribution
+overlappingtest
+.venv/
+.vscode/
+nvhpc_*/
+
