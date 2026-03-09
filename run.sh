@@ -1,6 +1,7 @@
 #!/bin/bash
 # File: run_all_benchmarks.sh
 
+
 OUTDIR="MBResult_A/Archer2_Output"
 mkdir -p "$OUTDIR"
 

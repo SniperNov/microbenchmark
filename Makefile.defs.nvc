@@ -1,5 +1,4 @@
 CC =nvc
 CFLAGS = -mp=gpu -O0
 LDFLAGS = -mp=gpu
-CPPFLAGS = -E -O0
 LIBS = -lm
