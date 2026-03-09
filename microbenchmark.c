@@ -383,7 +383,15 @@ void device_target(int method, int set, int run, double *a, int N, int thread_co
                         delay_kernel(delay, &a[team_id % N]);
                     }
                     break;
+
                     case 6: // teams_id * threads_id
+#if defined(__NVCOMPILER)
+#pragma omp target teams distribute parallel for num_teams(team_count) thread_limit(thread_count)
+                    for (int i = 0; i < g_max_iter; i++)
+                        delay_kernel(delay, &a[i % N]);
+                    
+                    break;
+#elif defined(_CRAYC) || defined(__AMD__) || defined(__clang__)
 #pragma omp target teams distribute parallel for num_teams(team_count) thread_limit(thread_count)
                     {
                     for (int i = 0; i < g_max_iter; i++)
@@ -391,6 +399,7 @@ void device_target(int method, int set, int run, double *a, int N, int thread_co
                     
                     }
                         break;
+#endif
                     case 7:
 #pragma omp target nowait
                         delay_kernel(delay, a);
@@ -406,6 +415,17 @@ void device_target(int method, int set, int run, double *a, int N, int thread_co
                         }
                         break;
                     case 9:
+#if defined(__NVCOMPILER)
+#pragma omp target teams distribute parallel for reduction(+:tmp[0:N])
+                        for (int i = 0; i < g_max_iter; i++)
+                        {
+                            delay_kernel(delay, &a[i]);
+                            tmp[i % N] += 1.0;
+                        }
+                        break;
+
+#elif defined(_CRAYC) || defined(__AMD__) || defined(__clang__)
+
 #pragma omp target
 #pragma teams distribute reduction(+ : tmp[0 : N])
 #pragma parallel for reduction(+ : tmp[0 : N])
@@ -416,7 +436,7 @@ void device_target(int method, int set, int run, double *a, int N, int thread_co
                             tmp[i % N] += 1.0;
                         }
                         break;
-
+#endif
                     case 10:
 #pragma omp target teams
 {
