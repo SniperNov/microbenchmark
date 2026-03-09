@@ -9,20 +9,20 @@
 #define RAW_OUTPUT_FILE "raw_times.csv"
 #define N_DEF 16382
 #define NUM_SAMPLES 20         // If all methods outputs same value, we should enlarge the interval of [MIN_D,MAX_D]
-#define MIN_DELAYLENGTH 512    // Too small introduces noise.
-#define MAX_DELAYLENGTH 262144 // Log scale sampling across magnitudes, cover launches and execution.
-#define INNERREPS 1
+#define MIN_DELAYLENGTH 1    // Too small introduces noise.
+#define MAX_DELAYLENGTH 8096 // Log scale sampling across magnitudes, cover launches and execution.
+#define INNERREPS 20
 #define MAX_ITER_DEF 6656 // total mapping and iteration space (equivalent to MAX_ARRAY_SIZE)
 #define MAX_ARRAY_SIZE_DEF 65536
 
-#define OUTERREPS 1
+#define OUTERREPS 5
 #define WARMUP_ITERATIONS 10
-#define BENCHMARK_SETS 20
-#define BENCHMARK_RUNS 20
+#define BENCHMARK_SETS 2
+#define BENCHMARK_RUNS 2
 #define NUM_METHODS 11
 #define NUM_SIZES 16
-// 覆盖区间的可变全局，默认等于宏
-static int g_max_iter = MAX_ITER_DEF;             // fixed kernel workload
+
+static int g_max_iter = MAX_ITER_DEF;                            // fixed kernel workload
 static int g_max_array_size = MAX_ARRAY_SIZE_DEF; // mapping / memory size
 static int g_min_delaylength = MIN_DELAYLENGTH;
 static int g_max_delaylength = MAX_DELAYLENGTH;
@@ -41,17 +41,19 @@ const char *method_names[] = {
     "teams + parallel inside"};
 
 double delays[NUM_SAMPLES];
-double execution_times[BENCHMARK_SETS][BENCHMARK_RUNS][NUM_SAMPLES];
+double execution_times[BENCHMARK_SETS][BENCHMARK_RUNS][NUM_SAMPLES][OUTERREPS];
 
 void delay_kernel(int delay, double *ptr)
 {
     array_delay(delay, ptr);
 }
 // void compute_offloading_time(double *intercept_avg, double *slope_avg, double *error);
-void compute_offloading_time(double *intercept_avg, double *error,
-                             int method_id, const char *method_name, int N);
+void compute_offloading_time(double *intercept_avg, double *intercept_err,
+    double *min_avg, double *min_err,
+    int method_id, const char *method_name, int N);
 void warmup_cache(int N, int thread_count, int team_count);
 void device_target(int offloading_method, int set, int run, double *a, int N, int thread_count, int team_count);
+static void shuffle_indices_local(int *perm, int n, unsigned int seed);
 
 int main(int argc, char **argv)
 {
@@ -236,20 +238,62 @@ int main(int argc, char **argv)
     FILE *raw = fopen(RAW_OUTPUT_FILE, "w");
     if (raw)
     {
-        fprintf(raw, "method_id, method_name, N, thread_count, team_count, set, run, delaylength, exec_time_us\n");
+        fprintf(raw, "method_id,method_name,N,thread_count,team_count,set,run,delaylength,outerreps,exec_time_us\n");
         fclose(raw);
     }
     else
     {
-        perror("open raw data file.");
+        perror("Failed to open raw data file.");
+        return 1;
     }
+    // --- Adjust MAX_ITER once (before benchmarking) ---
+    int required_iter = MAX_ITER_DEF;
+
+    // cover max threads*teams
+    int max_prod = 0;
+    for (int t = 0; t < num_threads; ++t)
+    {
+        for (int tm = 0; tm < num_teams; ++tm)
+        {
+            int prod = thread_counts[t] * team_counts[tm];
+            if (prod > max_prod)
+                max_prod = prod;
+        }
+    }
+    if (max_prod > required_iter)
+        required_iter = max_prod;
+
+    // also cover max N (reuse maxN computed above)
+    if (maxN > required_iter)
+        required_iter = maxN;
+
+    g_max_iter = required_iter;
+
+    printf("MAX_ITER set to %d (MAX_ITER_DEF=%d, max threads*teams=%d, max N=%d)\n",
+           g_max_iter, MAX_ITER_DEF, max_prod, maxN);
+
+    // safety: ensure mapping space is large enough
+    if (g_max_iter > g_max_array_size)
+    {
+        printf("ERROR: MAX_ITER (%d) > MAX_ARRAY_SIZE (%d). Increase MAX_ARRAY_SIZE.\n",
+               g_max_iter, g_max_array_size);
+        exit(1);
+    }
+    // --- end adjust ---
 
     // ---- Print table header ----
     printf("\n========== Benchmark Execution ==========\n");
     printf("%-35s", "Method/N");
     for (int i = 0; i < num_Ns; ++i)
     {
-        printf("%28d", Ns[i]);
+        printf("%30d", Ns[i]);
+    }
+    printf("\n");
+    
+    printf("%-35s", "");
+    for (int i = 0; i < num_Ns; ++i)
+    {
+        printf("%30s", "BIC intercept | lowest");
     }
     printf("\n");
     fflush(stdout);
@@ -271,12 +315,6 @@ int main(int argc, char **argv)
                 for (int nidx = 0; nidx < num_Ns; ++nidx)
                 {
                     int N = Ns[nidx];
-                    if (thread_counts[t] * team_counts[tm] > g_max_iter)
-                    {
-                        printf("%20s", "NA");
-                        continue;
-                    }
-
                     // double *a = (double *)malloc(N * sizeof(double));
                     double *a = (double *)malloc(g_max_array_size * sizeof(double));
                     if (!a)
@@ -294,10 +332,15 @@ int main(int argc, char **argv)
                             device_target(m + 1, set, run, a, N, thread_counts[t], team_counts[tm]);
                     }
 
-                    double intercept, err;
-                    compute_offloading_time(&intercept, &err, m + 1, method_names[m], N);
+                    double intercept, intercept_err;
+                    double minval, min_err;
 
-                    printf("%20.6f±%-10.6f", intercept, err);
+                    compute_offloading_time(&intercept, &intercept_err, &minval, &min_err,
+                            m + 1, method_names[m], N);
+
+                    printf("%10.3f±%-10.3f | %10.3f±%-10.3f",
+                                intercept, intercept_err, minval, min_err);
+                    fflush(stdout);
                     free(a);
                 }
             }
@@ -307,273 +350,349 @@ int main(int argc, char **argv)
     printf("==========================================\n");
 
     finalise();
+
     return 0;
 }
 
+void shuffle_indices_local(int *perm, int n, unsigned int seed)
+{   
+    if(!seed) seed = 12345u;
+    for (int i = 0; i < n; ++i)
+        perm[i] = i;
+    for (int i = n - 1; i > 0; --i)
+    {
+        seed = 1664525u * seed + 1013904223u; // LCG 更新 seed（不用 rand_r 也行）
+        int j = (int)(seed % (unsigned)(i + 1));
+        int tmp = perm[i];
+        perm[i] = perm[j];
+        perm[j] = tmp;
+    }
+}
+
+
 void device_target(int method, int set, int run, double *a, int N, int thread_count, int team_count)
 {
-
-    double start = 0;
-    double end = 0;
-    // data movement group
-    for (int sidx = 0; sidx < NUM_SAMPLES; sidx++)
+    
+    // generate log-scale sampled delaylengths once (monotonic increasing)
+    double log_min = log2((double)g_min_delaylength);
+    double log_max = log2((double)g_max_delaylength);
+    for (int i = 0; i < NUM_SAMPLES; i++)
     {
-        // int delay = g_min_delaylength + sidx * (g_max_delaylength - g_min_delaylength) / (NUM_SAMPLES - 1);
-        double delay;
-        if (sidx == 0)
+        if (i == 0)
         {
-            delay = g_min_delaylength;
+            delays[i] = g_min_delaylength;
         }
-        else if (sidx == NUM_SAMPLES - 1)
+        else if (i == NUM_SAMPLES - 1)
         {
-            delay = g_max_delaylength;
+            delays[i] = g_max_delaylength;
         }
         else
         {
-            double log_min = log2((double)g_min_delaylength);
-            double log_max = log2((double)g_max_delaylength);
-            double ratio = (double)sidx / (NUM_SAMPLES - 1);
+            double ratio = (double)i / (NUM_SAMPLES - 1);
             double log_val = log_min + (log_max - log_min) * ratio;
-            delay = pow(2.0, log_val);
+            delays[i] = pow(2.0, log_val);
         }
-        delays[sidx] = delay;
-        if (method >= 1 && method <= 4)
+    }
+    int perm[NUM_SAMPLES];
+    unsigned int seed = 12345u + 97u * (unsigned int)set + 1009u * (unsigned int)(run + 1);
+    shuffle_indices_local(perm, NUM_SAMPLES, seed);    double start, end, delay;
+    for (int sidx = 0; sidx < NUM_SAMPLES; sidx++)
+    {
+        int logical = perm[sidx]; // shuffled index
+        delay = delays[logical];
+        for (int orep = 0; orep < OUTERREPS; orep++)
         {
-            start = omp_get_wtime();
-            for (int rep = 0; rep < INNERREPS; rep++)
-            {
-                switch (method)
-                {
-                case 1:
-#pragma omp target map(tofrom : a[0 : N])
-                    delay_kernel(delay, a);
-                    break;
-                case 2:
-#pragma omp target map(to : a[0 : N])
-                    delay_kernel(delay, a);
-                    break;
-                case 3:
-#pragma omp target map(from : a[0 : N])
-                    delay_kernel(delay, a);
-                    break;
-                case 4:
-#pragma omp target map(alloc : a[0 : N])
-                    delay_kernel(delay, a);
-                    break;
-                    /* 对标保持一致性 */
-                }
-                a[0] += 1;
-                if (a[0] < 0)
-                {
-                    printf("%f \n", a[0]);
-                }
-            }
-            end = omp_get_wtime();
-        }
-        else if (method >= 5 && method <= 11)
-        {
-            double *tmp = (double *)malloc(N * sizeof(double));
-
-            if (!tmp)
-            {
-                fprintf(stderr, "Allocation failed for tmp[N=%d]\n", N);
-                exit(EXIT_FAILURE);
-            }
-            for (int i = 0; i < N; i++)
-                tmp[i] = 0.0;
-
-#pragma omp target data map(tofrom : a[0 : g_max_array_size], tmp[0 : N])
+            if (method >= 1 && method <= 4)
             {
                 start = omp_get_wtime();
-                for (int rep = 0; rep < INNERREPS; rep++)
+                for (int irep = 0; irep < INNERREPS; irep++)
                 {
                     switch (method)
                     {
-                    case 5:
-#pragma omp target teams
-                    {
-                        int team_id = omp_get_team_num();
-                        delay_kernel(delay, &a[team_id % N]);
-                    }
-                    break;
-                    case 6: // teams_id * threads_id
-#pragma omp target teams distribute parallel for num_teams(team_count) thread_limit(thread_count)
-                    {
-                        for (int i = 0; i < g_max_iter; i++)
-                            delay_kernel(delay, &a[i % N]);
-                    }
-                    break;
-                    case 7:
-#pragma omp target nowait
+                    case 1:
+#pragma omp target map(tofrom : a[0 : N])
                         delay_kernel(delay, a);
-#pragma omp taskwait
                         break;
-                    case 8:
-#pragma omp target teams distribute parallel for
-                        for (int i = 0; i < g_max_iter; i++)
-                        {
-                            delay_kernel(delay, &a[i]);
-#pragma omp atomic
-                            tmp[i % N] += 1.0;
-                        }
-                        break;
-                    case 9:
-#pragma omp target
-#pragma teams distribute reduction(+ : tmp[0 : N])
-#pragma parallel for reduction(+ : tmp[0 : N])
-
-                        for (int i = 0; i < g_max_iter; i++)
-                        {
-                            delay_kernel(delay, &a[i]);
-                            tmp[i % N] += 1.0;
-                        }
-                        break;
-
-                    case 10:
-#pragma omp target teams
-                    {
-#pragma omp parallel
+                    case 2:
+#pragma omp target map(to : a[0 : N])
                         delay_kernel(delay, a);
+                        break;
+                    case 3:
+#pragma omp target map(from : a[0 : N])
+                        delay_kernel(delay, a);
+                        break;
+                    case 4:
+#pragma omp target map(alloc : a[0 : N])
+                        delay_kernel(delay, a);
+                        break;
+                        /* 对标保持一致性 */
                     }
-                    break;
-                    case 11:
-#pragma omp target teams
-                    {
-                        for (int r = 0; r < INNERREPS; r++)
-                        {
-#pragma omp parallel
-                            {
-                                delay_kernel(delay, a);
-                            }
-                        }
-                    }
-                    break;
-                    }
-                    /* 对标保持一致性 */
-                    a[0] += 1.0;
-                    if (a[0] < 0.0)
+                    a[0] += 1;
+                    if (a[0] < 0)
                     {
                         printf("%f \n", a[0]);
-                        fflush(stdout);
                     }
                 }
                 end = omp_get_wtime();
             }
-            free(tmp);
-        }
-
-        // execution_times[set][run][sidx] = (end - start) * 1.0e6 / INNERREPS;
-        double elapsed_us = (end - start) * 1.0e6 / INNERREPS;
-        //--
-        if (run >= 0)
-        {
-            execution_times[set][run][sidx] = elapsed_us;
-            FILE *raw = fopen(RAW_OUTPUT_FILE, "a");
-            if (raw)
+            else if (method >= 5 && method <= 11)
             {
-                const char *mname = (method >= 1 && method <= NUM_METHODS) ? method_names[method - 1] : "UNKNOWN";
-                fprintf(raw, "%d,\"%s\",%d,%d,%d,%d,%d,%.0f,%.9f\n", method, mname, N, thread_count, team_count, set, run, delays[sidx], elapsed_us);
+                double *tmp = (double *)malloc(N * sizeof(double));
+
+                if (!tmp)
+                {
+                    fprintf(stderr, "Allocation failed for tmp[N=%d]\n", N);
+                    exit(EXIT_FAILURE);
+                }
+                for (int i = 0; i < N; i++)
+                    tmp[i] = 0.0;
+
+#pragma omp target data map(tofrom : a[0 : g_max_array_size], tmp[0 : N])
+                {
+                    start = omp_get_wtime();
+                    for (int rep = 0; rep < INNERREPS; rep++)
+                    {
+                        switch (method)
+                        {
+                        case 5:
+#pragma omp target teams
+                        {
+                            int team_id = omp_get_team_num();
+                            delay_kernel(delay, &a[team_id % N]);
+                        }
+                        break;
+                        case 6: // teams_id * threads_id
+#pragma omp target teams distribute parallel for num_teams(team_count) thread_limit(thread_count)
+                        {
+                            for (int i = 0; i < g_max_iter; i++)
+                                delay_kernel(delay, &a[i % N]);
+                        }
+                        break;
+                        case 7:
+#pragma omp target nowait
+                            delay_kernel(delay, a);
+#pragma omp taskwait
+                            break;
+                        case 8:
+#pragma omp target teams distribute parallel for
+                            for (int i = 0; i < g_max_iter; i++)
+                            {
+                                delay_kernel(delay, &a[i]);
+#pragma omp atomic
+                                tmp[i % N] += 1.0;
+                            }
+                            break;
+                        case 9:
+#pragma omp target
+#pragma teams distribute reduction(+ : tmp[0 : N])
+#pragma parallel for reduction(+ : tmp[0 : N])
+
+                            for (int i = 0; i < g_max_iter; i++)
+                            {
+                                delay_kernel(delay, &a[i]);
+                                tmp[i % N] += 1.0;
+                            }
+                            break;
+
+                        case 10:
+#pragma omp target teams
+                        {
+#pragma omp parallel
+                            delay_kernel(delay, a);
+                        }
+                        break;
+                        case 11:
+#pragma omp target teams
+                        {
+                            for (int r = 0; r < INNERREPS; r++)
+                            {
+#pragma omp parallel
+                                {
+                                    delay_kernel(delay, a);
+                                }
+                            }
+                        }
+                        break;
+                        }
+                        /* 对标保持一致性 */
+                        a[0] += 1.0;
+                        if (a[0] < 0.0)
+                        {
+                            printf("%f \n", a[0]);
+                            fflush(stdout);
+                        }
+                    }
+                    end = omp_get_wtime();
+                }
+                free(tmp);
             }
-            fclose(raw);
+
+            // execution_times[set][run][sidx] = (end - start) * 1.0e6 / INNERREPS;
+            double elapsed_us = (end - start) * 1.0e6 / INNERREPS;
+            //--
+            if (run >= 0)
+            {
+                execution_times[set][run][logical][orep] = elapsed_us;
+                FILE *raw = fopen(RAW_OUTPUT_FILE, "a");
+                if (raw)
+                {
+                    const char *mname = (method >= 1 && method <= NUM_METHODS) ? method_names[method - 1] : "UNKNOWN";
+                    fprintf(raw, "%d,\"%s\",%d,%d,%d,%d,%d,%.0f,%d,%.9f\n", method, mname, N, thread_count, team_count, set, run, delays[logical], orep, elapsed_us);
+                    fclose(raw);
+                }
+                else
+                {
+                    perror("fopen raw_times.csv failed");
+                }
+            }
         }
-        //__
     }
 }
 
-void compute_offloading_time(double *intercept_avg, double *error,
-                             int method_id, const char *method_name, int N)
+void compute_offloading_time(double *intercept_avg, double *intercept_err,
+    double *min_avg, double *min_err,
+    int method_id, const char *method_name, int N)
 {
     FILE *file = fopen(OUTPUT_FILE, "a");
-    if (!file)
-    {
+    if (!file){
         perror("open BIC summary");
         return;
     }
 
 #ifdef PRINT_DISTRIBUTION
-    // ---- 打印方法头 ----
     fprintf(file, "\n[Method=%d %s N=%d]\n", method_id, method_name, N);
 #endif
 
     int total_runs = BENCHMARK_SETS * BENCHMARK_RUNS;
+
     double intercepts[total_runs];
-    double sum_intercept = 0, sum_sq = 0;
+    double mins[total_runs];
+
+    double sum_intercept = 0.0, sumsq_intercept = 0.0;
+    double sum_min = 0.0, sumsq_min = 0.0;
+
     int idx = 0;
 
-    for (int set = 0; set < BENCHMARK_SETS; ++set)
-    {
-        for (int run = 0; run < BENCHMARK_RUNS; ++run)
-        {
+    for (int set = 0; set < BENCHMARK_SETS; ++set){
+        for (int run = 0; run < BENCHMARK_RUNS; ++run){
+            double avg_y[NUM_SAMPLES];
 
-            double best_BIC = INFINITY;
-            int best_k = 0;
-            double best_a = 0.0, best_b = 0.0, best_R2 = 0.0;
+    for (int i = 0; i < NUM_SAMPLES; ++i){
+        double sum = 0.0;
+        double point_min = INFINITY;
 
-            // ----------- 自动扫描 L_min by BIC -----------
-            // 枚举不同的delaylength起点𝐿_𝑘
-            // 不停去掉第一个点，直到只剩最后五个不能再少了
-            for (int k = 0; k < NUM_SAMPLES - 5; ++k)
-            {
-                int n = NUM_SAMPLES - k;
-                double sum_x = 0, sum_y = 0, sum_xx = 0, sum_xy = 0;
-                for (int i = k; i < NUM_SAMPLES; ++i)
-                {
-                    sum_x += delays[i];
-                    sum_y += execution_times[set][run][i];
-                    sum_xx += delays[i] * delays[i];
-                    sum_xy += delays[i] * execution_times[set][run][i];
-                } // 线性回归基础统计量
-                double denom = n * sum_xx - sum_x * sum_x; // 最小二乘法OLS
-                if (denom <= 0)
-                    continue;
+        for (int orep = 0; orep < OUTERREPS; ++orep){
+            double y = execution_times[set][run][i][orep];
+            sum += y;
+            if (y < point_min)
+                point_min = y;
+        }
 
-                double b = (n * sum_xy - sum_x * sum_y) / denom;
-                double a = (sum_y - b * sum_x) / n;
+        avg_y[i] = sum / OUTERREPS;
+    }
 
-                // compute RSS and R² 计算样本拟合质量
-                double rss = 0, tss = 0, mean_y = sum_y / n;
-                for (int i = k; i < NUM_SAMPLES; ++i)
-                {
-                    double yhat = a + b * delays[i];
-                    double e = execution_times[set][run][i] - yhat; // 每个点的误差
-                    rss += e * e;
-                    tss += (execution_times[set][run][i] - mean_y) * (execution_times[set][run][i] - mean_y);
-                }
-                if (rss <= 0)
-                    continue;
-                double R2 = 1.0 - rss / tss; // R^2用来衡量拟合的优度
+/* ---------- lowest value across all sampled delaylengths and outer reps ---------- */
+    double run_min = INFINITY;
+    double run_min_delay = -1.0;
 
-                // compute BIC
-                int p = 2;
-                double BIC = n * log(rss / n) + p * log((double)n);
-                // 每次算出一个BIC 保存当前最优
-                if (BIC < best_BIC)
-                {
-                    best_BIC = BIC;
-                    best_k = k;
-                    best_a = a;
-                    best_b = b;
-                    best_R2 = R2;
-                }
+    for (int i = 0; i < NUM_SAMPLES; ++i){
+        for (int orep = 0; orep < OUTERREPS; ++orep){
+            double y = execution_times[set][run][i][orep];
+            if (y < run_min){
+                run_min = y;
+                run_min_delay = delays[i];
             }
-
-            intercepts[idx++] = best_a;
-            sum_intercept += best_a;
-#ifdef PRINT_DISTRIBUTION
-            fprintf(file,
-                    "Set=%d Run=%d  Lmin=%.0f  Intercept=%.6fμs  Slope=%.6f  R2=%.5f  BIC=%.3f\n",
-                    set, run, delays[best_k], best_a, best_b, best_R2, best_BIC);
-#endif
         }
     }
 
-    *intercept_avg = sum_intercept / idx;
-    for (int i = 0; i < idx; i++)
-        sum_sq += (intercepts[i] - *intercept_avg) * (intercepts[i] - *intercept_avg);
-    *error = sqrt(sum_sq / (idx - 1));
+/* ---------- original BIC intercept ---------- */
+    double best_BIC = INFINITY;
+    int best_k = 0;
+    double best_a = 0.0, best_b = 0.0, best_R2 = 0.0;
+
+    const double MIN_KEEP_RATIO = 0.5;
+    int min_keep;
+    if (NUM_SAMPLES <= 10)
+        min_keep = 5;
+    else
+        min_keep = (int)ceil(NUM_SAMPLES * MIN_KEEP_RATIO);
+
+    for (int k = 0; k <= NUM_SAMPLES - min_keep; ++k){
+        int n = NUM_SAMPLES - k;
+        double sum_x = 0.0, sum_y = 0.0, sum_xx = 0.0, sum_xy = 0.0;
+
+        for (int i = k; i < NUM_SAMPLES; ++i){
+            sum_x += delays[i];
+            sum_y += avg_y[i];
+            sum_xx += delays[i] * delays[i];
+            sum_xy += delays[i] * avg_y[i];
+        }
+
+        double denom = n * sum_xx - sum_x * sum_x;
+        if (denom <= 0.0)
+        continue;
+
+        double b = (n * sum_xy - sum_x * sum_y) / denom;
+        double a = (sum_y - b * sum_x) / n;
+        double rss = 0.0, tss = 0.0, mean_y = sum_y / n;
+        for (int i = k; i < NUM_SAMPLES; ++i){
+            double yhat = a + b * delays[i];
+            double e = avg_y[i] - yhat;
+            rss += e * e;
+
+            double dy = avg_y[i] - mean_y;
+            tss += dy * dy;
+        }
+
+        if (rss <= 0.0) continue;
+
+        double R2 = 1.0 - rss / tss;
+        int p = 2;
+        double BIC = n * log(rss / n) + p * log((double)n);
+
+        if (BIC < best_BIC)
+        {
+        best_BIC = BIC;
+        best_k = k;
+        best_a = a;
+        best_b = b;
+        best_R2 = R2;
+        }
+    }
+
+    intercepts[idx] = best_a;
+    mins[idx] = run_min;
+
+    sum_intercept += best_a;
+    sum_min += run_min;
+
 #ifdef PRINT_DISTRIBUTION
-    fprintf(file, "Average Intercept=%.6f ± %.6f μs\n", *intercept_avg, *error);
+    fprintf(file,
+    "Set=%d Run=%d  Lmin=%.0f  Intercept=%.6f us  Slope=%.6f  R2=%.5f  BIC=%.3f  Lowest=%.6f us @ delay=%.0f\n",
+    set, run, delays[best_k], best_a, best_b, best_R2, best_BIC,
+    run_min, run_min_delay);
 #endif
+
+    idx++;
+    }
+}
+
+    *intercept_avg = sum_intercept / idx;
+    *min_avg = sum_min / idx;
+
+    for (int i = 0; i < idx; ++i){
+        sumsq_intercept += (intercepts[i] - *intercept_avg) * (intercepts[i] - *intercept_avg);
+        sumsq_min += (mins[i] - *min_avg) * (mins[i] - *min_avg);
+    }
+
+    *intercept_err = (idx > 1) ? sqrt(sumsq_intercept / (idx - 1)) : 0.0;
+    *min_err = (idx > 1) ? sqrt(sumsq_min / (idx - 1)) : 0.0;
+
+#ifdef PRINT_DISTRIBUTION
+    fprintf(file, "Average Intercept = %.6f ± %.6f us\n", *intercept_avg, *intercept_err);
+    fprintf(file, "Average Lowest    = %.6f ± %.6f us\n", *min_avg, *min_err);
+#endif
+
     fclose(file);
 }
 
