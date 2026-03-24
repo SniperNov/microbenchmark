@@ -1,4 +1,4 @@
-include Makefile.defs.cray
+include Makefile.defs
 
 TARGET = microbenchmark
 SRCS = microbenchmark.c common.c
