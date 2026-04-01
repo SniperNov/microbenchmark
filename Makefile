@@ -1,4 +1,4 @@
-include Makefile.defs.nvc
+include Makefile.defs.clang
 
 SRC     := microbenchmark.c common.c
 OBJ     := $(SRC:.c=.o)

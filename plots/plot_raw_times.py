@@ -119,7 +119,7 @@ def load_overhead_txt(path: str) -> pd.DataFrame:
         for line in f:
             line = line.strip()
 
-            m = re.match(r"^\[Method=(\d+)\s+(.+)\s+N=(\d+)\]$", line)
+            m = re.match(r"^\[?Method=(\d+)\s+(.+)\s+N=(\d+)\]?$", line)
             if m:
                 current = {
                     "method_id": int(m.group(1)),
@@ -127,11 +127,12 @@ def load_overhead_txt(path: str) -> pd.DataFrame:
                     "N": int(m.group(3)),
                 }
                 continue
-
+            
             m2 = re.search(
-                r"Set=(\d+)\s+Run=(\d+)\s+Lmin=([0-9\.]+)\s+Intercept=([-\d\.]+)μs\s+Slope=([-\d\.]+)",
+                r"Set=(\d+)\s+Run=(\d+)\s+Lmin=([-\d\.]+)\s+Intercept=([-\d\.]+)\s*(?:μs|us)(?:\s+Lowest=([-\d\.]+)\s*(?:μs|us))?\s+Slope=([-\d\.]+)",
                 line
             )
+                
             if m2 and current:
                 rows.append({
                     **current,
@@ -139,9 +140,9 @@ def load_overhead_txt(path: str) -> pd.DataFrame:
                     "run": int(m2.group(2)),
                     "Lmin": float(m2.group(3)),
                     "intercept_us": float(m2.group(4)),
-                    "slope": float(m2.group(5)),
+                    "lowest": float(m2.group(5)) if m2.group(5) is not None else None,
+                    "slope": float(m2.group(6)),
                 })
-
     return pd.DataFrame(rows)
 
 
@@ -273,8 +274,8 @@ def main():
     if delay_spec:
         uniq = sorted(dist["delaylength"].unique())
         chosen = pick_delaylengths(dist, delay_spec)
-        print(f"[INFO] delay_spec='{delay_spec}' means unique delays sorted = {uniq}")
-        print(f"[INFO] chosen delays = {chosen}")
+        # print(f"[INFO] delay_spec='{delay_spec}' means unique delays sorted = {uniq}")
+        # print(f"[INFO] chosen delays = {chosen}")
     print(f"[INFO] x-scale = {scale}")
 
 

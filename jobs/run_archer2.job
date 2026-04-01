@@ -23,10 +23,4 @@ module load craype-x86-milan
 # module load intel-20.4/compilers 
 # module load mpt
 # module load nvidia/nvhpc
-
-# srun ./microbenchmark Method=1,2,3,4,5,6,9,10,11,12 N=1024,2048,4096,8192,16384,32768,65536,131072
-# srun ./microbenchmark Method=7 thread_count=32,64,128,256,512,1024,2048,4096,8192,16384,32768 N=1024,2048,4096,8192,16384,32768,65536,131072
-# srun ./microbenchmark Method=7 team_count=16,32,64,128,256,512,1024,2048,4096 N=1024,2048,4096,8192,16384,32768,65536,131072
-# srun ./microbenchmark Method=7 team_count=16,32,64 thread_count=32,128,512,2048,8192,32768 N=131072
 srun ./run.sh
-# srun ./microbenchmark Method=7 team_count=16,32,64 thread_count=32,128,512,2048,8192,32768 N=1024,2048,4096,8192,16384,32768,65536,131072

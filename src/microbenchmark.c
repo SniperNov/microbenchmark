@@ -574,7 +574,8 @@ void compute_offloading_time(double *intercept_avg, double *intercept_err,
     int method_id, const char *method_name, int N)
 {
     FILE *file = fopen(OUTPUT_FILE, "a");
-    if (!file){
+    if (!file)
+    {
         perror("open BIC summary");
         return;
     }
@@ -584,123 +585,122 @@ void compute_offloading_time(double *intercept_avg, double *intercept_err,
 #endif
 
     int total_runs = BENCHMARK_SETS * BENCHMARK_RUNS;
-
     double intercepts[total_runs];
     double mins[total_runs];
 
     double sum_intercept = 0.0, sumsq_intercept = 0.0;
     double sum_min = 0.0, sumsq_min = 0.0;
-
     int idx = 0;
 
-    for (int set = 0; set < BENCHMARK_SETS; ++set){
-        for (int run = 0; run < BENCHMARK_RUNS; ++run){
+    for (int set = 0; set < BENCHMARK_SETS; ++set)
+    {
+        for (int run = 0; run < BENCHMARK_RUNS; ++run)
+        {
             double avg_y[NUM_SAMPLES];
 
-    for (int i = 0; i < NUM_SAMPLES; ++i){
-        double sum = 0.0;
-        double point_min = INFINITY;
-
-        for (int orep = 0; orep < OUTERREPS; ++orep){
-            double y = execution_times[set][run][i][orep];
-            sum += y;
-            if (y < point_min)
-                point_min = y;
-        }
-
-        avg_y[i] = sum / OUTERREPS;
-    }
-
-/* ---------- lowest value across all sampled delaylengths and outer reps ---------- */
-    double run_min = INFINITY;
-    double run_min_delay = -1.0;
-
-    for (int i = 0; i < NUM_SAMPLES; ++i){
-        for (int orep = 0; orep < OUTERREPS; ++orep){
-            double y = execution_times[set][run][i][orep];
-            if (y < run_min){
-                run_min = y;
-                run_min_delay = delays[i];
+            for (int i = 0; i < NUM_SAMPLES; ++i)
+            {
+                double sum = 0.0;
+                for (int orep = 0; orep < OUTERREPS; ++orep)
+                    sum += execution_times[set][run][i][orep];
+                avg_y[i] = sum / OUTERREPS;
             }
-        }
-    }
 
-/* ---------- original BIC intercept ---------- */
-    double best_BIC = INFINITY;
-    int best_k = 0;
-    double best_a = 0.0, best_b = 0.0, best_R2 = 0.0;
+            double run_min = avg_y[0];
+            double run_min_delay = delays[0];
+            for (int i = 1; i < NUM_SAMPLES; ++i)
+            {
+                if (avg_y[i] < run_min)
+                {
+                    run_min = avg_y[i];
+                    run_min_delay = delays[i];
+                }
+                else if (avg_y[i] >= 2.0 * run_min)
+                {
+                    break;
+                }
+            }
 
-    const double MIN_KEEP_RATIO = 0.5;
-    int min_keep;
-    if (NUM_SAMPLES <= 10)
-        min_keep = 5;
-    else
-        min_keep = (int)ceil(NUM_SAMPLES * MIN_KEEP_RATIO);
+            double best_BIC = INFINITY;
+            int best_k = 0;
+            double best_a = 0.0, best_b = 0.0, best_R2 = 0.0;
 
-    for (int k = 0; k <= NUM_SAMPLES - min_keep; ++k){
-        int n = NUM_SAMPLES - k;
-        double sum_x = 0.0, sum_y = 0.0, sum_xx = 0.0, sum_xy = 0.0;
+            const double MIN_KEEP_RATIO = 0.5;
+            int min_keep;
+            if (NUM_SAMPLES <= 10)
+                min_keep = 5;
+            else
+                min_keep = (int)ceil(NUM_SAMPLES * MIN_KEEP_RATIO);
 
-        for (int i = k; i < NUM_SAMPLES; ++i){
-            sum_x += delays[i];
-            sum_y += avg_y[i];
-            sum_xx += delays[i] * delays[i];
-            sum_xy += delays[i] * avg_y[i];
-        }
+            for (int k = 0; k <= NUM_SAMPLES - min_keep; ++k)
+            {
+                int n = NUM_SAMPLES - k;
+                double sum_x = 0.0, sum_y = 0.0, sum_xx = 0.0, sum_xy = 0.0;
 
-        double denom = n * sum_xx - sum_x * sum_x;
-        if (denom <= 0.0)
-        continue;
+                for (int i = k; i < NUM_SAMPLES; ++i)
+                {
+                    sum_x += delays[i];
+                    sum_y += avg_y[i];
+                    sum_xx += delays[i] * delays[i];
+                    sum_xy += delays[i] * avg_y[i];
+                }
 
-        double b = (n * sum_xy - sum_x * sum_y) / denom;
-        double a = (sum_y - b * sum_x) / n;
-        double rss = 0.0, tss = 0.0, mean_y = sum_y / n;
-        for (int i = k; i < NUM_SAMPLES; ++i){
-            double yhat = a + b * delays[i];
-            double e = avg_y[i] - yhat;
-            rss += e * e;
+                double denom = n * sum_xx - sum_x * sum_x;
+                if (denom <= 0.0)
+                    continue;
 
-            double dy = avg_y[i] - mean_y;
-            tss += dy * dy;
-        }
+                double b = (n * sum_xy - sum_x * sum_y) / denom;
+                double a = (sum_y - b * sum_x) / n;
+                double rss = 0.0, tss = 0.0;
+                double mean_y = sum_y / n;
 
-        if (rss <= 0.0) continue;
+                for (int i = k; i < NUM_SAMPLES; ++i)
+                {
+                    double yhat = a + b * delays[i];
+                    double e = avg_y[i] - yhat;
+                    rss += e * e;
 
-        double R2 = 1.0 - rss / tss;
-        int p = 2;
-        double BIC = n * log(rss / n) + p * log((double)n);
+                    double dy = avg_y[i] - mean_y;
+                    tss += dy * dy;
+                }
 
-        if (BIC < best_BIC)
-        {
-        best_BIC = BIC;
-        best_k = k;
-        best_a = a;
-        best_b = b;
-        best_R2 = R2;
-        }
-    }
+                if (rss <= 0.0)
+                    continue;
 
-    intercepts[idx] = best_a;
-    mins[idx] = run_min;
+                double R2 = (tss > 0.0) ? (1.0 - rss / tss) : 1.0;
+                int p = 2;
+                double BIC = n * log(rss / n) + p * log((double)n);
 
-    sum_intercept += best_a;
-    sum_min += run_min;
+                if (BIC < best_BIC)
+                {
+                    best_BIC = BIC;
+                    best_k = k;
+                    best_a = a;
+                    best_b = b;
+                    best_R2 = R2;
+                }
+            }
+
+            intercepts[idx] = best_a;
+            mins[idx] = run_min;
+            sum_intercept += best_a;
+            sum_min += run_min;
 
 #ifdef PRINT_DISTRIBUTION
-    fprintf(file,
-    "Set=%d Run=%d  Lmin=%.0f  Intercept=%.6f us  Slope=%.6f  R2=%.5f  BIC=%.3f  Lowest=%.6f us @ delay=%.0f\n",
-    set, run, delays[best_k], best_a, best_b, best_R2, best_BIC,
-    run_min, run_min_delay);
+            fprintf(file,
+                    "Set=%d Run=%d  Lmin=%.0f  Intercept=%.6f us  Slope=%.6f  R2=%.5f  BIC=%.3f  Lowest=%.6f us @ delay=%.0f\n",
+                    set, run, delays[best_k], best_a, best_b, best_R2, best_BIC,
+                    run_min, run_min_delay);
 #endif
-
-    idx++;
+            idx++;
+        }
     }
-}
 
     *intercept_avg = sum_intercept / idx;
     *min_avg = sum_min / idx;
 
-    for (int i = 0; i < idx; ++i){
+    for (int i = 0; i < idx; ++i)
+    {
         sumsq_intercept += (intercepts[i] - *intercept_avg) * (intercepts[i] - *intercept_avg);
         sumsq_min += (mins[i] - *min_avg) * (mins[i] - *min_avg);
     }
@@ -715,6 +715,7 @@ void compute_offloading_time(double *intercept_avg, double *intercept_err,
 
     fclose(file);
 }
+
 
 void warmup_cache(int N, int thread_count, int team_count)
 {
