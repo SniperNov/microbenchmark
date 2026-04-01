@@ -1,32 +1,68 @@
-#include <stdio.h>
-#include <omp.h>
-#include <math.h>
-#include <stdlib.h>
-#include <string.h>
-#include "common.h"
+#include <stdio.h>  // Standard input/output functions
+#include <omp.h>    // OpenMP functions and offloading support
+#include <math.h>   // Math functions such as log2, pow, ceil, sqrt
+#include <stdlib.h> // Memory allocation and general utilities
+#include <string.h> // String handling functions
+#include "common.h" // Project-specific shared declarations
 
+// Output file for fitted overhead / regression summary
 #define OUTPUT_FILE "overhead_distribution.txt"
+
+// Output file for all raw timing data
 #define RAW_OUTPUT_FILE "raw_times.csv"
+
+// Default array size
 #define N_DEF 16382
-#define NUM_SAMPLES 20         // If all methods outputs same value, we should enlarge the interval of [MIN_D,MAX_D]
-#define MIN_DELAYLENGTH 1    // Too small introduces noise.
+
+// Number of delay sample points
+#define NUM_SAMPLES 20 // If all methods outputs same value, we should enlarge the interval of [MIN_D,MAX_D]
+
+// Minimum tested delaylength
+#define MIN_DELAYLENGTH 1 // Too small introduces noise.
+
+// Maximum tested delaylength
 #define MAX_DELAYLENGTH 8096 // Log scale sampling across magnitudes, cover launches and execution.
+
+// Number of repetitions inside one timing region
 #define INNERREPS 20
+
+// Default total iteration space used by the kernel
 #define MAX_ITER_DEF 6656 // total mapping and iteration space (equivalent to MAX_ARRAY_SIZE)
+
+// Default maximum mapped array size
 #define MAX_ARRAY_SIZE_DEF 65536
 
+// Number of outer repetitions saved for distribution analysis
 #define OUTERREPS 5
+
+// Warm-up iterations before real measurement
 #define WARMUP_ITERATIONS 10
+
+// Number of benchmark sets
 #define BENCHMARK_SETS 2
+
+// Number of runs in each set
 #define BENCHMARK_RUNS 2
+
+// Total number of benchmark methods
 #define NUM_METHODS 11
+
+// Maximum number of values allowed in size/config arrays
 #define NUM_SIZES 16
 
-static int g_max_iter = MAX_ITER_DEF;                            // fixed kernel workload
+// Global maximum iteration count used by the kernel
+static int g_max_iter = MAX_ITER_DEF; // fixed kernel workload
+
+// Global maximum mapped array size
 static int g_max_array_size = MAX_ARRAY_SIZE_DEF; // mapping / memory size
+
+// Global delaylength lower bound
 static int g_min_delaylength = MIN_DELAYLENGTH;
+
+// Global delaylength upper bound
 static int g_max_delaylength = MAX_DELAYLENGTH;
 
+// Human-readable names for each benchmark method
 const char *method_names[] = {
     "map(tofrom: a)",
     "map(to: a)",
@@ -40,27 +76,40 @@ const char *method_names[] = {
     "teams parallel",
     "teams + parallel inside"};
 
+// Delay sample values used in the benchmark
 double delays[NUM_SAMPLES];
+
+// Measured execution times:
+// [set][run][delay sample][outer repetition]
 double execution_times[BENCHMARK_SETS][BENCHMARK_RUNS][NUM_SAMPLES][OUTERREPS];
 
+// Small wrapper around the delay function
 void delay_kernel(int delay, double *ptr)
 {
     array_delay(delay, ptr);
 }
+
+// Function declarations
 // void compute_offloading_time(double *intercept_avg, double *slope_avg, double *error);
 void compute_offloading_time(double *intercept_avg, double *intercept_err,
-    double *min_avg, double *min_err,
-    int method_id, const char *method_name, int N);
+                             double *min_avg, double *min_err,
+                             int method_id, const char *method_name, int N);
 void warmup_cache(int N, int thread_count, int team_count);
 void device_target(int offloading_method, int set, int run, double *a, int N, int thread_count, int team_count);
 static void shuffle_indices_local(int *perm, int n, unsigned int seed);
 
 int main(int argc, char **argv)
 {
+    // Number of selected methods from command line
     int num_methods = 0;
+
+    // Arrays for user-selected N, thread_count, team_count, and methods
     int Ns[NUM_SIZES], thread_counts[NUM_SIZES], team_counts[NUM_SIZES], methods[NUM_METHODS];
+
+    // Actual number of values stored in the arrays above
     int num_Ns = 0, num_threads = 0, num_teams = 0;
-    // 默认值
+
+    // Default values
     Ns[0] = N_DEF;
     num_Ns = 1;
     thread_counts[0] = 32;
@@ -68,11 +117,11 @@ int main(int argc, char **argv)
     team_counts[0] = 4 * omp_get_num_devices();
     num_teams = 1;
 
-    // 解析命令行参数
+    // Parse command-line arguments
     for (int i = 1; i < argc; ++i)
     {
 
-        // 解析 Method=
+        // Parse Method=
         if (strncasecmp(argv[i], "Method=", 7) == 0)
         {
             num_methods = 0;
@@ -83,10 +132,11 @@ int main(int argc, char **argv)
                 token = strtok(NULL, ",");
             }
 
-            // 解析 Delay=
+            // Parse Delay=
         }
         else if (strncasecmp(argv[i], "Delay=", 6) == 0)
         {
+            // Temporary storage for up to four delay values
             int delays[4] = {0};
             int num_delays = 0;
             char *token = strtok(argv[i] + 6, ",");
@@ -96,29 +146,39 @@ int main(int argc, char **argv)
                 token = strtok(NULL, ",");
             }
 
+            // No Delay= value given: use default full range
             if (num_delays == 0)
             {
                 g_min_delaylength = MIN_DELAYLENGTH;
                 g_max_delaylength = MAX_DELAYLENGTH;
                 // printf("Delaylength: [%d, %d]\n", g_min_delaylength, g_max_delaylength);
             }
+
+            // One value given: keep default min, replace max
             else if (num_delays == 1)
             {
                 g_min_delaylength = MIN_DELAYLENGTH;
                 g_max_delaylength = delays[0];
                 // printf("Delaylength: MIN=%d (default), MAX=%d\n", g_min_delaylength, g_max_delaylength);
             }
+
+            // Two or more values given: use the first two as [min, max]
             else
             {
                 int a = delays[0], b = delays[1];
+
+                // Swap if user gave them in reverse order
                 if (a > b)
                 {
                     int tmp = a;
                     a = b;
                     b = tmp;
                 }
+
                 g_min_delaylength = a;
                 g_max_delaylength = b;
+
+                // Ignore extra values beyond the first two
                 if (num_delays > 2)
                 {
                     printf("Warning: extra Delay values ignored.\n");
@@ -126,7 +186,7 @@ int main(int argc, char **argv)
                 // printf("Delaylength: MIN=%d, MAX=%d\n", g_min_delaylength, g_max_delaylength);
             }
 
-            // 解析 N=
+            // Parse N=
         }
         else if (strncmp(argv[i], "N=", 2) == 0)
         {
@@ -138,11 +198,13 @@ int main(int argc, char **argv)
                 token = strtok(NULL, ",");
             }
 
+            // If nothing valid was read, keep the default N
             if (num_Ns == 0)
             {
                 printf("No N specified. Using default N=16384\n");
             }
 
+            // Check each N against current delay upper bound
             for (int ni = 0; ni < num_Ns; ++ni)
             {
                 if (Ns[ni] > g_max_delaylength)
@@ -153,7 +215,7 @@ int main(int argc, char **argv)
                 }
             }
 
-            // 解析 thread_count=
+            // Parse thread_count=
         }
         else if (strncasecmp(argv[i], "thread_count=", 13) == 0)
         {
@@ -165,7 +227,7 @@ int main(int argc, char **argv)
                 token = strtok(NULL, ",");
             }
 
-            // 解析 team_count=
+            // Parse team_count=
         }
         else if (strncasecmp(argv[i], "team_count=", 11) == 0)
         {
@@ -177,11 +239,15 @@ int main(int argc, char **argv)
                 token = strtok(NULL, ",");
             }
         }
+
+        // Parse MAX_ITER=
         else if (strncasecmp(argv[i], "MAX_ITER=", 9) == 0)
         {
             g_max_iter = atoi(argv[i] + 9);
             printf("MAX_ITER set to %d\n", g_max_iter);
         }
+
+        // Parse MAX_ARRAY_SIZE=
         else if (strncasecmp(argv[i], "MAX_ARRAY_SIZE=", 15) == 0)
         {
             g_max_array_size = atoi(argv[i] + 15);
@@ -189,11 +255,13 @@ int main(int argc, char **argv)
         }
     }
 
+    // Find the largest N requested by the user
     int maxN = 0;
     for (int ni = 0; ni < num_Ns; ++ni)
         if (Ns[ni] > maxN)
             maxN = Ns[ni];
 
+    // Make sure the mapped array is large enough for the largest N
     if (g_max_array_size < maxN)
     {
         fprintf(stderr, "Warning: MAX_ARRAY_SIZE (%d) < max(N) (%d). "
@@ -202,6 +270,7 @@ int main(int argc, char **argv)
         g_max_array_size = maxN;
     }
 
+    // Print current runtime settings
     printf("========== Runtime Configuration ==========\n");
     printf("Delay range   : [%d, %d]\n", g_min_delaylength, g_max_delaylength);
     printf("Array size(s) : ");
@@ -214,17 +283,25 @@ int main(int argc, char **argv)
     printf("==========================================\n");
 
     // ---- Check target device ----
+    // Number of target devices seen by OpenMP
     int numdevs = omp_get_num_devices();
+
+    // ID of the host device
     int hostdev = omp_get_initial_device();
 
+    // This value will be set inside the target region:
+    // 1 means host execution, 0 means target device execution
     int targetdev = -9999;
+
 #pragma omp target map(from : targetdev)
     {
         targetdev = omp_is_initial_device();
     }
+
     printf("There are  %d available devices\n", numdevs);
     printf("Host device is %d\n", hostdev);
 
+    // Stop if the target region actually ran on the host
     if (targetdev)
     {
         printf("Target region executed on host. Terminating...\n");
@@ -232,12 +309,14 @@ int main(int argc, char **argv)
         return 0;
     }
 
+    // Project-specific initialisation
     init(argc, argv);
 
     // New or rewrite the csv recording all the raw execution_times
     FILE *raw = fopen(RAW_OUTPUT_FILE, "w");
     if (raw)
     {
+        // Write CSV header
         fprintf(raw, "method_id,method_name,N,thread_count,team_count,set,run,delaylength,outerreps,exec_time_us\n");
         fclose(raw);
     }
@@ -246,7 +325,9 @@ int main(int argc, char **argv)
         perror("Failed to open raw data file.");
         return 1;
     }
+
     // --- Adjust MAX_ITER once (before benchmarking) ---
+    // Start from the default value
     int required_iter = MAX_ITER_DEF;
 
     // cover max threads*teams
@@ -260,6 +341,8 @@ int main(int argc, char **argv)
                 max_prod = prod;
         }
     }
+
+    // Make sure MAX_ITER can cover the largest threads*teams value
     if (max_prod > required_iter)
         required_iter = max_prod;
 
@@ -267,6 +350,7 @@ int main(int argc, char **argv)
     if (maxN > required_iter)
         required_iter = maxN;
 
+    // Update the global value
     g_max_iter = required_iter;
 
     printf("MAX_ITER set to %d (MAX_ITER_DEF=%d, max threads*teams=%d, max N=%d)\n",
@@ -289,7 +373,8 @@ int main(int argc, char **argv)
         printf("%30d", Ns[i]);
     }
     printf("\n");
-    
+
+    // Second header line: what each printed result means
     printf("%-35s", "");
     for (int i = 0; i < num_Ns; ++i)
     {
@@ -301,13 +386,16 @@ int main(int argc, char **argv)
     // ---- Print method results ----
     for (int midx = 0; midx < (num_methods == 0 ? NUM_METHODS : num_methods); ++midx)
     {
+        // Use all methods if none were explicitly selected
         int m = (num_methods == 0 ? midx : methods[midx] - 1);
         if (m < 0 || m >= NUM_METHODS)
             continue;
 
+        // Print method name at the start of the row
         printf("%-35s", method_names[m]);
         fflush(stdout);
 
+        // Loop over all thread_count, team_count, and N combinations
         for (int t = 0; t < num_threads; ++t)
         {
             for (int tm = 0; tm < num_teams; ++tm)
@@ -315,6 +403,8 @@ int main(int argc, char **argv)
                 for (int nidx = 0; nidx < num_Ns; ++nidx)
                 {
                     int N = Ns[nidx];
+
+                    // Allocate the mapped array using the maximum mapping size
                     // double *a = (double *)malloc(N * sizeof(double));
                     double *a = (double *)malloc(g_max_array_size * sizeof(double));
                     if (!a)
@@ -323,8 +413,10 @@ int main(int argc, char **argv)
                         exit(EXIT_FAILURE);
                     }
 
+                    // Warm up runtime / device before real measurement
                     warmup_cache(Ns[num_Ns - 1], thread_counts[num_threads - 1], team_counts[num_teams - 1]);
 
+                    // First call with run = -1 is used as a warm-up path inside device_target
                     for (int set = 0; set < BENCHMARK_SETS; ++set)
                     {
                         device_target(m + 1, set, -1, a, N, thread_counts[t], team_counts[tm]);
@@ -332,15 +424,18 @@ int main(int argc, char **argv)
                             device_target(m + 1, set, run, a, N, thread_counts[t], team_counts[tm]);
                     }
 
+                    // Final averaged results for this method / N
                     double intercept, intercept_err;
                     double minval, min_err;
 
                     compute_offloading_time(&intercept, &intercept_err, &minval, &min_err,
-                            m + 1, method_names[m], N);
+                                            m + 1, method_names[m], N);
 
+                    // Print mean ± standard deviation for both values
                     printf("%10.3f±%-10.3f | %10.3f±%-10.3f",
-                                intercept, intercept_err, minval, min_err);
+                           intercept, intercept_err, minval, min_err);
                     fflush(stdout);
+
                     free(a);
                 }
             }
@@ -349,19 +444,27 @@ int main(int argc, char **argv)
     }
     printf("==========================================\n");
 
+    // Project-specific cleanup
     finalise();
 
     return 0;
 }
 
+// Shuffle an index array using a simple deterministic pseudo-random generator
 void shuffle_indices_local(int *perm, int n, unsigned int seed)
-{   
-    if(!seed) seed = 12345u;
+{
+    // Fallback seed if 0 is passed in
+    if (!seed)
+        seed = 12345u;
+
+    // Start with identity order: 0,1,2,...,n-1
     for (int i = 0; i < n; ++i)
         perm[i] = i;
+
+    // Fisher-Yates shuffle
     for (int i = n - 1; i > 0; --i)
     {
-        seed = 1664525u * seed + 1013904223u; // LCG 更新 seed（不用 rand_r 也行）
+        seed = 1664525u * seed + 1013904223u; // LCG update for reproducible pseudo-random numbers
         int j = (int)(seed % (unsigned)(i + 1));
         int tmp = perm[i];
         perm[i] = perm[j];
@@ -369,11 +472,12 @@ void shuffle_indices_local(int *perm, int n, unsigned int seed)
     }
 }
 
-
+// Run one benchmark method for a given set/run/N/thread/team configuration
 void device_target(int method, int set, int run, double *a, int N, int thread_count, int team_count)
 {
-    
-    // generate log-scale sampled delaylengths once (monotonic increasing)
+
+    // Generate log-scale sampled delaylengths once
+    // This creates increasing values between g_min_delaylength and g_max_delaylength
     double log_min = log2((double)g_min_delaylength);
     double log_max = log2((double)g_max_delaylength);
     for (int i = 0; i < NUM_SAMPLES; i++)
@@ -393,15 +497,25 @@ void device_target(int method, int set, int run, double *a, int N, int thread_co
             delays[i] = pow(2.0, log_val);
         }
     }
+
+    // Create a shuffled order for delay samples
     int perm[NUM_SAMPLES];
     unsigned int seed = 12345u + 97u * (unsigned int)set + 1009u * (unsigned int)(run + 1);
-    shuffle_indices_local(perm, NUM_SAMPLES, seed);    double start, end, delay;
+    shuffle_indices_local(perm, NUM_SAMPLES, seed);
+
+    // Timing variables
+    double start, end, delay;
+
+    // Loop over all sampled delaylengths
     for (int sidx = 0; sidx < NUM_SAMPLES; sidx++)
     {
         int logical = perm[sidx]; // shuffled index
         delay = delays[logical];
+
+        // Repeat each sampled point OUTERREPS times
         for (int orep = 0; orep < OUTERREPS; orep++)
         {
+            // Methods 1-4: include target mapping in each measured region
             if (method >= 1 && method <= 4)
             {
                 start = omp_get_wtime();
@@ -413,20 +527,26 @@ void device_target(int method, int set, int run, double *a, int N, int thread_co
 #pragma omp target map(tofrom : a[0 : N])
                         delay_kernel(delay, a);
                         break;
+
                     case 2:
 #pragma omp target map(to : a[0 : N])
                         delay_kernel(delay, a);
                         break;
+
                     case 3:
 #pragma omp target map(from : a[0 : N])
                         delay_kernel(delay, a);
                         break;
+
                     case 4:
 #pragma omp target map(alloc : a[0 : N])
                         delay_kernel(delay, a);
                         break;
-                        /* 对标保持一致性 */
+
+                        /* Keep a similar structure across methods */
                     }
+
+                    // Prevent the compiler from treating the result as unused
                     a[0] += 1;
                     if (a[0] < 0)
                     {
@@ -435,8 +555,11 @@ void device_target(int method, int set, int run, double *a, int N, int thread_co
                 }
                 end = omp_get_wtime();
             }
+
+            // Methods 5-11: use target data region, then measure target execution behaviour
             else if (method >= 5 && method <= 11)
             {
+                // Temporary array used by atomic/reduction methods
                 double *tmp = (double *)malloc(N * sizeof(double));
 
                 if (!tmp)
@@ -444,31 +567,34 @@ void device_target(int method, int set, int run, double *a, int N, int thread_co
                     fprintf(stderr, "Allocation failed for tmp[N=%d]\n", N);
                     exit(EXIT_FAILURE);
                 }
+
+                // Initialise tmp
                 for (int i = 0; i < N; i++)
                     tmp[i] = 0.0;
 
 #pragma omp target data map(tofrom : a[0 : g_max_array_size], tmp[0 : N])
                 {
                     start = omp_get_wtime();
+
                     for (int rep = 0; rep < INNERREPS; rep++)
                     {
                         switch (method)
                         {
                         case 5:
 #pragma omp target teams
-                    {
-                        int team_id = omp_get_team_num();
-                        delay_kernel(delay, &a[team_id % N]);
-                    }
-                    break;
+                        {
+                            int team_id = omp_get_team_num();
+                            delay_kernel(delay, &a[team_id % N]);
+                        }
+                        break;
 
-                    case 6: // teams_id * threads_id
+                        case 6: // teams_id * threads_id
 #if defined(__NVCOMPILER)
 #pragma omp target teams distribute parallel for num_teams(team_count) thread_limit(thread_count)
-                    for (int i = 0; i < g_max_iter; i++)
-                        delay_kernel(delay, &a[i % N]);
-                    
-                    break;
+                            for (int i = 0; i < g_max_iter; i++)
+                                delay_kernel(delay, &a[i % N]);
+
+                            break;
 #elif defined(_CRAYC) || defined(__AMD__) || defined(__clang__)
 #pragma omp target teams distribute parallel for num_teams(team_count) thread_limit(thread_count)
                         {
@@ -477,29 +603,32 @@ void device_target(int method, int set, int run, double *a, int N, int thread_co
                         }
                         break;
 #endif
-                    case 7:
+
+                        case 7:
 #pragma omp target nowait
                             delay_kernel(delay, a);
 #pragma omp taskwait
                             break;
+
                         case 8:
 #pragma omp target teams distribute parallel for
                             for (int i = 0; i < g_max_iter; i++)
                             {
                                 delay_kernel(delay, &a[i]);
 #pragma omp atomic
-                            tmp[i % N] += 1.0;
-                        }
-                        break;
-                    case 9:
+                                tmp[i % N] += 1.0;
+                            }
+                            break;
+
+                        case 9:
 #if defined(__NVCOMPILER)
-#pragma omp target teams distribute parallel for reduction(+:tmp[0:N])
-                        for (int i = 0; i < g_max_iter; i++)
-                        {
-                            delay_kernel(delay, &a[i]);
-                            tmp[i % N] += 1.0;
-                        }
-                        break;
+#pragma omp target teams distribute parallel for reduction(+ : tmp[0 : N])
+                            for (int i = 0; i < g_max_iter; i++)
+                            {
+                                delay_kernel(delay, &a[i]);
+                                tmp[i % N] += 1.0;
+                            }
+                            break;
 
 #elif defined(_CRAYC) || defined(__AMD__) || defined(__clang__)
 
@@ -507,20 +636,22 @@ void device_target(int method, int set, int run, double *a, int N, int thread_co
 #pragma teams distribute reduction(+ : tmp[0 : N])
 #pragma parallel for reduction(+ : tmp[0 : N])
 
-                        for (int i = 0; i < g_max_iter; i++)
-                        {
-                            delay_kernel(delay, &a[i]);
-                            tmp[i % N] += 1.0;
-                        }
-                        break;
+                            for (int i = 0; i < g_max_iter; i++)
+                            {
+                                delay_kernel(delay, &a[i]);
+                                tmp[i % N] += 1.0;
+                            }
+                            break;
 #endif
-                    case 10:
+
+                        case 10:
 #pragma omp target teams
                         {
 #pragma omp parallel
                             delay_kernel(delay, a);
                         }
                         break;
+
                         case 11:
 #pragma omp target teams
                         {
@@ -534,7 +665,8 @@ void device_target(int method, int set, int run, double *a, int N, int thread_co
                         }
                         break;
                         }
-                        /* 对标保持一致性 */
+
+                        /* Keep a similar structure across methods */
                         a[0] += 1.0;
                         if (a[0] < 0.0)
                         {
@@ -542,17 +674,24 @@ void device_target(int method, int set, int run, double *a, int N, int thread_co
                             fflush(stdout);
                         }
                     }
+
                     end = omp_get_wtime();
                 }
+
                 free(tmp);
             }
 
+            // Average time per inner repetition, in microseconds
             // execution_times[set][run][sidx] = (end - start) * 1.0e6 / INNERREPS;
             double elapsed_us = (end - start) * 1.0e6 / INNERREPS;
+
+            // Save result only for real runs (run >= 0), not warm-up runs
             //--
             if (run >= 0)
             {
                 execution_times[set][run][logical][orep] = elapsed_us;
+
+                // Also append raw data to CSV
                 FILE *raw = fopen(RAW_OUTPUT_FILE, "a");
                 if (raw)
                 {
@@ -569,9 +708,12 @@ void device_target(int method, int set, int run, double *a, int N, int thread_co
     }
 }
 
+// Compute two summaries from the measured times:
+// 1) BIC-selected linear intercept
+// 2) lowest observed average time
 void compute_offloading_time(double *intercept_avg, double *intercept_err,
-    double *min_avg, double *min_err,
-    int method_id, const char *method_name, int N)
+                             double *min_avg, double *min_err,
+                             int method_id, const char *method_name, int N)
 {
     FILE *file = fopen(OUTPUT_FILE, "a");
     if (!file)
@@ -581,21 +723,27 @@ void compute_offloading_time(double *intercept_avg, double *intercept_err,
     }
 
 #ifdef PRINT_DISTRIBUTION
+    // Optional detailed header in the output text file
     fprintf(file, "\n[Method=%d %s N=%d]\n", method_id, method_name, N);
 #endif
 
     int total_runs = BENCHMARK_SETS * BENCHMARK_RUNS;
+
+    // Store one intercept and one minimum for each set/run
     double intercepts[total_runs];
     double mins[total_runs];
 
+    // Running sums used to compute averages and standard deviations
     double sum_intercept = 0.0, sumsq_intercept = 0.0;
     double sum_min = 0.0, sumsq_min = 0.0;
     int idx = 0;
 
+    // Process each set/run independently
     for (int set = 0; set < BENCHMARK_SETS; ++set)
     {
         for (int run = 0; run < BENCHMARK_RUNS; ++run)
         {
+            // Average the OUTERREPS results for each delay point
             double avg_y[NUM_SAMPLES];
 
             for (int i = 0; i < NUM_SAMPLES; ++i)
@@ -606,6 +754,8 @@ void compute_offloading_time(double *intercept_avg, double *intercept_err,
                 avg_y[i] = sum / OUTERREPS;
             }
 
+            // Find the lowest observed average time
+            // The search stops once the value reaches 2x the current minimum
             double run_min = avg_y[0];
             double run_min_delay = delays[0];
             for (int i = 1; i < NUM_SAMPLES; ++i)
@@ -621,10 +771,13 @@ void compute_offloading_time(double *intercept_avg, double *intercept_err,
                 }
             }
 
+            // Best linear fit selected by BIC
             double best_BIC = INFINITY;
             int best_k = 0;
             double best_a = 0.0, best_b = 0.0, best_R2 = 0.0;
 
+            // Keep at least half of the points for fitting,
+            // but at least 5 points when NUM_SAMPLES is small
             const double MIN_KEEP_RATIO = 0.5;
             int min_keep;
             if (NUM_SAMPLES <= 10)
@@ -632,11 +785,13 @@ void compute_offloading_time(double *intercept_avg, double *intercept_err,
             else
                 min_keep = (int)ceil(NUM_SAMPLES * MIN_KEEP_RATIO);
 
+            // Try all possible starting points k for the fitted linear region
             for (int k = 0; k <= NUM_SAMPLES - min_keep; ++k)
             {
                 int n = NUM_SAMPLES - k;
                 double sum_x = 0.0, sum_y = 0.0, sum_xx = 0.0, sum_xy = 0.0;
 
+                // Build sums for least-squares fitting
                 for (int i = k; i < NUM_SAMPLES; ++i)
                 {
                     sum_x += delays[i];
@@ -649,11 +804,13 @@ void compute_offloading_time(double *intercept_avg, double *intercept_err,
                 if (denom <= 0.0)
                     continue;
 
+                // Linear model: y = a + b*x
                 double b = (n * sum_xy - sum_x * sum_y) / denom;
                 double a = (sum_y - b * sum_x) / n;
                 double rss = 0.0, tss = 0.0;
                 double mean_y = sum_y / n;
 
+                // Compute RSS and TSS for this fit
                 for (int i = k; i < NUM_SAMPLES; ++i)
                 {
                     double yhat = a + b * delays[i];
@@ -668,9 +825,10 @@ void compute_offloading_time(double *intercept_avg, double *intercept_err,
                     continue;
 
                 double R2 = (tss > 0.0) ? (1.0 - rss / tss) : 1.0;
-                int p = 2;
+                int p = 2; // a and b
                 double BIC = n * log(rss / n) + p * log((double)n);
 
+                // Keep the fit with the smallest BIC
                 if (BIC < best_BIC)
                 {
                     best_BIC = BIC;
@@ -681,12 +839,14 @@ void compute_offloading_time(double *intercept_avg, double *intercept_err,
                 }
             }
 
+            // Save per-run results
             intercepts[idx] = best_a;
             mins[idx] = run_min;
             sum_intercept += best_a;
             sum_min += run_min;
 
 #ifdef PRINT_DISTRIBUTION
+            // Optional detailed printout
             fprintf(file,
                     "Set=%d Run=%d  Lmin=%.0f  Intercept=%.6f us  Slope=%.6f  R2=%.5f  BIC=%.3f  Lowest=%.6f us @ delay=%.0f\n",
                     set, run, delays[best_k], best_a, best_b, best_R2, best_BIC,
@@ -696,9 +856,11 @@ void compute_offloading_time(double *intercept_avg, double *intercept_err,
         }
     }
 
+    // Compute averages across all set/run combinations
     *intercept_avg = sum_intercept / idx;
     *min_avg = sum_min / idx;
 
+    // Compute standard deviations
     for (int i = 0; i < idx; ++i)
     {
         sumsq_intercept += (intercepts[i] - *intercept_avg) * (intercepts[i] - *intercept_avg);
@@ -716,9 +878,10 @@ void compute_offloading_time(double *intercept_avg, double *intercept_err,
     fclose(file);
 }
 
-
+// Run a warm-up call before real benchmarking
 void warmup_cache(int N, int thread_count, int team_count)
 {
+    // Allocate the maximum mapping size, same as in the benchmark
     double *a = (double *)malloc(g_max_array_size * sizeof(double));
     if (!a)
     {
@@ -729,6 +892,7 @@ void warmup_cache(int N, int thread_count, int team_count)
     int dummy_set = 0;
     int dummy_run = -1;
 
+    // Use method 1 as a warm-up path
     device_target(1, dummy_set, dummy_run, a, N, thread_count, team_count);
 
     free(a);
