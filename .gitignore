@@ -23,3 +23,13 @@ slurm-*
 .DS_Store
 .vscode/
 .idea/
+.plotenv/
+microbenchmark_distribution
+
+benchmark_cli_toolchain.py
+config.yaml
+microbenchmark.job
+plot_extra.py
+visualise.py
+
+
