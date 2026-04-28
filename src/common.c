@@ -16,7 +16,7 @@ void init(int argc, char **argv) {
 }
 
 #pragma omp declare target
-void array_delay(int delaylength, double *array)
+void delay_kernel(int delaylength, double *array)
 {
     // Simple delay loop performing non-optimizable accumulation
     array[0]=1.0;

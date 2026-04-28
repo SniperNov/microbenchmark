@@ -33,7 +33,7 @@
 #define MAX_ARRAY_SIZE_DEF 65536
 
 // Number of outer repetitions saved for distribution analysis
-#define OUTERREPS 5
+#define OUTERREPS 1
 
 // Warm-up iterations before real measurement
 #define WARMUP_ITERATIONS 10
@@ -42,7 +42,10 @@
 #define BENCHMARK_SETS 2
 
 // Number of runs in each set
-#define BENCHMARK_RUNS 2
+#define BENCHMARK_RUNS 5
+
+// Max parreps used by method 11
+#define MAXPARREPS 128
 
 // Total number of benchmark methods
 #define NUM_METHODS 11
@@ -83,20 +86,6 @@ double delays[NUM_SAMPLES];
 // [set][run][delay sample][outer repetition]
 double execution_times[BENCHMARK_SETS][BENCHMARK_RUNS][NUM_SAMPLES][OUTERREPS];
 
-// Small wrapper around the delay function
-void delay_kernel(int delay, double *ptr)
-{
-    array_delay(delay, ptr);
-}
-
-// Function declarations
-// void compute_offloading_time(double *intercept_avg, double *slope_avg, double *error);
-void compute_offloading_time(double *intercept_avg, double *intercept_err,
-                             double *min_avg, double *min_err,
-                             int method_id, const char *method_name, int N);
-void warmup_cache(int N, int thread_count, int team_count);
-void device_target(int offloading_method, int set, int run, double *a, int N, int thread_count, int team_count);
-static void shuffle_indices_local(int *perm, int n, unsigned int seed);
 
 int main(int argc, char **argv)
 {
@@ -107,15 +96,15 @@ int main(int argc, char **argv)
     int Ns[NUM_SIZES], thread_counts[NUM_SIZES], team_counts[NUM_SIZES], methods[NUM_METHODS];
 
     // Actual number of values stored in the arrays above
-    int num_Ns = 0, num_threads = 0, num_teams = 0;
+    int num_Ns = 0, num_thread_configs = 0, num_team_configs = 0;
 
     // Default values
     Ns[0] = N_DEF;
     num_Ns = 1;
     thread_counts[0] = 32;
-    num_threads = 1;
+    num_thread_configs = 1;
     team_counts[0] = 4 * omp_get_num_devices();
-    num_teams = 1;
+    num_team_configs = 1;
 
     // Parse command-line arguments
     for (int i = 1; i < argc; ++i)
@@ -136,13 +125,13 @@ int main(int argc, char **argv)
         }
         else if (strncasecmp(argv[i], "Delay=", 6) == 0)
         {
-            // Temporary storage for up to four delay values
-            int delays[4] = {0};
+            // Temporary storage for up to two delay values
+            int delay_bounds[2] = {0};
             int num_delays = 0;
             char *token = strtok(argv[i] + 6, ",");
-            while (token != NULL && num_delays < 4)
+            while (token != NULL && num_delays < 2)
             {
-                delays[num_delays++] = atoi(token);
+                delay_bounds[num_delays++] = atoi(token);
                 token = strtok(NULL, ",");
             }
 
@@ -151,21 +140,19 @@ int main(int argc, char **argv)
             {
                 g_min_delaylength = MIN_DELAYLENGTH;
                 g_max_delaylength = MAX_DELAYLENGTH;
-                // printf("Delaylength: [%d, %d]\n", g_min_delaylength, g_max_delaylength);
             }
 
             // One value given: keep default min, replace max
             else if (num_delays == 1)
             {
                 g_min_delaylength = MIN_DELAYLENGTH;
-                g_max_delaylength = delays[0];
-                // printf("Delaylength: MIN=%d (default), MAX=%d\n", g_min_delaylength, g_max_delaylength);
+                g_max_delaylength = delay_bounds[0];
             }
 
-            // Two or more values given: use the first two as [min, max]
+            // Two values given: use them as [min, max]
             else
             {
-                int a = delays[0], b = delays[1];
+                int a = delay_bounds[0], b = delay_bounds[1];
 
                 // Swap if user gave them in reverse order
                 if (a > b)
@@ -177,13 +164,6 @@ int main(int argc, char **argv)
 
                 g_min_delaylength = a;
                 g_max_delaylength = b;
-
-                // Ignore extra values beyond the first two
-                if (num_delays > 2)
-                {
-                    printf("Warning: extra Delay values ignored.\n");
-                }
-                // printf("Delaylength: MIN=%d, MAX=%d\n", g_min_delaylength, g_max_delaylength);
             }
 
             // Parse N=
@@ -204,26 +184,15 @@ int main(int argc, char **argv)
                 printf("No N specified. Using default N=16384\n");
             }
 
-            // Check each N against current delay upper bound
-            for (int ni = 0; ni < num_Ns; ++ni)
-            {
-                if (Ns[ni] > g_max_delaylength)
-                {
-                    printf("Warning: N=%d exceeds current delay upper bound (%d), resetting to 16384\n",
-                           Ns[ni], g_max_delaylength);
-                    Ns[ni] = N_DEF;
-                }
-            }
-
             // Parse thread_count=
         }
         else if (strncasecmp(argv[i], "thread_count=", 13) == 0)
         {
-            num_threads = 0;
+            num_thread_configs = 0;
             char *token = strtok(argv[i] + 13, ",");
-            while (token != NULL && num_threads < NUM_SIZES)
+            while (token != NULL && num_thread_configs < NUM_SIZES)
             {
-                thread_counts[num_threads++] = atoi(token);
+                thread_counts[num_thread_configs++] = atoi(token);
                 token = strtok(NULL, ",");
             }
 
@@ -231,11 +200,11 @@ int main(int argc, char **argv)
         }
         else if (strncasecmp(argv[i], "team_count=", 11) == 0)
         {
-            num_teams = 0;
+            num_team_configs = 0;
             char *token = strtok(argv[i] + 11, ",");
-            while (token != NULL && num_teams < NUM_SIZES)
+            while (token != NULL && num_team_configs < NUM_SIZES)
             {
-                team_counts[num_teams++] = atoi(token);
+                team_counts[num_team_configs++] = atoi(token);
                 token = strtok(NULL, ",");
             }
         }
@@ -255,31 +224,99 @@ int main(int argc, char **argv)
         }
     }
 
-    // Find the largest N requested by the user
+    
+    // --- Adjust MAX_ITER and MAX_ARRAY_SIZE once (before benchmarking) ---
+
+    // Largest N in the input list
     int maxN = 0;
     for (int ni = 0; ni < num_Ns; ++ni)
+    {
         if (Ns[ni] > maxN)
             maxN = Ns[ni];
-
-    // Make sure the mapped array is large enough for the largest N
-    if (g_max_array_size < maxN)
-    {
-        fprintf(stderr, "Warning: MAX_ARRAY_SIZE (%d) < max(N) (%d). "
-                        "Adjusting to %d to avoid out-of-bounds mapping.\n",
-                g_max_array_size, maxN, maxN);
-        g_max_array_size = maxN;
     }
+
+    // Largest thread_count * team_count across all configurations
+    int max_prod = 0;
+    for (int t = 0; t < num_thread_configs; ++t)
+    {
+        for (int tm = 0; tm < num_team_configs; ++tm)
+        {
+            int prod = thread_counts[t] * team_counts[tm];
+            if (prod > max_prod)
+                max_prod = prod;
+        }
+    }
+
+    // MAX_ITER controls kernel iteration space
+    int required_iter = MAX_ITER_DEF;
+    if (max_prod > required_iter)
+        required_iter = max_prod;
+    if (maxN > required_iter)
+        required_iter = maxN;
+    if (g_max_iter < required_iter)
+        g_max_iter = required_iter;
+
+    // MAX_ARRAY_SIZE controls mapped / stored array space
+    int required_array_size = MAX_ARRAY_SIZE_DEF;
+    if (maxN > required_array_size)
+        required_array_size = maxN;
+    if (max_prod > required_array_size)
+        required_array_size = max_prod;
+    if (g_max_array_size < required_array_size)
+        g_max_array_size = required_array_size;
+
+    printf("Adjusted limits: MAX_ITER=%d (default=%d, max threads*teams=%d, max N=%d), "
+           "MAX_ARRAY_SIZE=%d (default=%d)\n",
+           g_max_iter, MAX_ITER_DEF, max_prod, maxN,
+           g_max_array_size, MAX_ARRAY_SIZE_DEF);
+
+    // Safety check: mapped array space must be able to cover iteration/indexing needs
+    if (g_max_iter > g_max_array_size)
+    {
+        fprintf(stderr,
+                "ERROR: MAX_ITER (%d) > MAX_ARRAY_SIZE (%d). Increase MAX_ARRAY_SIZE.\n",
+                g_max_iter, g_max_array_size);
+        exit(EXIT_FAILURE);
+    }
+
+    // --- End adjustment ---
 
     // Print current runtime settings
     printf("========== Runtime Configuration ==========\n");
+
+    printf("Methods       : ");
+    if (num_methods == 0)
+    {
+        printf("1-11 (all)\n");
+    }
+    else
+    {
+        for (int i = 0; i < num_methods; ++i)
+            printf("%d%s", methods[i], (i < num_methods - 1) ? ", " : "\n");
+    }
+
     printf("Delay range   : [%d, %d]\n", g_min_delaylength, g_max_delaylength);
+
     printf("Array size(s) : ");
     for (int ni = 0; ni < num_Ns; ++ni)
         printf("%d%s", Ns[ni], (ni < num_Ns - 1) ? ", " : "\n");
-    printf("Threads/Teams : %d / %d\n", thread_counts[0], team_counts[0]);
+
+    printf("thread_count(s): ");
+    for (int i = 0; i < num_thread_configs; ++i)
+        printf("%d%s", thread_counts[i], (i < num_thread_configs - 1) ? ", " : "\n");
+
+    printf("team_count(s) : ");
+    for (int i = 0; i < num_team_configs; ++i)
+        printf("%d%s", team_counts[i], (i < num_team_configs - 1) ? ", " : "\n");
+
     printf("MAX_ITER      : %d  (kernel workload)\n", g_max_iter);
     printf("MAX_ARRAY_SIZE: %d  (mapping/memory space)\n", g_max_array_size);
     printf("NUM_SAMPLES   : %d\n", NUM_SAMPLES);
+    printf("OUTERREPS     : %d\n", OUTERREPS);
+    printf("WARMUP_ITERS  : %d\n", WARMUP_ITERATIONS);
+    printf("BENCHMARK_SETS: %d\n", BENCHMARK_SETS);
+    printf("BENCHMARK_RUNS: %d\n", BENCHMARK_RUNS);
+    printf("MAXPARREPS    : %d\n", MAXPARREPS);
     printf("==========================================\n");
 
     // ---- Check target device ----
@@ -326,44 +363,6 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    // --- Adjust MAX_ITER once (before benchmarking) ---
-    // Start from the default value
-    int required_iter = MAX_ITER_DEF;
-
-    // cover max threads*teams
-    int max_prod = 0;
-    for (int t = 0; t < num_threads; ++t)
-    {
-        for (int tm = 0; tm < num_teams; ++tm)
-        {
-            int prod = thread_counts[t] * team_counts[tm];
-            if (prod > max_prod)
-                max_prod = prod;
-        }
-    }
-
-    // Make sure MAX_ITER can cover the largest threads*teams value
-    if (max_prod > required_iter)
-        required_iter = max_prod;
-
-    // also cover max N (reuse maxN computed above)
-    if (maxN > required_iter)
-        required_iter = maxN;
-
-    // Update the global value
-    g_max_iter = required_iter;
-
-    printf("MAX_ITER set to %d (MAX_ITER_DEF=%d, max threads*teams=%d, max N=%d)\n",
-           g_max_iter, MAX_ITER_DEF, max_prod, maxN);
-
-    // safety: ensure mapping space is large enough
-    if (g_max_iter > g_max_array_size)
-    {
-        printf("ERROR: MAX_ITER (%d) > MAX_ARRAY_SIZE (%d). Increase MAX_ARRAY_SIZE.\n",
-               g_max_iter, g_max_array_size);
-        exit(1);
-    }
-    // --- end adjust ---
 
     // ---- Print table header ----
     printf("\n========== Benchmark Execution ==========\n");
@@ -395,17 +394,16 @@ int main(int argc, char **argv)
         printf("%-35s", method_names[m]);
         fflush(stdout);
 
-        // Loop over all thread_count, team_count, and N combinations
-        for (int t = 0; t < num_threads; ++t)
+        for (int t = 0; t < num_thread_configs; ++t)
         {
-            for (int tm = 0; tm < num_teams; ++tm)
+            for (int tm = 0; tm < num_team_configs; ++tm)
             {
+
                 for (int nidx = 0; nidx < num_Ns; ++nidx)
                 {
                     int N = Ns[nidx];
 
                     // Allocate the mapped array using the maximum mapping size
-                    // double *a = (double *)malloc(N * sizeof(double));
                     double *a = (double *)malloc(g_max_array_size * sizeof(double));
                     if (!a)
                     {
@@ -414,15 +412,14 @@ int main(int argc, char **argv)
                     }
 
                     // Warm up runtime / device before real measurement
-                    warmup_cache(Ns[num_Ns - 1], thread_counts[num_threads - 1], team_counts[num_teams - 1]);
+                    warmup_cache(m + 1, N, thread_counts[t], team_counts[tm]);
 
-                    // First call with run = -1 is used as a warm-up path inside device_target
                     for (int set = 0; set < BENCHMARK_SETS; ++set)
                     {
-                        device_target(m + 1, set, -1, a, N, thread_counts[t], team_counts[tm]);
                         for (int run = 0; run < BENCHMARK_RUNS; ++run)
                             device_target(m + 1, set, run, a, N, thread_counts[t], team_counts[tm]);
                     }
+
 
                     // Final averaged results for this method / N
                     double intercept, intercept_err;
@@ -475,9 +472,7 @@ void shuffle_indices_local(int *perm, int n, unsigned int seed)
 // Run one benchmark method for a given set/run/N/thread/team configuration
 void device_target(int method, int set, int run, double *a, int N, int thread_count, int team_count)
 {
-
     // Generate log-scale sampled delaylengths once
-    // This creates increasing values between g_min_delaylength and g_max_delaylength
     double log_min = log2((double)g_min_delaylength);
     double log_max = log2((double)g_max_delaylength);
     for (int i = 0; i < NUM_SAMPLES; i++)
@@ -542,11 +537,8 @@ void device_target(int method, int set, int run, double *a, int N, int thread_co
 #pragma omp target map(alloc : a[0 : N])
                         delay_kernel(delay, a);
                         break;
-
-                        /* Keep a similar structure across methods */
                     }
 
-                    // Prevent the compiler from treating the result as unused
                     a[0] += 1;
                     if (a[0] < 0)
                     {
@@ -581,10 +573,9 @@ void device_target(int method, int set, int run, double *a, int N, int thread_co
                         switch (method)
                         {
                         case 5:
-#pragma omp target teams
+#pragma omp target teams num_teams(team_count)
                         {
-                            int team_id = omp_get_team_num();
-                            delay_kernel(delay, &a[team_id % N]);
+                            delay_kernel(delay, &a[omp_get_team_num() * g_max_array_size / team_count]);
                         }
                         break;
 
@@ -592,16 +583,13 @@ void device_target(int method, int set, int run, double *a, int N, int thread_co
 #if defined(__NVCOMPILER)
 #pragma omp target teams distribute parallel for num_teams(team_count) thread_limit(thread_count)
                             for (int i = 0; i < g_max_iter; i++)
-                                delay_kernel(delay, &a[i % N]);
-
+                                delay_kernel(delay, &a[i]);
                             break;
 #elif defined(_CRAYC) || defined(__AMD__) || defined(__clang__)
 #pragma omp target teams distribute parallel for num_teams(team_count) thread_limit(thread_count)
-                        {
                             for (int i = 0; i < g_max_iter; i++)
-                                delay_kernel(delay, &a[i % N]);
-                        }
-                        break;
+                                delay_kernel(delay, &a[i]);
+                            break;
 #endif
 
                         case 7:
@@ -631,11 +619,9 @@ void device_target(int method, int set, int run, double *a, int N, int thread_co
                             break;
 
 #elif defined(_CRAYC) || defined(__AMD__) || defined(__clang__)
-
 #pragma omp target
 #pragma teams distribute reduction(+ : tmp[0 : N])
 #pragma parallel for reduction(+ : tmp[0 : N])
-
                             for (int i = 0; i < g_max_iter; i++)
                             {
                                 delay_kernel(delay, &a[i]);
@@ -645,28 +631,37 @@ void device_target(int method, int set, int run, double *a, int N, int thread_co
 #endif
 
                         case 10:
-#pragma omp target teams
+#pragma omp target teams num_teams(team_count) thread_limit(thread_count)
                         {
+                            int team_id = omp_get_team_num();
+                            int stride = g_max_array_size / team_count;
 #pragma omp parallel
-                            delay_kernel(delay, a);
+                            {
+                                delay_kernel(delay, &a[team_id * stride + omp_get_thread_num()]);
+                            }
                         }
                         break;
 
                         case 11:
-#pragma omp target teams
-                        {
-                            for (int r = 0; r < INNERREPS; r++)
+                            for (int parreps = 1; parreps <= MAXPARREPS; parreps *= 2)
                             {
-#pragma omp parallel
+#pragma omp target teams num_teams(team_count) thread_limit(thread_count)
                                 {
-                                    delay_kernel(delay, a);
+                                    int team_id = omp_get_team_num();
+                                    int stride = g_max_array_size / team_count;
+                                    for (int r = 0; r < parreps; r++)
+                                    {
+#pragma omp parallel
+                                        {
+                                        int idx = team_id * stride + omp_get_thread_num();
+                                        delay_kernel(delay, &a[idx]);
+                                        }
+                                    }
                                 }
                             }
-                        }
-                        break;
+                            break;
                         }
 
-                        /* Keep a similar structure across methods */
                         a[0] += 1.0;
                         if (a[0] < 0.0)
                         {
@@ -682,11 +677,9 @@ void device_target(int method, int set, int run, double *a, int N, int thread_co
             }
 
             // Average time per inner repetition, in microseconds
-            // execution_times[set][run][sidx] = (end - start) * 1.0e6 / INNERREPS;
             double elapsed_us = (end - start) * 1.0e6 / INNERREPS;
 
             // Save result only for real runs (run >= 0), not warm-up runs
-            //--
             if (run >= 0)
             {
                 execution_times[set][run][logical][orep] = elapsed_us;
@@ -696,7 +689,8 @@ void device_target(int method, int set, int run, double *a, int N, int thread_co
                 if (raw)
                 {
                     const char *mname = (method >= 1 && method <= NUM_METHODS) ? method_names[method - 1] : "UNKNOWN";
-                    fprintf(raw, "%d,\"%s\",%d,%d,%d,%d,%d,%.0f,%d,%.9f\n", method, mname, N, thread_count, team_count, set, run, delays[logical], orep, elapsed_us);
+                    fprintf(raw, "%d,\"%s\",%d,%d,%d,%d,%d,%.0f,%d,%.9f\n",
+                            method, mname, N, thread_count, team_count, set, run, delays[logical], orep, elapsed_us);
                     fclose(raw);
                 }
                 else
@@ -755,7 +749,6 @@ void compute_offloading_time(double *intercept_avg, double *intercept_err,
             }
 
             // Find the lowest observed average time
-            // The search stops once the value reaches 2x the current minimum
             double run_min = avg_y[0];
             double run_min_delay = delays[0];
             for (int i = 1; i < NUM_SAMPLES; ++i)
@@ -764,10 +757,6 @@ void compute_offloading_time(double *intercept_avg, double *intercept_err,
                 {
                     run_min = avg_y[i];
                     run_min_delay = delays[i];
-                }
-                else if (avg_y[i] >= 2.0 * run_min)
-                {
-                    break;
                 }
             }
 
@@ -846,7 +835,6 @@ void compute_offloading_time(double *intercept_avg, double *intercept_err,
             sum_min += run_min;
 
 #ifdef PRINT_DISTRIBUTION
-            // Optional detailed printout
             fprintf(file,
                     "Set=%d Run=%d  Lmin=%.0f  Intercept=%.6f us  Slope=%.6f  R2=%.5f  BIC=%.3f  Lowest=%.6f us @ delay=%.0f\n",
                     set, run, delays[best_k], best_a, best_b, best_R2, best_BIC,
@@ -878,10 +866,8 @@ void compute_offloading_time(double *intercept_avg, double *intercept_err,
     fclose(file);
 }
 
-// Run a warm-up call before real benchmarking
-void warmup_cache(int N, int thread_count, int team_count)
+void warmup_cache(int method, int N, int thread_count, int team_count)
 {
-    // Allocate the maximum mapping size, same as in the benchmark
     double *a = (double *)malloc(g_max_array_size * sizeof(double));
     if (!a)
     {
@@ -892,8 +878,10 @@ void warmup_cache(int N, int thread_count, int team_count)
     int dummy_set = 0;
     int dummy_run = -1;
 
-    // Use method 1 as a warm-up path
-    device_target(1, dummy_set, dummy_run, a, N, thread_count, team_count);
+    for (int i = 0; i < WARMUP_ITERATIONS; i++)
+    {
+        device_target(method, dummy_set, dummy_run, a, N, thread_count, team_count);
+    }
 
     free(a);
 }

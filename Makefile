@@ -1,6 +1,6 @@
 include Makefile.defs.clang
 
-SRC     := microbenchmark.c common.c
+SRC     := src/microbenchmark.c src/common.c
 OBJ     := $(SRC:.c=.o)
 
 BIN     := microbenchmark
