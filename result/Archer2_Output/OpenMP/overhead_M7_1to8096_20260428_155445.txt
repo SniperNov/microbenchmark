@@ -1,0 +1,14 @@
+
+[Method=7 nowait N=16384]
+Set=0 Run=0  Lmin=114  Intercept=248.455538 us  Slope=0.865509  R2=0.99993  BIC=62.625  Lowest=231.349468 us @ delay=2
+Set=0 Run=1  Lmin=114  Intercept=246.985062 us  Slope=0.862718  R2=0.99984  BIC=70.350  Lowest=231.349468 us @ delay=2
+Set=0 Run=2  Lmin=114  Intercept=240.179527 us  Slope=0.867032  R2=0.99997  BIC=54.857  Lowest=230.848789 us @ delay=2
+Set=0 Run=3  Lmin=114  Intercept=248.597877 us  Slope=0.861554  R2=0.99986  BIC=69.268  Lowest=231.444836 us @ delay=2
+Set=0 Run=4  Lmin=114  Intercept=236.420282 us  Slope=0.868089  R2=0.99994  BIC=61.206  Lowest=231.254101 us @ delay=2
+Set=1 Run=0  Lmin=114  Intercept=231.149324 us  Slope=0.879114  R2=0.99999  BIC=43.730  Lowest=231.254101 us @ delay=1
+Set=1 Run=1  Lmin=114  Intercept=229.980930 us  Slope=0.880443  R2=0.99997  BIC=53.356  Lowest=230.908394 us @ delay=1
+Set=1 Run=2  Lmin=114  Intercept=241.445122 us  Slope=0.861766  R2=0.99998  BIC=50.929  Lowest=231.254101 us @ delay=2
+Set=1 Run=3  Lmin=114  Intercept=231.815103 us  Slope=0.874532  R2=0.99984  BIC=70.605  Lowest=231.242180 us @ delay=1
+Set=1 Run=4  Lmin=114  Intercept=253.976411 us  Slope=0.859461  R2=0.99983  BIC=71.341  Lowest=231.254101 us @ delay=2
+Average Intercept = 240.900518 ± 8.446467 us
+Average Lowest    = 231.215954 ± 0.189722 us
