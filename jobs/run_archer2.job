@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --account=d35-wt
 #SBATCH --job-name=RunLog
-#SBATCH --time=12:00:00
+#SBATCH --time=4:00:00
 #SBATCH --nodes=1
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu-exc
@@ -46,7 +46,6 @@ N_FIXED="16384"
 # Delay variations
 # -------------------------------
 DELAY_SHORT="1,8096"
-DELAY_FULL="512,262144"
 
 echo "Running Archer2 benchmark sweep..." | tee "$OUTFILE"
 echo "THREADS=$THREADS, TEAMS=$TEAMS" | tee -a "$OUTFILE"
@@ -54,7 +53,6 @@ echo "N_DATA=$N_DATA" | tee -a "$OUTFILE"
 echo "N_ATORED=$N_ATORED" | tee -a "$OUTFILE"
 echo "N_FIXED=$N_FIXED" | tee -a "$OUTFILE"
 echo "DELAY_SHORT=$DELAY_SHORT" | tee -a "$OUTFILE"
-echo "DELAY_FULL=$DELAY_FULL" | tee -a "$OUTFILE"
 
 run_group () {
     local TAG="$1"
@@ -113,25 +111,20 @@ run_group "M1to4" "1,2,3,4" "$N_DATA"   "$DELAY_SHORT"
 # Group 2: methods 5 / 6 / 7, fixed N
 # =========================================
 run_group "M5"    "5"       "$N_FIXED"  "$DELAY_SHORT"
-run_group "M5"    "5"       "$N_FIXED"  "$DELAY_FULL"
 
 run_group "M6"    "6"       "$N_FIXED"  "$DELAY_SHORT"
-run_group "M6"    "6"       "$N_FIXED"  "$DELAY_FULL"
 
 run_group "M7"    "7"       "$N_FIXED"  "$DELAY_SHORT"
-run_group "M7"    "7"       "$N_FIXED"  "$DELAY_FULL"
 
 # =========================================
 # Group 3: methods 8 / 9, atomic + reduction
 # =========================================
 run_group "M8to9" "8,9"     "$N_ATORED" "$DELAY_SHORT"
-run_group "M8to9" "8,9"     "$N_ATORED" "$DELAY_FULL"
 
 # =========================================
 # Group 4: methods 10 / 11, parallel structure
 # =========================================
 run_group "M10to11" "10,11" "$N_FIXED"  "$DELAY_SHORT"
-run_group "M10to11" "10,11" "$N_FIXED"  "$DELAY_FULL"
 
 echo "" | tee -a "$OUTFILE"
 echo "All benchmark groups completed." | tee -a "$OUTFILE"

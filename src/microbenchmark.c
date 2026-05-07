@@ -44,11 +44,8 @@
 // Number of runs in each set
 #define BENCHMARK_RUNS 5
 
-// Max parreps used by method 11
-#define MAXPARREPS 128
-
 // Total number of benchmark methods
-#define NUM_METHODS 11
+#define NUM_METHODS 12
 
 // Maximum number of values allowed in size/config arrays
 #define NUM_SIZES 16
@@ -67,6 +64,7 @@ static int g_max_delaylength = MAX_DELAYLENGTH;
 
 // Human-readable names for each benchmark method
 const char *method_names[] = {
+    "pure delay kernel",
     "map(tofrom: a)",
     "map(to: a)",
     "map(from: a)",
@@ -287,7 +285,7 @@ int main(int argc, char **argv)
     printf("Methods       : ");
     if (num_methods == 0)
     {
-        printf("1-11 (all)\n");
+        printf("0-11 (all)\n");
     }
     else
     {
@@ -316,7 +314,6 @@ int main(int argc, char **argv)
     printf("WARMUP_ITERS  : %d\n", WARMUP_ITERATIONS);
     printf("BENCHMARK_SETS: %d\n", BENCHMARK_SETS);
     printf("BENCHMARK_RUNS: %d\n", BENCHMARK_RUNS);
-    printf("MAXPARREPS    : %d\n", MAXPARREPS);
     printf("==========================================\n");
 
     // ---- Check target device ----
@@ -386,7 +383,7 @@ int main(int argc, char **argv)
     for (int midx = 0; midx < (num_methods == 0 ? NUM_METHODS : num_methods); ++midx)
     {
         // Use all methods if none were explicitly selected
-        int m = (num_methods == 0 ? midx : methods[midx] - 1);
+        int m = (num_methods == 0 ? midx : methods[midx]);
         if (m < 0 || m >= NUM_METHODS)
             continue;
 
@@ -412,12 +409,12 @@ int main(int argc, char **argv)
                     }
 
                     // Warm up runtime / device before real measurement
-                    warmup_cache(m + 1, N, thread_counts[t], team_counts[tm]);
+                    warmup_cache(m, N, thread_counts[t], team_counts[tm]);
 
                     for (int set = 0; set < BENCHMARK_SETS; ++set)
                     {
                         for (int run = 0; run < BENCHMARK_RUNS; ++run)
-                            device_target(m + 1, set, run, a, N, thread_counts[t], team_counts[tm]);
+                            device_target(m, set, run, a, N, thread_counts[t], team_counts[tm]);
                     }
 
 
@@ -426,7 +423,7 @@ int main(int argc, char **argv)
                     double minval, min_err;
 
                     compute_offloading_time(&intercept, &intercept_err, &minval, &min_err,
-                                            m + 1, method_names[m], N);
+                                            m, method_names[m], N);
 
                     // Print mean ± standard deviation for both values
                     printf("%10.3f±%-10.3f | %10.3f±%-10.3f",
@@ -510,8 +507,26 @@ void device_target(int method, int set, int run, double *a, int N, int thread_co
         // Repeat each sampled point OUTERREPS times
         for (int orep = 0; orep < OUTERREPS; orep++)
         {
+            if (method == 0)
+            {
+                start = omp_get_wtime();
+
+                for (int irep = 0; irep < INNERREPS; irep++)
+                {
+                    delay_kernel(delay, a);
+
+                    a[0] += 1.0;
+                    if (a[0] < 0.0)
+                    {
+                        printf("%f \n", a[0]);
+                        fflush(stdout);
+                    }
+                }
+
+                end = omp_get_wtime();
+            }
             // Methods 1-4: include target mapping in each measured region
-            if (method >= 1 && method <= 4)
+            else if (method >= 1 && method <= 4)
             {
                 start = omp_get_wtime();
                 for (int irep = 0; irep < INNERREPS; irep++)
@@ -643,23 +658,25 @@ void device_target(int method, int set, int run, double *a, int N, int thread_co
                         break;
 
                         case 11:
-                            for (int parreps = 1; parreps <= MAXPARREPS; parreps *= 2)
-                            {
+                        {
+                            int parreps = N;
+
 #pragma omp target teams num_teams(team_count) thread_limit(thread_count)
+                            {
+                                int team_id = omp_get_team_num();
+
+                                for (int r = 0; r < parreps; r++)
                                 {
-                                    int team_id = omp_get_team_num();
-                                    int stride = g_max_array_size / team_count;
-                                    for (int r = 0; r < parreps; r++)
-                                    {
 #pragma omp parallel
-                                        {
-                                        int idx = team_id * stride + omp_get_thread_num();
+                                    {
+                                        int idx = team_id * thread_count + omp_get_thread_num();
+                                        idx = idx % g_max_array_size;
                                         delay_kernel(delay, &a[idx]);
-                                        }
                                     }
                                 }
                             }
-                            break;
+                        }
+                        break;
                         }
 
                         a[0] += 1.0;
@@ -688,7 +705,7 @@ void device_target(int method, int set, int run, double *a, int N, int thread_co
                 FILE *raw = fopen(RAW_OUTPUT_FILE, "a");
                 if (raw)
                 {
-                    const char *mname = (method >= 1 && method <= NUM_METHODS) ? method_names[method - 1] : "UNKNOWN";
+                    const char *mname = (method >= 0 && method <= NUM_METHODS) ? method_names[method] : "UNKNOWN";
                     fprintf(raw, "%d,\"%s\",%d,%d,%d,%d,%d,%.0f,%d,%.9f\n",
                             method, mname, N, thread_count, team_count, set, run, delays[logical], orep, elapsed_us);
                     fclose(raw);
