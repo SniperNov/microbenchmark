@@ -43,12 +43,11 @@ TEAMS=304
 # Experiment configuration
 # Same logical structure as Archer2 and GH
 # =========================================
-N_DATA="1,4,16,64,256,1024,4096,8192,16382,32768,65536"
-N_FIXED="16382"
-N_ATORED="16,64,256,1024,4096,8192,16382"
+N_DATA="1,4,16,64,256,1024,4096,16384,65536,262144,1048576,4194304,16777216"
+N_ATORED="1,2,4,8,16,32,64"
+N_FIXED="16384"
 
 DELAY_SHORT="1,8096"
-DELAY_FULL="512,262144"
 
 PLOT_PY="/cosma/home/do018/dc-tu2/microbenchmark/.venv/bin/python"
 
@@ -103,25 +102,27 @@ run_group "M1to4" "1,2,3,4" "$N_DATA" "$DELAY_SHORT"
 # Group 2: methods 5 / 6 / 7, fixed N
 # =========================================
 run_group "M5" "5" "$N_FIXED" "$DELAY_SHORT"
-run_group "M5" "5" "$N_FIXED" "$DELAY_FULL"
 
 run_group "M6" "6" "$N_FIXED" "$DELAY_SHORT"
-run_group "M6" "6" "$N_FIXED" "$DELAY_FULL"
 
 run_group "M7" "7" "$N_FIXED" "$DELAY_SHORT"
-run_group "M7" "7" "$N_FIXED" "$DELAY_FULL"
 
 # =========================================
 # Group 3: methods 8 / 9, atomic + reduction
 # =========================================
 run_group "M8to9" "8,9" "$N_ATORED" "$DELAY_SHORT"
-run_group "M8to9" "8,9" "$N_ATORED" "$DELAY_FULL"
 
 # =========================================
-# Group 4: methods 10 / 11, parallel structure
+# Group 4a: method 0 / 10, fixed N
 # =========================================
-run_group "M10to11" "10,11" "$N_FIXED" "$DELAY_SHORT"
-run_group "M10to11" "10,11" "$N_FIXED" "$DELAY_FULL"
+run_group "M0_M10" "0,10" "$N_FIXED" "$DELAY_SHORT"
+
+# =========================================
+# Group 4b: method 11, N is parreps
+# =========================================
+N_PARREPS="1,2,4,8,16,32,64,128"
+
+run_group "M11_parreps" "11" "$N_PARREPS" "$DELAY_SHORT"
 
 echo "" | tee -a "$OUTFILE"
 echo "All COSMA5 MI300X benchmark groups completed." | tee -a "$OUTFILE"
