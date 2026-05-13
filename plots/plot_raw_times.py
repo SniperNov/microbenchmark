@@ -40,7 +40,7 @@ def apply_style():
         "font.size": 11,
         "axes.titlesize": 13,
         "axes.labelsize": 12,
-        "legend.fontsize": 10,
+        "legend.fontsize": 7,
         "xtick.labelsize": 10,
         "ytick.labelsize": 10,
         "axes.grid": True,

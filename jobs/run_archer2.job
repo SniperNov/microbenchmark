@@ -39,7 +39,7 @@ TEAMS=104
 # N groups
 # -------------------------------
 N_DATA="1,4,16,64,256,1024,4096,16384,65536,262144,1048576,4194304,16777216"
-N_ATORED="1,2,4,8,16,32,64"
+N_ATORED="1,4,16,64"
 N_FIXED="16384"
 
 # -------------------------------
@@ -100,6 +100,11 @@ run_group () {
         echo "Plot skipped for $BASE because csv/txt missing." | tee -a "$OUTFILE"
     fi
 }
+# =========================================
+# Group 0: method 0 / 10, fixed N
+# =========================================
+run_group "M0_M10" "0,10" "$N_FIXED" "$DELAY_SHORT"
+
 
 # =========================================
 # Group 1: methods 1-4, data size sweep
@@ -119,15 +124,10 @@ run_group "M7"    "7"       "$N_FIXED"  "$DELAY_SHORT"
 # =========================================
 # Group 3: methods 8 / 9, atomic + reduction
 # =========================================
-run_group "M8to9" "8,9"     "$N_ATORED" "$DELAY_SHORT"
+run_group "M8to9" "8"     "$N_ATORED" "$DELAY_SHORT"
 
 # =========================================
-# Group 4a: method 0 / 10, fixed N
-# =========================================
-run_group "M0_M10" "0,10" "$N_FIXED" "$DELAY_SHORT"
-
-# =========================================
-# Group 4b: method 11, N is parreps
+# Group 4: method 11, N is parreps
 # =========================================
 N_PARREPS="1,2,4,8,16,32,64,128"
 

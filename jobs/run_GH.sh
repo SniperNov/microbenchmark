@@ -72,7 +72,7 @@ run_group () {
         "$PLOT_PY" ./plots/plot_raw_times.py \
             "$OUTDIR/distribution_${BASE}.csv" \
             "$OUTDIR/overhead_${BASE}.txt" \
-            1,18 lin \
+            0,19 log \
             "$OUTDIR/resultLowest_${BASE}.png" 2>&1 | tee -a "$OUTFILE"
 
         if [ -f "$OUTDIR/resultLowest_${BASE}.png" ]; then
@@ -109,10 +109,16 @@ run_group "M8to9" "8,9" "$N_ATORED" "$DELAY_SHORT"
 run_group "M8to9" "8,9" "$N_ATORED" "$DELAY_FULL"
 
 # =========================================
-# Group 4: methods 10 / 11, parallel structure
+# Group 4a: method 0 / 10, fixed N
 # =========================================
-run_group "M10to11" "10,11" "$N_FIXED" "$DELAY_SHORT"
-run_group "M10to11" "10,11" "$N_FIXED" "$DELAY_FULL"
+run_group "M0_M10" "0,10" "$N_FIXED" "$DELAY_SHORT"
+
+# =========================================
+# Group 4b: method 11, N is parreps
+# =========================================
+N_PARREPS="1,2,4,8,16,32,64,128"
+
+run_group "M11_parreps" "11" "$N_PARREPS" "$DELAY_SHORT"
 
 
 echo "" | tee -a "$OUTFILE"
