@@ -6,8 +6,9 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=96
+#SBATCH --gres=gpu:1
 #SBATCH --exclusive
-#SBATCH -t 02:00:00
+#SBATCH -t 04:00:00
 
 set -e
 
@@ -92,33 +93,34 @@ run_group () {
         echo "Plot skipped for $BASE because csv/txt missing." | tee -a "$OUTFILE"
     fi
 }
+# =========================================
+# Group 0: method 0 / 10, fixed N
+# =========================================
+run_group "M0_M10" "0,10" "$N_FIXED" "$DELAY_SHORT"
+
 
 # =========================================
 # Group 1: methods 1-4, data size sweep
 # =========================================
-run_group "M1to4" "1,2,3,4" "$N_DATA" "$DELAY_SHORT"
+run_group "M1to4" "1,2,3,4" "$N_DATA"   "$DELAY_SHORT"
+
 
 # =========================================
 # Group 2: methods 5 / 6 / 7, fixed N
 # =========================================
-run_group "M5" "5" "$N_FIXED" "$DELAY_SHORT"
+run_group "M5"    "5"       "$N_FIXED"  "$DELAY_SHORT"
 
-run_group "M6" "6" "$N_FIXED" "$DELAY_SHORT"
+run_group "M6"    "6"       "$N_FIXED"  "$DELAY_SHORT"
 
-run_group "M7" "7" "$N_FIXED" "$DELAY_SHORT"
+run_group "M7"    "7"       "$N_FIXED"  "$DELAY_SHORT"
 
 # =========================================
 # Group 3: methods 8 / 9, atomic + reduction
 # =========================================
-run_group "M8to9" "8,9" "$N_ATORED" "$DELAY_SHORT"
+run_group "M8to9" "8,9"     "$N_ATORED" "$DELAY_SHORT"
 
 # =========================================
-# Group 4a: method 0 / 10, fixed N
-# =========================================
-run_group "M0_M10" "0,10" "$N_FIXED" "$DELAY_SHORT"
-
-# =========================================
-# Group 4b: method 11, N is parreps
+# Group 4: method 11, N is parreps
 # =========================================
 N_PARREPS="1,2,4,8,16,32,64,128"
 
