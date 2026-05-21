@@ -1,0 +1,60 @@
+Running COSMA5 MI300X OpenMP benchmark groups...
+
+===== [M0_M10] Method=0,10 N=16384 Delay=1,8096 =====
+THREADS=64 TEAMS=304
+Adjusted limits: MAX_ITER=19456 (default=6656, max threads*teams=19456, max N=16384), MAX_ARRAY_SIZE=65536 (default=65536)
+========== Runtime Configuration ==========
+Methods       : 0, 10
+Delay range   : [1, 8096]
+Array size(s) : 16384
+thread_count(s): 64
+team_count(s) : 304
+MAX_ITER      : 19456  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+NUM_SAMPLES   : 20
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  1 available devices
+Host device is 1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                    16384
+                                           BIC intercept | lowest
+pure delay kernel                       0.000±0.000      |      0.000±0.000     
+teams parallel                        380.261±5.238      |    379.219±1.754     
+==========================================
+Finalizing benchmark.
+Plotting M0_M10_1to8096_20260521_160430 ...
+/var/slurm/slurmd/job11159545/slurm_script: line 87: /cosma/home/do018/dc-tu2/microbenchmark/.venv/bin/python: No such file or directory
+
+===== [M1to4] Method=1,2,3,4 N=1,4,16,64,256,1024,4096,16384,65536,262144,1048576,4194304,16777216 Delay=1,8096 =====
+THREADS=64 TEAMS=304
+Adjusted limits: MAX_ITER=16777216 (default=6656, max threads*teams=19456, max N=16777216), MAX_ARRAY_SIZE=16777216 (default=65536)
+========== Runtime Configuration ==========
+Methods       : 1, 2, 3, 4
+Delay range   : [1, 8096]
+Array size(s) : 1, 4, 16, 64, 256, 1024, 4096, 16384, 65536, 262144, 1048576, 4194304, 16777216
+thread_count(s): 64
+team_count(s) : 304
+MAX_ITER      : 16777216  (kernel workload)
+MAX_ARRAY_SIZE: 16777216  (mapping/memory space)
+NUM_SAMPLES   : 20
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  1 available devices
+Host device is 1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                        1                             4                            16                            64                           256                          1024                          4096                         16384                         65536                        262144                       1048576                       4194304                      16777216
+                                           BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest
+map(tofrom: a)                        222.030±18.404     |    215.278±0.506        214.125±5.987      |    215.298±0.203        212.942±6.227      |    215.266±0.175        234.867±66.455     |    215.181±0.199        218.294±4.791      |    218.356±0.500        220.057±5.963      |    220.082±0.237        227.668±7.702      |    230.809±0.612        222.180±7.136      |    224.853±0.097        240.151±5.481      |    240.469±0.184        294.306±4.833      |    292.207±6.761        513.826±6.966      |    514.851±0.163       1489.514±6.273      |   1491.928±0.493       5400.567±15.801     |   5389.684±0.863     
+map(to: a)                            211.653±4.083      |    208.143±0.502        211.555±5.404      |    208.191±0.095        209.746±7.291      |    208.073±0.296        209.948±6.330      |    208.203±0.112        213.105±6.730      |    208.316±0.138        212.623±5.054      |    208.678±0.144        212.736±6.684      |    209.891±0.158        211.689±4.948      |    215.616±0.203        222.106±4.557      |    222.675±0.267        251.189±3.773      |    251.210±0.104        334.316±7.006      |    333.729±0.127        788.802±7.825      |    789.299±0.250       2612.651±10.391     |   2607.970±0.591     
+map(from: a)                          210.435±4.949      |    210.329±0.433        210.473±5.909      |    210.485±0.151        209.660±6.600      |    210.266±0.144        209.422±5.355      |    210.220±0.188        213.013±4.323      |    212.898±0.139        213.856±4.178      |    213.385±0.192        214.545±6.765      |    214.584±0.166        211.148±7.215      |    213.379±0.066        220.627±8.177      |    221.156±0.178        251.663±7.318      |    251.225±0.159        341.516±5.762      |    341.204±0.156        827.633±13.055     |    824.577±0.167       2759.705±9.666      |   2757.020±0.386     
