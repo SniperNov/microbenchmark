@@ -507,26 +507,8 @@ void device_target(int method, int set, int run, double *a, int N, int thread_co
         // Repeat each sampled point OUTERREPS times
         for (int orep = 0; orep < OUTERREPS; orep++)
         {
-            if (method == 0)
-            {
-                start = omp_get_wtime();
-
-                for (int irep = 0; irep < INNERREPS; irep++)
-                {
-                    delay_kernel(delay, a);
-
-                    a[0] += 1.0;
-                    if (a[0] < 0.0)
-                    {
-                        printf("%f \n", a[0]);
-                        fflush(stdout);
-                    }
-                }
-
-                end = omp_get_wtime();
-            }
             // Methods 1-4: include target mapping in each measured region
-            else if (method >= 1 && method <= 4)
+            if (method >= 1 && method <= 4)
             {
                 start = omp_get_wtime();
                 for (int irep = 0; irep < INNERREPS; irep++)
@@ -564,7 +546,7 @@ void device_target(int method, int set, int run, double *a, int N, int thread_co
             }
 
             // Methods 5-11: use target data region, then measure target execution behaviour
-            else if (method >= 5 && method <= 11)
+            else if (method >= 5 && method <= 11 || method == 0)
             {
                 // Temporary array used by atomic/reduction methods
                 double *tmp = (double *)malloc(N * sizeof(double));
@@ -578,7 +560,6 @@ void device_target(int method, int set, int run, double *a, int N, int thread_co
                 // Initialise tmp
                 for (int i = 0; i < N; i++)
                     tmp[i] = 0.0;
-
 #pragma omp target data map(tofrom : a[0 : g_max_array_size], tmp[0 : N])
                 {
                     start = omp_get_wtime();
@@ -677,7 +658,12 @@ void device_target(int method, int set, int run, double *a, int N, int thread_co
                             }
                         }
                         break;
-                        }
+                        
+                        case 0:
+#pragma omp target
+                    delay_kernel(delay, a);
+                    break;
+            }
 
                         a[0] += 1.0;
                         if (a[0] < 0.0)

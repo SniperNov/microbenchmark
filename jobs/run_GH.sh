@@ -72,7 +72,7 @@ run_group () {
         "$PLOT_PY" ./plots/plot_raw_times.py \
             "$OUTDIR/distribution_${BASE}.csv" \
             "$OUTDIR/overhead_${BASE}.txt" \
-            0,19 log \
+            1,18 log \
             "$OUTDIR/resultLowest_${BASE}.png" 2>&1 | tee -a "$OUTFILE"
 
         if [ -f "$OUTDIR/resultLowest_${BASE}.png" ]; then
@@ -86,35 +86,34 @@ run_group () {
 }
 
 # =========================================
+# Group 0: method 0 / 10, fixed N
+# =========================================
+run_group "M0_M10" "0,10" "$N_FIXED" "$DELAY_SHORT"
+
+
+# =========================================
 # Group 1: methods 1-4, data size sweep
 # =========================================
-run_group "M1to4" "1,2,3,4" "$N_DATA" "$DELAY_SHORT"
+run_group "M1to4" "1,2,3,4" "$N_DATA"   "$DELAY_SHORT"
+
 
 # =========================================
 # Group 2: methods 5 / 6 / 7, fixed N
 # =========================================
-run_group "M5" "5" "$N_FIXED" "$DELAY_SHORT"
-run_group "M5" "5" "$N_FIXED" "$DELAY_FULL"
+run_group "M5"    "5"       "$N_FIXED"  "$DELAY_SHORT"
 
-run_group "M6" "6" "$N_FIXED" "$DELAY_SHORT"
-run_group "M6" "6" "$N_FIXED" "$DELAY_FULL"
+run_group "M6"    "6"       "$N_FIXED"  "$DELAY_SHORT"
 
-run_group "M7" "7" "$N_FIXED" "$DELAY_SHORT"
-run_group "M7" "7" "$N_FIXED" "$DELAY_FULL"
+run_group "M7"    "7"       "$N_FIXED"  "$DELAY_SHORT"
 
 # =========================================
 # Group 3: methods 8 / 9, atomic + reduction
 # =========================================
-run_group "M8to9" "8,9" "$N_ATORED" "$DELAY_SHORT"
-run_group "M8to9" "8,9" "$N_ATORED" "$DELAY_FULL"
+run_group "M8to9" "8"     "$N_ATORED" "$DELAY_SHORT"
+run_group "M8to9" "9"     "$N_ATORED" "$DELAY_SHORT"
 
 # =========================================
-# Group 4a: method 0 / 10, fixed N
-# =========================================
-run_group "M0_M10" "0,10" "$N_FIXED" "$DELAY_SHORT"
-
-# =========================================
-# Group 4b: method 11, N is parreps
+# Group 4: method 11, N is parreps
 # =========================================
 N_PARREPS="1,2,4,8,16,32,64,128"
 
