@@ -84,7 +84,6 @@ double delays[NUM_SAMPLES];
 // [set][run][delay sample][outer repetition]
 double execution_times[BENCHMARK_SETS][BENCHMARK_RUNS][NUM_SAMPLES][OUTERREPS];
 
-
 int main(int argc, char **argv)
 {
     // Number of selected methods from command line
@@ -222,7 +221,6 @@ int main(int argc, char **argv)
         }
     }
 
-    
     // --- Adjust MAX_ITER and MAX_ARRAY_SIZE once (before benchmarking) ---
 
     // Largest N in the input list
@@ -360,7 +358,6 @@ int main(int argc, char **argv)
         return 1;
     }
 
-
     // ---- Print table header ----
     printf("\n========== Benchmark Execution ==========\n");
     printf("%-35s", "Method/N");
@@ -416,7 +413,6 @@ int main(int argc, char **argv)
                         for (int run = 0; run < BENCHMARK_RUNS; ++run)
                             device_target(m, set, run, a, N, thread_counts[t], team_counts[tm]);
                     }
-
 
                     // Final averaged results for this method / N
                     double intercept, intercept_err;
@@ -658,12 +654,12 @@ void device_target(int method, int set, int run, double *a, int N, int thread_co
                             }
                         }
                         break;
-                        
+
                         case 0:
 #pragma omp target
-                    delay_kernel(delay, a);
-                    break;
-            }
+                            delay_kernel(delay, a);
+                            break;
+                        }
 
                         a[0] += 1.0;
                         if (a[0] < 0.0)
