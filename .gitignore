@@ -33,3 +33,5 @@ plot_extra.py
 visualise.py
 
 
+.venv/
+software/
