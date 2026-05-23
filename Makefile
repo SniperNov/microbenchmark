@@ -1,4 +1,4 @@
-include Makefile.defs.MI300X
+include Makefile.defs.gcc
 
 SRC     := src/microbenchmark.c src/common.c
 OBJ     := $(SRC:.c=.o)
