@@ -1,1 +1,2 @@
-CFLAGS = -O0 -fopenmp -foffload=nvptx-none -fcf-protection=none -lm
+CFLAGS = -O0 -fopenmp -foffload=nvptx-none -fcf-protection=none -fno-stack-protector -no-pie
+LDFLAGS = -lm
