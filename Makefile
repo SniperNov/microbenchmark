@@ -1,4 +1,4 @@
-include Makefile.defs.gcc
+include Makefile.defs.nvc
 
 SRC     := src/microbenchmark.c src/common.c
 OBJ     := $(SRC:.c=.o)
