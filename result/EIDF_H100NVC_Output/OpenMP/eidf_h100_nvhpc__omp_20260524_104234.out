@@ -1,0 +1,249 @@
+Running EIDF H100 NVHPC OpenMP benchmark groups...
+SET UP H100 configuration NVIDIA H100 NVHPC=====
+THREADS=32
+TEAMS=132
+Sun May 24 10:42:34 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 570.124.06             Driver Version: 570.124.06     CUDA Version: 12.8     |
+|-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA H100 80GB HBM3          Off |   00000000:0E:00.0 Off |                    0 |
+| N/A   34C    P0             99W /  700W |       1MiB /  81559MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+                                                                                         
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+=============================================
+Compiling...
+
+===== [M0_M10] Method=0,10 N=16382 Delay=1,8096 =====
+Adjusted limits: MAX_ITER=16382 (default=6656, max threads*teams=4224, max N=16382), MAX_ARRAY_SIZE=65536 (default=65536)
+========== Runtime Configuration ==========
+Methods       : 0, 10
+Delay range   : [1, 8096]
+Array size(s) : 16382
+thread_count(s): 32
+team_count(s) : 132
+MAX_ITER      : 16382  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+NUM_SAMPLES   : 20
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  1 available devices
+Host device is -1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                    16382
+                                           BIC intercept | lowest
+pure delay kernel                      17.577±0.602      |     16.303±0.510     
+teams parallel                         18.474±0.633      |     16.841±0.724     
+==========================================
+Finalizing benchmark.
+
+===== [M1to4] Method=1,2,3,4 N=1,4,16,64,256,1024,4096,8192,16382,32768,65536 Delay=1,8096 =====
+Adjusted limits: MAX_ITER=65536 (default=6656, max threads*teams=4224, max N=65536), MAX_ARRAY_SIZE=65536 (default=65536)
+========== Runtime Configuration ==========
+Methods       : 1, 2, 3, 4
+Delay range   : [1, 8096]
+Array size(s) : 1, 4, 16, 64, 256, 1024, 4096, 8192, 16382, 32768, 65536
+thread_count(s): 32
+team_count(s) : 132
+MAX_ITER      : 65536  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+NUM_SAMPLES   : 20
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  1 available devices
+Host device is -1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                        1                             4                            16                            64                           256                          1024                          4096                          8192                         16382                         32768                         65536
+                                           BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest
+map(tofrom: a)                         30.640±0.901      |     29.569±0.696         34.115±0.746      |     32.370±0.850         30.878±0.904      |     29.389±0.538         31.714±0.808      |     30.527±0.581         32.655±0.696      |     31.432±0.917         37.113±0.899      |     35.846±1.132         49.731±1.038      |     48.788±1.370         63.892±2.054      |     61.729±1.842         77.007±1.451      |     74.675±1.023        114.212±1.202      |    112.227±0.835        197.662±3.946      |    193.605±3.462     
+map(to: a)                             20.640±0.485      |     18.274±1.060         20.606±0.524      |     18.340±0.562         20.845±0.839      |     18.648±0.705         21.387±0.820      |     18.644±0.724         21.139±0.760      |     19.099±0.429         23.420±0.523      |     20.591±1.070         23.951±0.579      |     21.256±0.581         26.415±0.469      |     24.605±0.929         31.712±0.807      |     29.551±0.427         41.782±0.448      |     40.137±0.598         62.414±1.388      |     59.587±1.731     
+map(from: a)                           28.019±0.885      |     27.618±0.720         30.497±0.773      |     29.179±0.496         27.014±0.502      |     27.027±0.579         27.865±0.489      |     27.554±0.478         27.855±0.758      |     27.562±0.591         30.416±0.503      |     29.566±0.739         34.266±0.868      |     33.642±0.853         42.126±0.661      |     41.193±1.193         44.299±1.189      |     43.029±0.369         61.440±0.611      |     60.160±1.579         93.142±0.600      |     92.099±1.273     
+map(alloc: a)                          17.861±0.458      |     15.980±0.676         17.741±0.919      |     15.931±0.461         17.774±0.536      |     15.990±0.508         17.917±0.690      |     15.996±0.533         18.951±0.757      |     16.992±0.980         19.099±0.692      |     17.095±0.807         20.057±0.915      |     17.568±0.643         18.956±0.848      |     16.844±0.648         19.712±0.523      |     17.328±0.733         18.018±0.974      |     16.105±0.822         17.982±0.681      |     16.378±0.600     
+==========================================
+Finalizing benchmark.
+
+===== [M5] Method=5 N=16382 Delay=1,8096 =====
+Adjusted limits: MAX_ITER=16382 (default=6656, max threads*teams=4224, max N=16382), MAX_ARRAY_SIZE=65536 (default=65536)
+========== Runtime Configuration ==========
+Methods       : 5
+Delay range   : [1, 8096]
+Array size(s) : 16382
+thread_count(s): 32
+team_count(s) : 132
+MAX_ITER      : 16382  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+NUM_SAMPLES   : 20
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  1 available devices
+Host device is -1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                    16382
+                                           BIC intercept | lowest
+teams (scalar)                         16.741±0.821      |     15.236±0.371     
+==========================================
+Finalizing benchmark.
+
+===== [M6] Method=6 N=16382 Delay=1,8096 =====
+Adjusted limits: MAX_ITER=16382 (default=6656, max threads*teams=4224, max N=16382), MAX_ARRAY_SIZE=65536 (default=65536)
+========== Runtime Configuration ==========
+Methods       : 6
+Delay range   : [1, 8096]
+Array size(s) : 16382
+thread_count(s): 32
+team_count(s) : 132
+MAX_ITER      : 16382  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+NUM_SAMPLES   : 20
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  1 available devices
+Host device is -1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                    16382
+                                           BIC intercept | lowest
+teams distribute parallel for          15.408±0.384      |     12.671±0.501     
+==========================================
+Finalizing benchmark.
+
+===== [M7] Method=7 N=16382 Delay=1,8096 =====
+Adjusted limits: MAX_ITER=16382 (default=6656, max threads*teams=4224, max N=16382), MAX_ARRAY_SIZE=65536 (default=65536)
+========== Runtime Configuration ==========
+Methods       : 7
+Delay range   : [1, 8096]
+Array size(s) : 16382
+thread_count(s): 32
+team_count(s) : 132
+MAX_ITER      : 16382  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+NUM_SAMPLES   : 20
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  1 available devices
+Host device is -1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                    16382
+                                           BIC intercept | lowest
+nowait                                 16.670±0.691      |     15.087±0.555     
+==========================================
+Finalizing benchmark.
+
+===== [M8] Method=8 N=16,64,256,1024,4096,8192,16382 Delay=1,8096 =====
+Adjusted limits: MAX_ITER=16382 (default=6656, max threads*teams=4224, max N=16382), MAX_ARRAY_SIZE=65536 (default=65536)
+========== Runtime Configuration ==========
+Methods       : 8
+Delay range   : [1, 8096]
+Array size(s) : 16, 64, 256, 1024, 4096, 8192, 16382
+thread_count(s): 32
+team_count(s) : 132
+MAX_ITER      : 16382  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+NUM_SAMPLES   : 20
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  1 available devices
+Host device is -1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                       16                            64                           256                          1024                          4096                          8192                         16382
+                                           BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest
+teams atomic                           18.500±0.415      |     17.004±0.704         15.404±0.447      |     14.125±0.430         14.155±0.502      |     12.841±0.538         12.570±0.435      |     10.779±0.369         12.221±0.273      |     10.843±0.428         11.811±0.331      |     10.355±0.310         11.830±0.413      |     10.568±0.391     
+==========================================
+Finalizing benchmark.
+
+===== [M9] Method=9 N=16,64,256,1024,4096,8192,16382 Delay=1,8096 =====
+Adjusted limits: MAX_ITER=16382 (default=6656, max threads*teams=4224, max N=16382), MAX_ARRAY_SIZE=65536 (default=65536)
+========== Runtime Configuration ==========
+Methods       : 9
+Delay range   : [1, 8096]
+Array size(s) : 16, 64, 256, 1024, 4096, 8192, 16382
+thread_count(s): 32
+team_count(s) : 132
+MAX_ITER      : 16382  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+NUM_SAMPLES   : 20
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  1 available devices
+Host device is -1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                       16                            64                           256                          1024                          4096                          8192                         16382
+                                           BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest
+teams reduction                        36.487±0.484      |     34.523±0.909         79.403±0.394      |     78.394±0.553        240.627±2.347      |    239.308±0.365       1007.925±6.423      |   1003.264±0.519       3947.200±1.291      |   3942.534±2.692       7866.312±3.222      |   7855.936±2.626      17368.726±3.716      |  17359.194±3.307     
+==========================================
+Finalizing benchmark.
+
+===== [M11_parreps] Method=11 N=1,2,4,8,16,32,64,128 Delay=1,8096 =====
+Adjusted limits: MAX_ITER=6656 (default=6656, max threads*teams=4224, max N=128), MAX_ARRAY_SIZE=65536 (default=65536)
+========== Runtime Configuration ==========
+Methods       : 11
+Delay range   : [1, 8096]
+Array size(s) : 1, 2, 4, 8, 16, 32, 64, 128
+thread_count(s): 32
+team_count(s) : 132
+MAX_ITER      : 6656  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+NUM_SAMPLES   : 20
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  1 available devices
+Host device is -1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                        1                             2                             4                             8                            16                            32                            64                           128
+                                           BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest
+teams + parallel inside                18.519±0.713      |     16.390±0.773         19.427±0.365      |     17.896±0.524         24.052±0.839      |     22.012±1.267         28.393±1.120      |     26.234±1.417         38.387±0.633      |     35.985±0.930         58.335±0.490      |     54.592±0.643         98.108±0.652      |     91.796±0.596        178.054±0.529      |    165.929±0.633     
+==========================================
+Finalizing benchmark.
+
+All EIDF H100 NVHPC benchmark groups completed.
+Results saved under result/EIDF_H100NVC_Output/OpenMP
