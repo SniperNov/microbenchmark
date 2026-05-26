@@ -1,0 +1,5 @@
+
+[Method=6 teams distribute parallel for N=16382]
+Set=0 Run=0  Lmin=114  Intercept=298.225499 us  Slope=2.378687  R2=1.00000  BIC=33.325  Lowest=297.806263 us @ delay=2
+Average Intercept = 298.225499 ± 0.000000 us
+Average Lowest    = 297.806263 ± 0.000000 us

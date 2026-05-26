@@ -1,0 +1,31 @@
+Running microbenchmark...
+========== Runtime Configuration ==========
+Methods       : 6
+Delay range   : [1, 8096]
+Array size(s) : 16382
+thread_count(s): 64
+team_count(s) : 104
+MAX_ITER      : 6656  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+NUM_SAMPLES   : 20
+OUTERREPS     : 10
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 1
+BENCHMARK_RUNS: 1
+MAXPARREPS    : 128
+==========================================
+There are  4 available devices
+Host device is 4
+Initializing benchmark runtime environment...
+MAX_ITER set to 16382 (MAX_ITER_DEF=6656, max threads*teams=6656, max N=16382)
+
+========== Benchmark Execution ==========
+Method/N                                                    16382
+                                           BIC intercept | lowest
+teams distribute parallel for         298.225±0.000      |    297.806±0.000     
+==========================================
+Finalizing benchmark.
+Matplotlib created a temporary config/cache directory at /tmp/matplotlib-3aq7y7bi because the default path (/home/d35/d35/weiyu24/.config/matplotlib) is not a writable directory; it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+[OK] saved: result/Archer2_Output/OpenMP/resultLowest_ar2_omp_20260422_225629.png
+[INFO] x-scale = lin
+Plot generated: result/Archer2_Output/OpenMP/resultLowest_ar2_omp_20260422_225629.png

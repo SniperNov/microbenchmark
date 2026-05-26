@@ -1,0 +1,42 @@
+Running Archer2 benchmark sweep...
+THREADS=64, TEAMS=104
+N_DATA=1,4,16,64,256,1024,4096,16384,65536,262144,1048576,4194304,1677216
+N_ATORED=1,2,4,8,16,32,64
+N_FIXED=16384
+DELAY_SHORT=1,8096
+DELAY_FULL=512,262144
+
+===== [M1to4] Method=1,2,3,4 N=1,4,16,64,256,1024,4096,16384,65536,262144,1048576,4194304,1677216 Delay=1,8096 =====
+Warning: N=16384 exceeds current delay upper bound (8096), resetting to 16384
+Warning: N=65536 exceeds current delay upper bound (8096), resetting to 16384
+Warning: N=262144 exceeds current delay upper bound (8096), resetting to 16384
+Warning: N=1048576 exceeds current delay upper bound (8096), resetting to 16384
+Warning: N=4194304 exceeds current delay upper bound (8096), resetting to 16384
+Warning: N=1677216 exceeds current delay upper bound (8096), resetting to 16384
+Adjusted limits: MAX_ITER=16382 (default=6656, max threads*teams=6656, max N=16382), MAX_ARRAY_SIZE=65536 (default=65536)
+========== Runtime Configuration ==========
+Methods       : 1, 2, 3, 4
+Delay range   : [1, 8096]
+Array size(s) : 1, 4, 16, 64, 256, 1024, 4096, 16382, 16382, 16382, 16382, 16382, 16382
+thread_count(s): 64
+team_count(s) : 104
+MAX_ITER      : 16382  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+NUM_SAMPLES   : 20
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+MAXPARREPS    : 128
+==========================================
+There are  4 available devices
+Host device is 4
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                        1                             4                            16                            64                           256                          1024                          4096                         16382                         16382                         16382                         16382                         16382                         16382
+                                           BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest
+map(tofrom: a)                        469.170±10.159     |    468.397±0.287        467.439±7.594      |    468.079±0.304        466.851±8.297      |    467.488±0.933        468.132±9.084      |    467.516±0.263        468.470±9.868      |    468.295±0.229        469.065±9.718      |    469.098±0.259        466.900±8.447      |    468.553±0.280        475.802±9.818      |    475.705±0.248        475.961±10.030     |    475.523±0.305        476.274±8.862      |    475.537±0.276        474.156±7.893      |    475.572±0.296        475.485±10.035     |    475.605±0.186        476.380±9.002      |    475.580±0.364     
+map(to: a)                            461.102±9.891      |    460.194±0.265        459.436±7.603      |    460.333±0.340        459.862±8.448      |    460.534±0.329        460.497±9.197      |    460.173±0.283        460.897±9.966      |    460.670±0.288        460.736±9.421      |    461.030±0.203        460.703±8.278      |    462.006±0.222        463.353±9.951      |    463.419±0.271        463.924±10.067     |    463.672±0.161        463.925±8.807      |    463.607±0.341        462.436±7.792      |    463.486±0.230        463.255±10.167     |    463.542±0.310        464.608±9.075      |    463.396±0.196     
+map(from: a)                          460.808±9.880      |    460.341±0.219        459.423±7.593      |    460.227±0.153        459.462±8.380      |    460.247±0.320        460.912±9.078      |    460.215±0.282        460.580±9.927      |    460.531±0.369        461.106±9.619      |    461.096±0.189        460.154±8.332      |    461.963±0.282        463.569±9.683      |    463.579±0.195        463.791±9.915      |    463.685±0.185        464.290±8.796      |    463.685±0.293        462.121±7.796      |    463.639±0.243        463.423±9.947      |    463.582±0.220        464.307±8.980      |    463.563±0.301     
+map(alloc: a)                         204.853±8.914      |    198.400±0.159        203.437±7.009      |    198.425±0.211        203.711±7.694      |    198.486±0.151        204.316±8.565      |    198.436±0.177        205.132±8.461      |    198.523±0.134        203.972±8.583      |    198.469±0.091        202.757±7.783      |    198.470±0.135        204.193±9.135      |    198.420±0.090     

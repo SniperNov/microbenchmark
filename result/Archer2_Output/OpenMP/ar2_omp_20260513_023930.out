@@ -1,0 +1,237 @@
+Running Archer2 benchmark sweep...
+THREADS=64, TEAMS=104
+N_DATA=1,4,16,64,256,1024,4096,16384,65536,262144,1048576,4194304,16777216
+N_ATORED=1,4,16,64
+N_FIXED=16384
+DELAY_SHORT=1,8096
+
+===== [M0_M10] Method=0,10 N=16384 Delay=1,8096 =====
+Adjusted limits: MAX_ITER=16384 (default=6656, max threads*teams=6656, max N=16384), MAX_ARRAY_SIZE=65536 (default=65536)
+========== Runtime Configuration ==========
+Methods       : 0, 10
+Delay range   : [1, 8096]
+Array size(s) : 16384
+thread_count(s): 64
+team_count(s) : 104
+MAX_ITER      : 16384  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+NUM_SAMPLES   : 20
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  4 available devices
+Host device is 4
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                    16384
+                                           BIC intercept | lowest
+pure delay kernel                      -0.001±0.010      |      0.000±0.000     
+teams parallel                        545.258±0.384      |    558.871±0.662     
+==========================================
+Finalizing benchmark.
+Plotting M0_M10_1to8096_20260513_023930 ...
+Matplotlib created a temporary config/cache directory at /tmp/matplotlib-52jlwwdy because the default path (/home/d35/d35/weiyu24/.config/matplotlib) is not a writable directory; it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+[OK] saved: result/Archer2_Output/OpenMP/resultLowest_M0_M10_1to8096_20260513_023930.png
+[INFO] x-scale = lin
+Plot generated: result/Archer2_Output/OpenMP/resultLowest_M0_M10_1to8096_20260513_023930.png
+
+===== [M1to4] Method=1,2,3,4 N=1,4,16,64,256,1024,4096,16384,65536,262144,1048576,4194304,16777216 Delay=1,8096 =====
+Adjusted limits: MAX_ITER=16777216 (default=6656, max threads*teams=6656, max N=16777216), MAX_ARRAY_SIZE=16777216 (default=65536)
+========== Runtime Configuration ==========
+Methods       : 1, 2, 3, 4
+Delay range   : [1, 8096]
+Array size(s) : 1, 4, 16, 64, 256, 1024, 4096, 16384, 65536, 262144, 1048576, 4194304, 16777216
+thread_count(s): 64
+team_count(s) : 104
+MAX_ITER      : 16777216  (kernel workload)
+MAX_ARRAY_SIZE: 16777216  (mapping/memory space)
+NUM_SAMPLES   : 20
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  4 available devices
+Host device is 4
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                        1                             4                            16                            64                           256                          1024                          4096                         16384                         65536                        262144                       1048576                       4194304                      16777216
+                                           BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest
+map(tofrom: a)                        466.196±8.525      |    467.411±0.186        467.560±10.951     |    467.455±0.388        468.307±10.329     |    466.856±0.260        466.358±8.172      |    467.273±0.304        466.267±8.031      |    467.554±0.316        468.583±8.921      |    468.813±0.245        468.877±11.226     |    468.066±0.336        475.668±9.727      |    475.780±0.252        504.568±7.186      |    506.620±0.379        819.620±7.488      |    788.162±6.636       1351.512±7.832      |   1329.849±4.235       3660.416±19.153     |   3626.750±9.828      12458.287±31.935     |  12334.994±21.118    
+map(to: a)                            457.721±8.846      |    459.349±0.428        459.244±11.388     |    459.144±0.252        460.201±10.250     |    459.076±0.287        458.135±8.462      |    459.256±0.266        457.621±7.873      |    459.204±0.273        460.393±9.448      |    460.382±0.254        461.704±11.052     |    461.468±0.322        463.850±9.328      |    463.820±0.294        477.119±7.543      |    480.220±0.418        720.877±6.072      |    679.148±4.726       1010.276±17.779     |    980.510±6.816       2350.826±20.136     |   2321.894±8.119       7381.389±77.848     |   7179.122±50.277    
+map(from: a)                          457.461±8.288      |    459.167±0.315        458.929±10.906     |    459.015±0.194        460.234±10.061     |    458.926±0.304        457.951±8.297      |    459.163±0.218        457.914±7.712      |    459.205±0.260        459.815±8.687      |    460.610±0.344        461.864±11.030     |    461.073±0.320        463.011±9.198      |    462.978±0.287        477.077±7.508      |    479.504±0.271        705.790±8.408      |    664.115±3.500       1008.555±15.670     |    977.508±7.330       2356.453±21.356     |   2330.145±17.314      7494.158±78.543     |   7322.816±43.783    
+map(alloc: a)                         202.475±8.012      |    198.495±0.165        204.849±10.425     |    198.528±0.177        205.254±9.238      |    198.522±0.119        203.533±7.259      |    198.554±0.164        202.561±6.943      |    198.528±0.225        204.214±8.704      |    198.436±0.162        204.800±9.763      |    198.485±0.160        204.265±8.326      |    198.475±0.128        201.465±6.354      |    198.516±0.215        478.135±8.169      |    482.956±3.382        475.923±9.520      |    481.859±2.476        473.909±7.302      |    482.122±2.125       3920.408±270.252    |   1571.673±637.336   
+==========================================
+Finalizing benchmark.
+Plotting M1to4_1to8096_20260513_023930 ...
+Matplotlib created a temporary config/cache directory at /tmp/matplotlib-ief_zhi9 because the default path (/home/d35/d35/weiyu24/.config/matplotlib) is not a writable directory; it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+[OK] saved: result/Archer2_Output/OpenMP/resultLowest_M1to4_1to8096_20260513_023930.png
+[INFO] x-scale = lin
+Plot generated: result/Archer2_Output/OpenMP/resultLowest_M1to4_1to8096_20260513_023930.png
+
+===== [M5] Method=5 N=16384 Delay=1,8096 =====
+Adjusted limits: MAX_ITER=16384 (default=6656, max threads*teams=6656, max N=16384), MAX_ARRAY_SIZE=65536 (default=65536)
+========== Runtime Configuration ==========
+Methods       : 5
+Delay range   : [1, 8096]
+Array size(s) : 16384
+thread_count(s): 64
+team_count(s) : 104
+MAX_ITER      : 16384  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+NUM_SAMPLES   : 20
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  4 available devices
+Host device is 4
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                    16384
+                                           BIC intercept | lowest
+teams (scalar)                        374.809±0.422      |    400.136±0.308     
+==========================================
+Finalizing benchmark.
+Plotting M5_1to8096_20260513_023930 ...
+Matplotlib created a temporary config/cache directory at /tmp/matplotlib-5dhu8_1y because the default path (/home/d35/d35/weiyu24/.config/matplotlib) is not a writable directory; it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+[OK] saved: result/Archer2_Output/OpenMP/resultLowest_M5_1to8096_20260513_023930.png
+[INFO] x-scale = lin
+Plot generated: result/Archer2_Output/OpenMP/resultLowest_M5_1to8096_20260513_023930.png
+
+===== [M6] Method=6 N=16384 Delay=1,8096 =====
+Adjusted limits: MAX_ITER=16384 (default=6656, max threads*teams=6656, max N=16384), MAX_ARRAY_SIZE=65536 (default=65536)
+========== Runtime Configuration ==========
+Methods       : 6
+Delay range   : [1, 8096]
+Array size(s) : 16384
+thread_count(s): 64
+team_count(s) : 104
+MAX_ITER      : 16384  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+NUM_SAMPLES   : 20
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  4 available devices
+Host device is 4
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                    16384
+                                           BIC intercept | lowest
+teams distribute parallel for         303.087±1.540      |    301.316±0.159     
+==========================================
+Finalizing benchmark.
+Plotting M6_1to8096_20260513_023930 ...
+Matplotlib created a temporary config/cache directory at /tmp/matplotlib-enzj_i34 because the default path (/home/d35/d35/weiyu24/.config/matplotlib) is not a writable directory; it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+[OK] saved: result/Archer2_Output/OpenMP/resultLowest_M6_1to8096_20260513_023930.png
+[INFO] x-scale = lin
+Plot generated: result/Archer2_Output/OpenMP/resultLowest_M6_1to8096_20260513_023930.png
+
+===== [M7] Method=7 N=16384 Delay=1,8096 =====
+Adjusted limits: MAX_ITER=16384 (default=6656, max threads*teams=6656, max N=16384), MAX_ARRAY_SIZE=65536 (default=65536)
+========== Runtime Configuration ==========
+Methods       : 7
+Delay range   : [1, 8096]
+Array size(s) : 16384
+thread_count(s): 64
+team_count(s) : 104
+MAX_ITER      : 16384  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+NUM_SAMPLES   : 20
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  4 available devices
+Host device is 4
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                    16384
+                                           BIC intercept | lowest
+nowait                                239.880±8.524      |    231.081±0.238     
+==========================================
+Finalizing benchmark.
+Plotting M7_1to8096_20260513_023930 ...
+Matplotlib created a temporary config/cache directory at /tmp/matplotlib-2js8c13z because the default path (/home/d35/d35/weiyu24/.config/matplotlib) is not a writable directory; it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+[OK] saved: result/Archer2_Output/OpenMP/resultLowest_M7_1to8096_20260513_023930.png
+[INFO] x-scale = lin
+Plot generated: result/Archer2_Output/OpenMP/resultLowest_M7_1to8096_20260513_023930.png
+
+===== [M8to9] Method=8 N=1,4,16,64 Delay=1,8096 =====
+Adjusted limits: MAX_ITER=6656 (default=6656, max threads*teams=6656, max N=64), MAX_ARRAY_SIZE=65536 (default=65536)
+========== Runtime Configuration ==========
+Methods       : 8
+Delay range   : [1, 8096]
+Array size(s) : 1, 4, 16, 64
+thread_count(s): 64
+team_count(s) : 104
+MAX_ITER      : 6656  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+NUM_SAMPLES   : 20
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  4 available devices
+Host device is 4
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                        1                             4                            16                            64
+                                           BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest
+teams atomic                        12304.162±23.616     |  12260.871±25.806      2136.599±2.144      |   2180.259±1.445        616.217±2.605      |    757.585±0.242        311.157±3.603      |    393.125±0.196     
+==========================================
+Finalizing benchmark.
+Plotting M8to9_1to8096_20260513_023930 ...
+Matplotlib created a temporary config/cache directory at /tmp/matplotlib-_0yqtbn6 because the default path (/home/d35/d35/weiyu24/.config/matplotlib) is not a writable directory; it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+[OK] saved: result/Archer2_Output/OpenMP/resultLowest_M8to9_1to8096_20260513_023930.png
+[INFO] x-scale = lin
+Plot generated: result/Archer2_Output/OpenMP/resultLowest_M8to9_1to8096_20260513_023930.png
+
+===== [M11_parreps] Method=11 N=1,2,4,8,16,32,64,128 Delay=1,8096 =====
+Adjusted limits: MAX_ITER=6656 (default=6656, max threads*teams=6656, max N=128), MAX_ARRAY_SIZE=65536 (default=65536)
+========== Runtime Configuration ==========
+Methods       : 11
+Delay range   : [1, 8096]
+Array size(s) : 1, 2, 4, 8, 16, 32, 64, 128
+thread_count(s): 64
+team_count(s) : 104
+MAX_ITER      : 6656  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+NUM_SAMPLES   : 20
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  4 available devices
+Host device is 4
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                        1                             2                             4                             8                            16                            32                            64                           128
+                                           BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest
+teams + parallel inside               594.982±0.943      |    597.541±1.208        636.198±0.431      |    647.539±0.257        721.312±0.528      |    743.183±0.930        905.313±1.268      |    930.116±0.650       1287.696±1.791      |   1316.862±0.839       2065.817±2.879      |   2115.154±1.862       3635.089±7.462      |   3720.609±2.339       6774.669±11.828     |   6926.686±3.566     
+==========================================
+Finalizing benchmark.
+Plotting M11_parreps_1to8096_20260513_023930 ...
+Matplotlib created a temporary config/cache directory at /tmp/matplotlib-xo8tser7 because the default path (/home/d35/d35/weiyu24/.config/matplotlib) is not a writable directory; it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+[OK] saved: result/Archer2_Output/OpenMP/resultLowest_M11_parreps_1to8096_20260513_023930.png
+[INFO] x-scale = lin
+Plot generated: result/Archer2_Output/OpenMP/resultLowest_M11_parreps_1to8096_20260513_023930.png
+
+All benchmark groups completed.
+Results saved under result/Archer2_Output/OpenMP
