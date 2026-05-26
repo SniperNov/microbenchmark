@@ -1,0 +1,14 @@
+
+[Method=5 teams (scalar) N=16382]
+Set=0 Run=0  Lmin=1  Intercept=17.675570 us  Slope=0.010487  R2=0.99815  BIC=2.851  Lowest=15.747547 us @ delay=114
+Set=0 Run=1  Lmin=114  Intercept=18.567076 us  Slope=0.010254  R2=0.99980  BIC=-15.878  Lowest=14.996529 us @ delay=71
+Set=0 Run=2  Lmin=28  Intercept=18.069414 us  Slope=0.010275  R2=0.99952  BIC=-11.412  Lowest=15.652180 us @ delay=11
+Set=0 Run=3  Lmin=1  Intercept=17.960740 us  Slope=0.010279  R2=0.99864  BIC=-4.108  Lowest=16.450882 us @ delay=71
+Set=0 Run=4  Lmin=11  Intercept=17.954220 us  Slope=0.010403  R2=0.99963  BIC=-18.498  Lowest=14.996529 us @ delay=4
+Set=1 Run=0  Lmin=1  Intercept=18.092125 us  Slope=0.010341  R2=0.99876  BIC=-5.646  Lowest=17.297268 us @ delay=2
+Set=1 Run=1  Lmin=7  Intercept=17.545837 us  Slope=0.010404  R2=0.99902  BIC=-4.856  Lowest=15.091896 us @ delay=4
+Set=1 Run=2  Lmin=114  Intercept=18.278750 us  Slope=0.010258  R2=0.99961  BIC=-9.022  Lowest=14.948845 us @ delay=71
+Set=1 Run=3  Lmin=4  Intercept=18.063781 us  Slope=0.010346  R2=0.99956  BIC=-19.802  Lowest=17.440319 us @ delay=2
+Set=1 Run=4  Lmin=1  Intercept=17.861171 us  Slope=0.010430  R2=0.99931  BIC=-17.019  Lowest=17.154217 us @ delay=3
+Average Intercept = 18.006869 ± 0.288792 us
+Average Lowest    = 15.977621 ± 1.022857 us

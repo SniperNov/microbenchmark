@@ -1,2 +1,2 @@
-CFLAGS = -h omp -O0
-LDFLAGS = -h omp
+CFLAGS = -O0 -fopenmp -foffload=nvptx-none -fcf-protection=none -fno-stack-protector -no-pie
+LDFLAGS = -lm
