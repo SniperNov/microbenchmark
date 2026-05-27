@@ -1,0 +1,155 @@
+Running COSMA5 MI300X OpenMP benchmark groups...
+
+===== [M1to4] Method=1,2,3,4 N=1,4,16,64,256,1024,4096,16384,65536,262144,1048576,4194304,16777216 Delay=1,8096 =====
+THREADS=64 TEAMS=304
+Adjusted limits: MAX_ITER=16777216 (default=6656, max threads*teams=19456, max N=16777216), MAX_ARRAY_SIZE=16777216 (default=65536)
+========== Runtime Configuration ==========
+Methods       : 1, 2, 3, 4
+Delay range   : [1, 8096]
+Array size(s) : 1, 4, 16, 64, 256, 1024, 4096, 16384, 65536, 262144, 1048576, 4194304, 16777216
+thread_count(s): 64
+team_count(s) : 304
+MAX_ITER      : 16777216  (kernel workload)
+MAX_ARRAY_SIZE: 16777216  (mapping/memory space)
+NUM_SAMPLES   : 20
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+MAXPARREPS    : 128
+==========================================
+There are  1 available devices
+Host device is 1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                        1                             4                            16                            64                           256                          1024                          4096                         16384                         65536                        262144                       1048576                       4194304                      16777216
+                                           BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest
+map(tofrom: a)                        218.979±8.949      |    215.193±0.225        215.774±2.554      |    215.207±0.169        217.006±3.671      |    215.373±0.176        239.383±70.051     |    215.234±0.136        220.295±4.905      |    218.494±0.349        220.770±2.388      |    220.500±0.305        232.017±3.158      |    231.385±0.351        225.786±5.859      |    225.109±0.149        241.136±1.974      |    240.815±0.092        294.992±2.716      |    294.856±2.291        517.151±2.062      |    515.895±0.183       1495.635±6.192      |   1490.372±0.536       5398.654±6.451      |   5390.590±0.768     
+map(to: a)                            213.006±2.566      |    208.095±0.154        212.624±2.264      |    208.232±0.163        213.033±1.810      |    208.107±0.110        213.353±2.343      |    208.148±0.123        212.707±2.083      |    208.213±0.147        213.776±2.328      |    208.641±0.211        215.502±2.179      |    209.790±0.137        217.428±2.118      |    216.247±0.185        223.715±1.892      |    223.624±0.166        252.686±2.261      |    252.153±0.157        336.733±3.049      |    334.463±0.137        793.320±4.308      |    789.219±0.612       2622.883±19.341     |   2608.888±0.499     
+map(from: a)                          210.614±4.197      |    210.056±0.054        213.022±5.913      |    210.361±0.137        211.390±3.606      |    210.339±0.162        211.219±2.591      |    210.139±0.112        212.546±2.627      |    212.822±0.260        213.763±2.808      |    213.324±0.238        215.326±2.539      |    214.541±0.193        214.419±2.775      |    213.405±0.090        220.455±3.117      |    221.281±0.068        251.197±2.890      |    251.480±0.161        341.783±2.488      |    341.483±0.503        826.098±2.535      |    825.241±0.233       2762.974±6.114      |   2757.931±0.371     
+map(alloc: a)                         206.316±2.462      |    202.409±0.081        206.686±3.261      |    202.570±0.169        206.572±2.719      |    202.394±0.145        206.613±2.545      |    202.321±0.073        207.945±4.819      |    202.358±0.069        206.595±3.116      |    202.417±0.137        205.977±2.988      |    202.467±0.105        206.710±2.328      |    202.383±0.065        205.992±3.093      |    202.360±0.095        205.930±2.650      |    202.409±0.162        207.260±4.884      |    202.416±0.096        208.065±4.781      |    202.463±0.143        207.021±2.824      |    202.525±0.079     
+==========================================
+Finalizing benchmark.
+Plotting M1to4_1to8096_20260429_181230 ...
+/var/slurm/slurmd/job10935361/slurm_script: line 88: /cosma/home/do018/dc-tu2/microbenchmark/.venv/bin/python: No such file or directory
+
+===== [M5] Method=5 N=16384 Delay=1,8096 =====
+THREADS=64 TEAMS=304
+Adjusted limits: MAX_ITER=19456 (default=6656, max threads*teams=19456, max N=16384), MAX_ARRAY_SIZE=65536 (default=65536)
+========== Runtime Configuration ==========
+Methods       : 5
+Delay range   : [1, 8096]
+Array size(s) : 16384
+thread_count(s): 64
+team_count(s) : 304
+MAX_ITER      : 19456  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+NUM_SAMPLES   : 20
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+MAXPARREPS    : 128
+==========================================
+There are  1 available devices
+Host device is 1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                    16384
+                                           BIC intercept | lowest
+teams (scalar)                        271.000±1.126      |    273.854±2.444     
+==========================================
+Finalizing benchmark.
+Plotting M5_1to8096_20260429_181230 ...
+/var/slurm/slurmd/job10935361/slurm_script: line 88: /cosma/home/do018/dc-tu2/microbenchmark/.venv/bin/python: No such file or directory
+
+===== [M6] Method=6 N=16384 Delay=1,8096 =====
+THREADS=64 TEAMS=304
+Adjusted limits: MAX_ITER=19456 (default=6656, max threads*teams=19456, max N=16384), MAX_ARRAY_SIZE=65536 (default=65536)
+========== Runtime Configuration ==========
+Methods       : 6
+Delay range   : [1, 8096]
+Array size(s) : 16384
+thread_count(s): 64
+team_count(s) : 304
+MAX_ITER      : 19456  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+NUM_SAMPLES   : 20
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+MAXPARREPS    : 128
+==========================================
+There are  1 available devices
+Host device is 1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                    16384
+                                           BIC intercept | lowest
+teams distribute parallel for         302.172±8.247      |    298.096±3.896     
+==========================================
+Finalizing benchmark.
+Plotting M6_1to8096_20260429_181230 ...
+/var/slurm/slurmd/job10935361/slurm_script: line 88: /cosma/home/do018/dc-tu2/microbenchmark/.venv/bin/python: No such file or directory
+
+===== [M7] Method=7 N=16384 Delay=1,8096 =====
+THREADS=64 TEAMS=304
+Adjusted limits: MAX_ITER=19456 (default=6656, max threads*teams=19456, max N=16384), MAX_ARRAY_SIZE=65536 (default=65536)
+========== Runtime Configuration ==========
+Methods       : 7
+Delay range   : [1, 8096]
+Array size(s) : 16384
+thread_count(s): 64
+team_count(s) : 304
+MAX_ITER      : 19456  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+NUM_SAMPLES   : 20
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+MAXPARREPS    : 128
+==========================================
+There are  1 available devices
+Host device is 1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                    16384
+                                           BIC intercept | lowest
+nowait                                209.104±6.622      |    201.629±0.092     
+==========================================
+Finalizing benchmark.
+Plotting M7_1to8096_20260429_181230 ...
+/var/slurm/slurmd/job10935361/slurm_script: line 88: /cosma/home/do018/dc-tu2/microbenchmark/.venv/bin/python: No such file or directory
+
+===== [M8to9] Method=8,9 N=1,2,4,8,16,32,64 Delay=1,8096 =====
+THREADS=64 TEAMS=304
+Adjusted limits: MAX_ITER=19456 (default=6656, max threads*teams=19456, max N=64), MAX_ARRAY_SIZE=65536 (default=65536)
+========== Runtime Configuration ==========
+Methods       : 8, 9
+Delay range   : [1, 8096]
+Array size(s) : 1, 2, 4, 8, 16, 32, 64
+thread_count(s): 64
+team_count(s) : 304
+MAX_ITER      : 19456  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+NUM_SAMPLES   : 20
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+MAXPARREPS    : 128
+==========================================
+There are  1 available devices
+Host device is 1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                        1                             2                             4                             8                            16                            32                            64
+                                           BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest
+teams atomic                          351.412±7.945      |    456.595±0.888        294.185±2.184      |    360.237±0.557        277.464±2.117      |    312.719±0.808        273.454±3.225      |    303.301±1.516        275.183±4.382      |    287.900±1.659        275.366±8.706      |    283.153±1.010        273.622±4.831      |    277.972±0.715     
