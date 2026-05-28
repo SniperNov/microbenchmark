@@ -1,0 +1,211 @@
+Running MI300A OpenMP benchmark groups...
+
+===== [M0_M10] Method=0,10 N=16384 Delay=1,8096 =====
+THREADS=64 TEAMS=228
+Adjusted limits: MAX_ITER=16384 (default=6656, max threads*teams=14592, max N=16384), MAX_ARRAY_SIZE=65536 (default=65536)
+========== Runtime Configuration ==========
+Methods       : 0, 10
+Delay range   : [1, 8096]
+Array size(s) : 16384
+thread_count(s): 64
+team_count(s) : 228
+MAX_ITER      : 16384  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+NUM_SAMPLES   : 20
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  1 available devices
+Host device is 1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                    16384
+                                           BIC intercept | lowest
+pure delay kernel                      20.983±6.120      |     25.463±2.091     
+teams parallel                        210.714±16.653     |    189.782±6.752     
+==========================================
+Finalizing benchmark.
+Plotting M0_M10_1to8096_20260526_043811 ...
+/var/spool/slurm-llnl/job10647/slurm_script: line 103: : command not found
+
+===== [M1to4] Method=1,2,3,4 N=1,4,16,64,256,1024,4096,16384,65536,262144,1048576,4194304,16777216 Delay=1,8096 =====
+THREADS=64 TEAMS=228
+Adjusted limits: MAX_ITER=16777216 (default=6656, max threads*teams=14592, max N=16777216), MAX_ARRAY_SIZE=16777216 (default=65536)
+========== Runtime Configuration ==========
+Methods       : 1, 2, 3, 4
+Delay range   : [1, 8096]
+Array size(s) : 1, 4, 16, 64, 256, 1024, 4096, 16384, 65536, 262144, 1048576, 4194304, 16777216
+thread_count(s): 64
+team_count(s) : 228
+MAX_ITER      : 16777216  (kernel workload)
+MAX_ARRAY_SIZE: 16777216  (mapping/memory space)
+NUM_SAMPLES   : 20
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  1 available devices
+Host device is 1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                        1                             4                            16                            64                           256                          1024                          4096                         16384                         65536                        262144                       1048576                       4194304                      16777216
+                                           BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest
+map(tofrom: a)                         47.068±67.864     |     39.245±3.488         36.931±5.793      |     39.564±3.643         35.266±6.446      |     38.581±3.220         52.868±57.048     |     38.780±3.705         49.328±10.524     |     52.400±8.012         51.216±8.696      |     54.603±3.876         57.915±9.606      |     60.252±4.165         51.594±8.843      |     53.830±8.270         63.685±8.982      |     67.269±8.292         78.868±8.464      |     79.676±9.566         87.632±8.809      |     86.912±8.566        114.949±9.448      |    113.800±8.742        250.515±9.738      |    248.872±5.880     
+map(to: a)                             25.418±6.425      |     33.096±3.041         26.495±6.047      |     32.918±2.667         27.959±6.840      |     33.114±2.943         27.696±6.481      |     33.151±3.769         26.695±7.415      |     34.132±3.558         25.943±5.727      |     34.139±3.415         29.081±6.076      |     35.784±3.144         40.058±7.523      |     42.678±6.013         45.600±7.996      |     49.355±5.585         49.619±8.333      |     53.817±5.911         54.345±7.410      |     57.245±6.340         68.125±8.076      |     70.730±6.427        140.887±8.767      |    142.022±6.029     
+map(from: a)                           27.015±7.206      |     34.376±3.710         28.806±6.677      |     35.377±3.856         30.476±6.802      |     34.596±3.594         29.840±6.231      |     34.562±2.989         38.975±5.716      |     41.736±0.779         35.158±5.475      |     38.176±1.828         45.142±7.290      |     47.123±0.491         39.175±7.704      |     42.059±5.765         44.921±7.754      |     48.236±5.389         49.850±7.837      |     53.308±5.905         52.875±6.953      |     55.908±6.072         67.399±7.094      |     69.445±5.522        135.229±8.030      |    136.811±6.072     
+map(alloc: a)                          20.954±7.067      |     28.324±3.143         21.715±6.500      |     28.934±2.986         22.079±5.985      |     28.727±3.208         22.588±6.492      |     28.641±3.287         22.405±7.165      |     28.721±3.146         21.457±7.269      |     28.697±3.085         20.905±5.838      |     28.540±2.977         22.715±6.219      |     28.522±3.002         23.238±5.824      |     28.616±3.333         22.773±7.412      |     28.851±3.056         21.499±6.928      |     28.094±3.108         23.195±6.272      |     28.647±3.366         23.626±5.931      |     28.727±3.188     
+==========================================
+Finalizing benchmark.
+Plotting M1to4_1to8096_20260526_043811 ...
+/var/spool/slurm-llnl/job10647/slurm_script: line 103: : command not found
+
+===== [M5] Method=5 N=16384 Delay=1,8096 =====
+THREADS=64 TEAMS=228
+Adjusted limits: MAX_ITER=16384 (default=6656, max threads*teams=14592, max N=16384), MAX_ARRAY_SIZE=65536 (default=65536)
+========== Runtime Configuration ==========
+Methods       : 5
+Delay range   : [1, 8096]
+Array size(s) : 16384
+thread_count(s): 64
+team_count(s) : 228
+MAX_ITER      : 16384  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+NUM_SAMPLES   : 20
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  1 available devices
+Host device is 1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                    16384
+                                           BIC intercept | lowest
+teams (scalar)                        111.152±27.185     |     96.685±4.526     
+==========================================
+Finalizing benchmark.
+Plotting M5_1to8096_20260526_043811 ...
+/var/spool/slurm-llnl/job10647/slurm_script: line 103: : command not found
+
+===== [M6] Method=6 N=16384 Delay=1,8096 =====
+THREADS=64 TEAMS=228
+Adjusted limits: MAX_ITER=16384 (default=6656, max threads*teams=14592, max N=16384), MAX_ARRAY_SIZE=65536 (default=65536)
+========== Runtime Configuration ==========
+Methods       : 6
+Delay range   : [1, 8096]
+Array size(s) : 16384
+thread_count(s): 64
+team_count(s) : 228
+MAX_ITER      : 16384  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+NUM_SAMPLES   : 20
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  1 available devices
+Host device is 1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                    16384
+                                           BIC intercept | lowest
+teams distribute parallel for         222.500±33.808     |    177.137±21.103    
+==========================================
+Finalizing benchmark.
+Plotting M6_1to8096_20260526_043811 ...
+/var/spool/slurm-llnl/job10647/slurm_script: line 103: : command not found
+
+===== [M7] Method=7 N=16384 Delay=1,8096 =====
+THREADS=64 TEAMS=228
+Adjusted limits: MAX_ITER=16384 (default=6656, max threads*teams=14592, max N=16384), MAX_ARRAY_SIZE=65536 (default=65536)
+========== Runtime Configuration ==========
+Methods       : 7
+Delay range   : [1, 8096]
+Array size(s) : 16384
+thread_count(s): 64
+team_count(s) : 228
+MAX_ITER      : 16384  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+NUM_SAMPLES   : 20
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  1 available devices
+Host device is 1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                    16384
+                                           BIC intercept | lowest
+nowait                                 25.634±26.302     |     26.062±2.218     
+==========================================
+Finalizing benchmark.
+Plotting M7_1to8096_20260526_043811 ...
+/var/spool/slurm-llnl/job10647/slurm_script: line 103: : command not found
+
+===== [M8] Method=8 N=1,2,4,8,16,32,64 Delay=1,8096 =====
+THREADS=64 TEAMS=228
+Adjusted limits: MAX_ITER=14592 (default=6656, max threads*teams=14592, max N=64), MAX_ARRAY_SIZE=65536 (default=65536)
+========== Runtime Configuration ==========
+Methods       : 8
+Delay range   : [1, 8096]
+Array size(s) : 1, 2, 4, 8, 16, 32, 64
+thread_count(s): 64
+team_count(s) : 228
+MAX_ITER      : 14592  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+NUM_SAMPLES   : 20
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  1 available devices
+Host device is 1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                        1                             2                             4                             8                            16                            32                            64
+                                           BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest
+teams atomic                          151.292±8.050      |    225.230±2.349        116.393±19.067     |    158.987±3.858        100.818±21.754     |    127.064±3.310        103.903±5.305      |    121.239±2.537        108.042±12.661     |    108.302±2.405        107.509±4.770      |    103.601±2.798        106.715±3.569      |    103.569±4.251     
+==========================================
+Finalizing benchmark.
+Plotting M8_1to8096_20260526_043811 ...
+/var/spool/slurm-llnl/job10647/slurm_script: line 103: : command not found
+
+===== [M11_parreps] Method=11 N=1,2,4,8,16,32,64,128 Delay=1,8096 =====
+THREADS=64 TEAMS=228
+Adjusted limits: MAX_ITER=14592 (default=6656, max threads*teams=14592, max N=128), MAX_ARRAY_SIZE=65536 (default=65536)
+========== Runtime Configuration ==========
+Methods       : 11
+Delay range   : [1, 8096]
+Array size(s) : 1, 2, 4, 8, 16, 32, 64, 128
+thread_count(s): 64
+team_count(s) : 228
+MAX_ITER      : 14592  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+NUM_SAMPLES   : 20
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  1 available devices
+Host device is 1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                        1                             2                             4                             8                            16                            32                            64                           128
+                                           BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest
+teams + parallel inside               295.342±72.374     |    230.302±11.538       284.203±16.613     |    260.626±13.360       359.475±33.579     |    320.809±16.111       447.756±5.846      |    422.332±39.458       619.424±16.931     |    640.461±86.801    
