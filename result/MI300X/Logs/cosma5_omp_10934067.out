@@ -1,4 +1,0 @@
-rm -f microbenchmark microbenchmark_distribution *.o *.out overhead_distribution.txt
-/opt/rocm/llvm/bin/clang -O0 -fopenmp -fopenmp-targets=amdgcn-amd-amdhsa -Xopenmp-target=amdgcn-amd-amdhsa -march=gfx942 -DPRINT_DISTRIBUTION -o microbenchmark_distribution src/microbenchmark.c src/common.c -fopenmp -lm
-Running COSMA5 MI300X OpenMP benchmark groups...
-/var/slurm/slurmd/job10934067/slurm_script: line 55: @REM: command not found
