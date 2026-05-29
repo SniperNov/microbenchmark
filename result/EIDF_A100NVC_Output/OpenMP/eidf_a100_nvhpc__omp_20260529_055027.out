@@ -1,0 +1,83 @@
+Running EIDF A100 NVHPC OpenMP benchmark groups...
+SET UP A100 configuration NVIDIA A100 NVHPC=====
+THREADS=32
+TEAMS=132
+Fri May 29 05:50:27 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 570.124.06             Driver Version: 570.124.06     CUDA Version: 12.8     |
+|-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA A100-SXM4-40GB          Off |   00000000:07:00.0 Off |                    0 |
+| N/A   26C    P0             53W /  350W |       1MiB /  40960MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+                                                                                         
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+=============================================
+Compiling...
+
+===== [M8] Method=8 N=1,2,4,8,16,32,64 Delay=1,8096 =====
+Adjusted limits: MAX_ITER=6656 (default=6656, max threads*teams=4224, max N=64), MAX_ARRAY_SIZE=65536 (default=65536)
+========== Runtime Configuration ==========
+Methods       : 8
+Delay range   : [1, 8096]
+Array size(s) : 1, 2, 4, 8, 16, 32, 64
+thread_count(s): 32
+team_count(s) : 132
+MAX_ITER      : 6656  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+NUM_SAMPLES   : 20
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  1 available devices
+Host device is -1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                        1                             2                             4                             8                            16                            32                            64
+                                           BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest
+teams atomic                           26.945±1.700      |     26.419±1.751         18.745±0.192      |     18.134±0.124         16.061±0.089      |     15.669±0.185         13.565±0.125      |     13.061±0.114         13.475±0.097      |     13.151±0.196         13.615±0.190      |     13.089±0.137         12.277±0.134      |     11.762±0.156     
+==========================================
+Finalizing benchmark.
+
+===== [M9] Method=9 N=1,2,4,8,16,32,64 Delay=1,8096 =====
+Adjusted limits: MAX_ITER=6656 (default=6656, max threads*teams=4224, max N=64), MAX_ARRAY_SIZE=65536 (default=65536)
+========== Runtime Configuration ==========
+Methods       : 9
+Delay range   : [1, 8096]
+Array size(s) : 1, 2, 4, 8, 16, 32, 64
+thread_count(s): 32
+team_count(s) : 132
+MAX_ITER      : 6656  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+NUM_SAMPLES   : 20
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  1 available devices
+Host device is -1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                        1                             2                             4                             8                            16                            32                            64
+                                           BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest
+teams reduction                        28.272±1.380      |     26.376±0.222         29.323±1.224      |     27.330±0.294         30.017±0.361      |     28.704±0.328         33.269±0.527      |     31.984±0.347         39.743±0.371      |     38.694±0.259         53.699±0.322      |     53.006±0.145         76.863±0.194      |     76.294±0.342     
+==========================================
+Finalizing benchmark.
+
+All EIDF A100 NVHPC benchmark groups completed.
+Results saved under result/EIDF_A100NVC_Output/OpenMP
