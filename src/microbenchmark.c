@@ -45,8 +45,8 @@
 // Number of runs in each set
 #define BENCHMARK_RUNS 5
 
-// Total number of benchmark methods, indexed 0..9
-#define NUM_METHODS 10
+// Total number of benchmark methods, indexed 0..11
+#define NUM_METHODS 12
 
 // Maximum number of values allowed in size/config arrays
 #define NUM_SIZES 16
@@ -70,11 +70,13 @@ const char *method_names[] = {
     "copyin(a[0:N])",
     "copyout(a[0:N])",
     "create(a[0:N])",
-    "parallel loop present",
-    "parallel loop gang present",
-    "parallel loop async present + wait",
-    "parallel loop gang vector present",
-    "parallel loop num_gangs + vector_length present"};
+    "parallel (scalar)",
+    "parallel loop",
+    "async parallel loop + wait",
+    "parallel loop atomic",
+    "parallel loop reduction",
+    "parallel num_gangs + vector_length",
+    "parallel loop gang vector num_gangs + vector_length"};
 
 // Delay sample values used in the benchmark
 double delays[NUM_SAMPLES];
@@ -276,7 +278,7 @@ int main(int argc, char **argv)
     printf("Methods       : ");
     if (num_methods == 0)
     {
-        printf("0-9 (all)\n");
+        printf("0-11 (all)\n");
     }
     else
     {
@@ -526,8 +528,49 @@ void device_target(int method, int set, int run, double *a, int N,
                 end = get_time_usec();
             }
 
-            // Methods 0 and 5-9: use data region, then measure launch/execution behaviour
-            else if (method == 0 || (method >= 5 && method <= 9))
+            // Method 8: use a temporary array to isolate atomic-update cost
+            else if (method == 8)
+            {
+                double *tmp = (double *)malloc(N * sizeof(double));
+                if (!tmp)
+                {
+                    fprintf(stderr, "Allocation failed for tmp[N=%d]\n", N);
+                    exit(EXIT_FAILURE);
+                }
+
+                for (int i = 0; i < N; ++i)
+                    tmp[i] = 0.0;
+
+#pragma acc data copy(a[0:g_max_array_size], tmp[0:N])
+                {
+                    start = get_time_usec();
+
+                    for (int rep = 0; rep < INNERREPS; rep++)
+                    {
+#pragma acc parallel loop present(a[0:g_max_array_size], tmp[0:N])
+                        for (int i = 0; i < g_max_iter; ++i)
+                        {
+                            delay_kernel((int)delay, &a[i]);
+#pragma acc atomic update
+                            tmp[i % N] += 1.0;
+                        }
+
+                        a[0] += 1.0;
+                        if (a[0] < 0.0)
+                        {
+                            printf("%f\n", a[0]);
+                            fflush(stdout);
+                        }
+                    }
+
+                    end = get_time_usec();
+                }
+
+                free(tmp);
+            }
+
+            // Methods 0 and 5-7, 9-11: use data region, then measure launch/execution behaviour
+            else if (method == 0 || (method >= 5 && method <= 11))
             {
 #pragma acc data copy(a[0:g_max_array_size])
                 {
@@ -545,34 +588,50 @@ void device_target(int method, int set, int run, double *a, int N,
                             break;
 
                         case 5:
-#pragma acc parallel loop present(a[0:g_max_array_size])
-                            for (int i = 0; i < g_max_iter; ++i)
-                                delay_kernel((int)delay, &a[i % N]);
+#pragma acc parallel present(a[0:g_max_array_size])
+                            {
+                                delay_kernel((int)delay, a);
+                            }
                             break;
 
                         case 6:
-#pragma acc parallel loop gang present(a[0:g_max_array_size])
+#pragma acc parallel loop present(a[0:g_max_array_size])
                             for (int i = 0; i < g_max_iter; ++i)
-                                delay_kernel((int)delay, &a[i % N]);
+                                delay_kernel((int)delay, &a[i]);
                             break;
 
                         case 7:
 #pragma acc parallel loop async(1) present(a[0:g_max_array_size])
                             for (int i = 0; i < g_max_iter; ++i)
-                                delay_kernel((int)delay, &a[i % N]);
+                                delay_kernel((int)delay, &a[i]);
 #pragma acc wait(1)
                             break;
 
-                        case 8:
-#pragma acc parallel loop gang vector present(a[0:g_max_array_size])
+                        case 9:
+                        {
+                            double reduction_sum = 0.0;
+#pragma acc parallel loop reduction(+ : reduction_sum) present(a[0:g_max_array_size])
                             for (int i = 0; i < g_max_iter; ++i)
-                                delay_kernel((int)delay, &a[i % N]);
+                            {
+                                delay_kernel((int)delay, &a[i]);
+                                reduction_sum += 1.0;
+                            }
+                            if (reduction_sum < 0.0)
+                                printf("%f\n", reduction_sum);
+                            break;
+                        }
+
+                        case 10:
+#pragma acc parallel num_gangs(gang_count) vector_length(vector_length) present(a[0:g_max_array_size])
+                            {
+                                delay_kernel((int)delay, a);
+                            }
                             break;
 
-                        case 9:
-#pragma acc parallel loop num_gangs(gang_count) vector_length(vector_length) present(a[0:g_max_array_size])
+                        case 11:
+#pragma acc parallel loop gang vector num_gangs(gang_count) vector_length(vector_length) present(a[0:g_max_array_size])
                             for (int i = 0; i < g_max_iter; ++i)
-                                delay_kernel((int)delay, &a[i % N]);
+                                delay_kernel((int)delay, &a[i]);
                             break;
                         }
 

@@ -8,7 +8,7 @@ TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 OUTFILE="$OUTDIR/${JOB_NAME}_${TIMESTAMP}.out"
 
 echo "Running OpenACC microbenchmark..." | tee "$OUTFILE"
-./microbenchmark_distribution Delay=1,8096 Method=9 N=16384 gang_count=64 vector_length=128 | tee -a "$OUTFILE"
+./microbenchmark_distribution Delay=1,8096 Method=11 N=16384 gang_count=64 vector_length=128 | tee -a "$OUTFILE"
 
 echo "Run completed. Output saved to $OUTFILE"
 mv overhead_distribution.txt "$OUTDIR/overhead_$TIMESTAMP.txt"

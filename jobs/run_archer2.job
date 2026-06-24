@@ -24,7 +24,7 @@ OUTFILE="$OUTDIR/openacc_${TIMESTAMP}.out"
 make clean
 make distribution
 
-srun ./microbenchmark_distribution Delay=1,8096 Method=0,1,2,3,4,5,6,7,8,9 N=16384 gang_count=64 vector_length=128 | tee "$OUTFILE"
+srun ./microbenchmark_distribution Delay=1,8096 Method=0,1,2,3,4,5,6,7,8,9,10,11 N=16384 gang_count=64 vector_length=128 | tee "$OUTFILE"
 
 mv overhead_distribution.txt "$OUTDIR/overhead_$TIMESTAMP.txt"
 mv raw_times.csv "$OUTDIR/distribution_$TIMESTAMP.csv"

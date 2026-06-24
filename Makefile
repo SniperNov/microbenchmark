@@ -21,11 +21,11 @@ distribution: $(SRC)
 # Run all benchmark methods and log output
 run_all: $(BIN)
 	mkdir -p Output
-	./$(BIN) Method=0,1,2,3,4,5,6,7,8,9 N=16384 gang_count=64 vector_length=128 > Output/full_run_$(shell date +%Y%m%d_%H%M%S).out 2>&1
+	./$(BIN) Method=0,1,2,3,4,5,6,7,8,9,10,11 N=16384 gang_count=64 vector_length=128 > Output/full_run_$(shell date +%Y%m%d_%H%M%S).out 2>&1
 
 # Run overhead logging plot benchmarks
 run_plot: $(BIN_DISTRIBUTION)
-	./$(BIN_DISTRIBUTION) Method=5,6,8,9 N=16384 gang_count=64 vector_length=128
+	./$(BIN_DISTRIBUTION) Method=5,6,8,9,10,11 N=16384 gang_count=64 vector_length=128
 
 # Help message
 help:
