@@ -32,13 +32,8 @@ echo "=============================================" | tee -a "$OUTFILE"
 
 echo "Compiling..." | tee -a "$OUTFILE"
 
-cc -O0 -fopenmp -foffload=nvptx-none \
-  -fcf-protection=none \
-  -fno-stack-protector \
-  -no-pie \
-  -DPRINT_DISTRIBUTION \
-  -o microbenchmark_distribution src/microbenchmark.c src/common.c \
-  -lm
+make clean
+make openmp-distribution OPENMP_DEFS=Makefile.defs.gcc
 
 run_group () {
     local TAG="$1"
@@ -54,7 +49,7 @@ run_group () {
 
     rm -f overhead_distribution.txt raw_times.csv
 
-    OMP_TARGET_OFFLOAD=mandatory ./microbenchmark_distribution \
+    OMP_TARGET_OFFLOAD=mandatory ./bin/microbenchmark API=openmp \
         Method="$METHODS" \
         N="$NLIST" \
         Delay="$DELAY_RANGE" \

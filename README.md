@@ -14,8 +14,8 @@ Future backends, such as CUDA, can be added behind the same command-line entry p
 ## Layout
 
 ```text
-src/openmp/      OpenMP backend implementation
-src/openacc/     OpenACC backend implementation
+src/core/        Shared CLI, measurement loop, CSV output, and fitting logic
+src/backends/    API-specific launch/mapping implementations
 bin/             Unified command-line dispatcher
 build/           Compiled backend binaries
 jobs/            Example job scripts
@@ -36,6 +36,13 @@ Build only one backend:
 ```bash
 make openmp
 make openacc
+```
+
+Build with detailed distribution logging:
+
+```bash
+make openmp-distribution
+make openacc-distribution
 ```
 
 Override compiler definitions when needed:
@@ -69,7 +76,7 @@ export MICROBENCHMARK_API=openacc
 
 ## Measurement Logic
 
-The OpenMP and OpenACC backends use the same benchmark workflow:
+The OpenMP and OpenACC backends use one shared benchmark driver:
 
 ```text
 log-spaced delay samples
@@ -80,11 +87,13 @@ BIC-selected linear intercept
 lowest observed average timing
 ```
 
+Backend code only implements API-specific launch/mapping methods and default configuration names. This keeps OpenMP, OpenACC, and future CUDA tests aligned by construction.
+
 The backend-specific launch controls are:
 
 ```text
 OpenMP  : thread_count, team_count
-OpenACC : vector_length, gang_count
+OpenACC : gang_count, vector_length
 ```
 
 Conceptual mapping:

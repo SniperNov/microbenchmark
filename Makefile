@@ -13,10 +13,11 @@ BIN_DIR := bin
 OPENMP_BIN := $(BUILD_DIR)/microbenchmark_openmp
 OPENACC_BIN := $(BUILD_DIR)/microbenchmark_openacc
 
-OPENMP_SRC := src/openmp/microbenchmark.c src/openmp/common.c
-OPENACC_SRC := src/openacc/microbenchmark.c src/openacc/common.c
+CORE_SRC := src/core/driver.c
+OPENMP_SRC := $(CORE_SRC) src/backends/openmp/backend.c
+OPENACC_SRC := $(CORE_SRC) src/backends/openacc/backend.c
 
-.PHONY: all openmp openacc wrapper clean help
+.PHONY: all openmp openacc openmp-distribution openacc-distribution distribution wrapper clean help
 
 all: openmp openacc wrapper
 
@@ -24,10 +25,19 @@ openmp: $(OPENMP_BIN) wrapper
 
 openacc: $(OPENACC_BIN) wrapper
 
+openmp-distribution: EXTRA_CFLAGS += -DPRINT_DISTRIBUTION
+openmp-distribution: openmp
+
+openacc-distribution: EXTRA_CFLAGS += -DPRINT_DISTRIBUTION
+openacc-distribution: openacc
+
+distribution: openmp-distribution
+
 $(OPENMP_BIN): $(OPENMP_SRC) $(OPENMP_DEFS)
 	@mkdir -p $(BUILD_DIR)
 	$(MAKE) -f Makefile.backend \
 		DEFS=$(OPENMP_DEFS) \
+		EXTRA_CFLAGS="$(EXTRA_CFLAGS)" \
 		BIN=$@ \
 		SRC="$(OPENMP_SRC)"
 
@@ -35,6 +45,7 @@ $(OPENACC_BIN): $(OPENACC_SRC) $(OPENACC_DEFS)
 	@mkdir -p $(BUILD_DIR)
 	$(MAKE) -f Makefile.backend \
 		DEFS=$(OPENACC_DEFS) \
+		EXTRA_CFLAGS="$(EXTRA_CFLAGS)" \
 		BIN=$@ \
 		SRC="$(OPENACC_SRC)"
 
@@ -51,6 +62,8 @@ help:
 	@echo "Build targets:"
 	@echo "  make openmp                 Build OpenMP backend"
 	@echo "  make openacc                Build OpenACC backend"
+	@echo "  make openmp-distribution    Build OpenMP backend with PRINT_DISTRIBUTION"
+	@echo "  make openacc-distribution   Build OpenACC backend with PRINT_DISTRIBUTION"
 	@echo "  make all                    Build all backends"
 	@echo "  make clean                  Remove build outputs"
 	@echo ""

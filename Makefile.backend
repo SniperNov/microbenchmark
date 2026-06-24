@@ -1,4 +1,4 @@
 include $(DEFS)
 
 $(BIN): $(SRC)
-	$(CC) $(CFLAGS) -o $@ $(SRC) $(LDFLAGS) $(LIBS)
+	$(CC) $(CFLAGS) $(EXTRA_CFLAGS) -I src/core -o $@ $(SRC) $(LDFLAGS) $(LIBS)

@@ -22,7 +22,7 @@ export PATH="$HOME/bin:$PATH"
 module purge
 
 make clean
-make distribution
+make openmp-distribution
 
 OUTDIR="result/COSMA5_Output/OpenMP"
 mkdir -p "$OUTDIR"
@@ -65,7 +65,7 @@ run_group () {
     echo "===== [$TAG] Method=$METHODS N=$NLIST Delay=$DELAY_RANGE =====" | tee -a "$OUTFILE"
     echo "THREADS=$THREADS TEAMS=$TEAMS" | tee -a "$OUTFILE"
 
-    srun ./microbenchmark_distribution \
+    srun ./bin/microbenchmark API=openmp \
         Method="$METHODS" \
         N="$NLIST" \
         Delay="$DELAY_RANGE" \

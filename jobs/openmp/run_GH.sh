@@ -4,7 +4,7 @@
 set -e
 
 make clean
-make distribution
+make openmp-distribution
 
 OUTDIR="result/GH_Output/OpenMP"
 mkdir -p "$OUTDIR"
@@ -49,7 +49,7 @@ run_group () {
     echo "" | tee -a "$OUTFILE"
     echo "===== [$TAG] Method=$METHODS N=$NLIST Delay=$DELAY_RANGE =====" | tee -a "$OUTFILE"
 
-    ./microbenchmark_distribution \
+    ./bin/microbenchmark API=openmp \
         Method=$METHODS \
         N=$NLIST \
         Delay=$DELAY_RANGE \

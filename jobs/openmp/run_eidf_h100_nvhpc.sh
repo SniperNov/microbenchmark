@@ -33,7 +33,7 @@ echo "=============================================" | tee -a "$OUTFILE"
 echo "Compiling..." | tee -a "$OUTFILE"
 
 make clean
-make distribution
+make openmp-distribution
 
 run_group () {
     local TAG="$1"
@@ -49,7 +49,7 @@ run_group () {
 
     rm -f overhead_distribution.txt raw_times.csv
 
-    OMP_TARGET_OFFLOAD=mandatory ./microbenchmark_distribution \
+    OMP_TARGET_OFFLOAD=mandatory ./bin/microbenchmark API=openmp \
         Method="$METHODS" \
         N="$NLIST" \
         Delay="$DELAY_RANGE" \
