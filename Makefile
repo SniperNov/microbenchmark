@@ -1,46 +1,63 @@
-include Makefile.defs.nvc
+# Unified microbenchmark suite.
+#
+# Build one or more API backends, then run through:
+#   ./bin/microbenchmark API=openmp ...
+#   ./bin/microbenchmark API=openacc ...
 
-SRC     := src/microbenchmark.c src/common.c
-OBJ     := $(SRC:.c=.o)
+OPENMP_DEFS ?= Makefile.defs.nvc
+OPENACC_DEFS ?= Makefile.defs.openacc.nvc
 
-BIN     := microbenchmark
-BIN_DISTRIBUTION := microbenchmark_distribution
+BUILD_DIR := build
+BIN_DIR := bin
 
-# -------------------------- Build Targets -------------------------------
+OPENMP_BIN := $(BUILD_DIR)/microbenchmark_openmp
+OPENACC_BIN := $(BUILD_DIR)/microbenchmark_openacc
 
-all: $(BIN)
+OPENMP_SRC := src/openmp/microbenchmark.c src/openmp/common.c
+OPENACC_SRC := src/openacc/microbenchmark.c src/openacc/common.c
 
-# Default build (no overhead logging)
-$(BIN): $(SRC)
-	$(CC) $(CFLAGS) -o $@ $(SRC) $(LDFLAGS) $(LIBS)
+.PHONY: all openmp openacc wrapper clean help
 
-# Distribution build with PRINT_DISTRIBUTION enabled
-distribution: $(SRC)
-	$(CC) $(CFLAGS) -DPRINT_DISTRIBUTION -o $(BIN_DISTRIBUTION) $(SRC) $(LDFLAGS) $(LIBS)
+all: openmp openacc wrapper
 
-# Run all benchmark methods and log output
-run_all: $(BIN)
-	mkdir -p Output
-	./$(BIN) Method=1,2,3,4,5,6,7,8,9,10,11 N=16384 thread_count=32 team_count=4 > Output/full_run_$(shell date +%Y%m%d_%H%M%S).out 2>&1
+openmp: $(OPENMP_BIN) wrapper
 
-# Run overhead logging plot benchmarks
-run_plot: $(BIN_DISTRIBUTION)
-	./$(BIN_DISTRIBUTION) Method=5,6,10,11 N=16384 thread_count=32 team_count=4
+openacc: $(OPENACC_BIN) wrapper
 
-# Help message
-help:
-	@echo "Usage: make <target>"
-	@echo ""
-	@echo "Targets:"
-	@echo "  all             - Build main microbenchmark (default)"
-	@echo "  distribution    - Build with overhead distribution logging enabled"
-	@echo "  run_all         - Run all methods and save output to timestamped file"
-	@echo "  run_plot        - Run selected methods with distribution output"
-	@echo "  clean           - Remove binaries and logs"
-	@echo "  help            - Show this help message"
+$(OPENMP_BIN): $(OPENMP_SRC) $(OPENMP_DEFS)
+	@mkdir -p $(BUILD_DIR)
+	$(MAKE) -f Makefile.backend \
+		DEFS=$(OPENMP_DEFS) \
+		BIN=$@ \
+		SRC="$(OPENMP_SRC)"
 
-# Clean all
+$(OPENACC_BIN): $(OPENACC_SRC) $(OPENACC_DEFS)
+	@mkdir -p $(BUILD_DIR)
+	$(MAKE) -f Makefile.backend \
+		DEFS=$(OPENACC_DEFS) \
+		BIN=$@ \
+		SRC="$(OPENACC_SRC)"
+
+wrapper:
+	@chmod +x $(BIN_DIR)/microbenchmark
+
 clean:
-	rm -f $(BIN) $(BIN_DISTRIBUTION) *.o *.out overhead_distribution.txt
+	rm -rf $(BUILD_DIR)
+	rm -f raw_times.csv overhead_distribution.txt
 
-.PHONY: all distribution run_all run_plot clean help
+help:
+	@echo "Unified microbenchmark suite"
+	@echo ""
+	@echo "Build targets:"
+	@echo "  make openmp                 Build OpenMP backend"
+	@echo "  make openacc                Build OpenACC backend"
+	@echo "  make all                    Build all backends"
+	@echo "  make clean                  Remove build outputs"
+	@echo ""
+	@echo "Override compiler definitions:"
+	@echo "  make openmp OPENMP_DEFS=Makefile.defs.gcc"
+	@echo "  make openacc OPENACC_DEFS=Makefile.defs.openacc.nvc"
+	@echo ""
+	@echo "Run:"
+	@echo "  ./bin/microbenchmark API=openmp Method=0,1 N=16384 thread_count=32 team_count=4"
+	@echo "  ./bin/microbenchmark API=openacc Method=0,1 N=16384 gang_count=64 vector_length=128"

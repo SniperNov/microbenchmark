@@ -1,0 +1,50 @@
+#!/bin/sh
+
+set -eu
+
+api=""
+args=""
+
+for arg in "$@"; do
+    case "$arg" in
+        API=*|api=*)
+            api=${arg#*=}
+            ;;
+        *)
+            if [ -z "$args" ]; then
+                args=$arg
+            else
+                args="$args $arg"
+            fi
+            ;;
+    esac
+done
+
+if [ -z "$api" ]; then
+    api=${MICROBENCHMARK_API:-openmp}
+fi
+
+case "$api" in
+    openmp|OpenMP|omp)
+        backend="./build/microbenchmark_openmp"
+        ;;
+    openacc|OpenACC|acc)
+        backend="./build/microbenchmark_openacc"
+        ;;
+    *)
+        echo "Unknown API '$api'. Supported APIs: openmp, openacc" >&2
+        exit 2
+        ;;
+esac
+
+if [ ! -x "$backend" ]; then
+    echo "Backend '$backend' is not built." >&2
+    echo "Run one of:" >&2
+    echo "  make openmp" >&2
+    echo "  make openacc" >&2
+    echo "  make all" >&2
+    exit 1
+fi
+
+# shellcheck disable=SC2086
+exec "$backend" $args

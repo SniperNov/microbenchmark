@@ -1,5 +1,9 @@
 # build
-microbenchmark
+/microbenchmark
+/microbenchmark_openmp
+/microbenchmark_openacc
+/microbenchmark_distribution
+build/
 *.o
 
 # outputs
@@ -24,7 +28,6 @@ slurm-*
 .vscode/
 .idea/
 .plotenv/
-microbenchmark_distribution
 
 benchmark_cli_toolchain.py
 config.yaml

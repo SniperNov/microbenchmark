@@ -1,0 +1,4 @@
+include $(DEFS)
+
+$(BIN): $(SRC)
+	$(CC) $(CFLAGS) -o $@ $(SRC) $(LDFLAGS) $(LIBS)

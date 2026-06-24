@@ -1,0 +1,29 @@
+#!/bin/bash
+#SBATCH --account=d35-wt
+#SBATCH --job-name=microbenchmark_openacc
+#SBATCH --time=2:00:00
+#SBATCH --nodes=1
+#SBATCH --partition=gpu
+#SBATCH --qos=gpu-exc
+#SBATCH --gres=gpu:1
+#SBATCH --exclusive
+#SBATCH --output=result/Archer2_Output/Logs/%x_%j.out
+
+module load PrgEnv-amd/8.4.0
+module load rocm
+module load craype-accel-amd-gfx90a
+module load craype-x86-milan
+
+mkdir -p result/Archer2_Output/Logs
+OUTDIR="result/Archer2_Output/OpenACC"
+mkdir -p "$OUTDIR"
+
+TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+OUTFILE="$OUTDIR/openacc_${TIMESTAMP}.out"
+
+make openacc OPENACC_DEFS=Makefile.defs.openacc.cray
+
+srun ./bin/microbenchmark API=openacc Delay=1,8096 Method=0,1,2,3,4,5,6,7,8,9,10,11 N=16384 gang_count=64 vector_length=128 | tee "$OUTFILE"
+
+mv overhead_distribution.txt "$OUTDIR/overhead_$TIMESTAMP.txt"
+mv raw_times.csv "$OUTDIR/distribution_$TIMESTAMP.csv"
