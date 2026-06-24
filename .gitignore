@@ -1,0 +1,29 @@
+# build
+microbenchmark
+microbenchmark_distribution
+*.o
+
+# outputs
+result/*
+!result/.gitkeep
+!result/README.md
+
+# raw results / logs
+*.csv
+*.txt
+*.log
+*.out
+slurm-*
+
+# figures
+*.png
+*.pdf
+*.svg
+
+# editor/system
+.DS_Store
+.vscode/
+.idea/
+.plotenv/
+.venv/
+software/

@@ -1,102 +1,88 @@
-### **📜 README: OpenMP Offloading Microbenchmark**  
+# OpenACC Offloading Microbenchmark
 
-# **OpenMP Offloading Microbenchmark**  
-This repository contains a **microbenchmark suite** designed to evaluate OpenMP offloading performance across different architectures and compilers. The benchmark measures **offloading overhead, execution time scaling, and OpenMP target device behavior**.
+This repository contains the OpenACC version of the microbenchmark suite. It follows the same measurement workflow and output structure as the `MBopenMP` branch while using OpenACC directives in the device kernels.
 
----
+## Repository Contents
 
-## **📂 Repository Contents**  
+| Path | Description |
+|------|-------------|
+| `src/microbenchmark.c` | Main benchmark driver and OpenACC benchmark methods. |
+| `src/common.c` | Common timing and delay-kernel utilities. |
+| `src/common.h` | Shared declarations for the benchmark. |
+| `jobs/` | Example job/run scripts. |
+| `plots/plot_raw_times.py` | Helper script for plotting raw timing and fitted overhead data. |
+| `result/` | Empty output directory placeholder. |
+| `Makefile` | Build system for default and distribution builds. |
+| `Makefile.defs*` | Compiler-specific build definitions. |
 
-| **File** | **Description** |
-|----------|---------------|
-| `microbenchmark.c` | Main benchmark source code, implementing multiple OpenMP offloading strategies. |
-| `common.c` | Common utility functions used by the benchmark. |
-| `common.h` | Header file defining shared functions and data structures. |
-| `Makefile` | Build system to compile the benchmark with different compilers. |
-| `Makefile.defs.gcc` | Compiler-specific definitions for GCC-based compilation. |
+## Build
 
----
+Select the appropriate `Makefile.defs*` file for the target machine/compiler, then build:
 
-## **📥 Installation & Compilation**  
-
-### **1️⃣ Clone the Repository**
-To obtain the latest version of the benchmark:
 ```bash
-git clone https://github.com/yourusername/microbenchmark.git
-cd microbenchmark
+make
 ```
 
-### **2️⃣ Load Required Modules (Depending on Target Machine)**
-#### **🔹 For example using cray for AMD MI210 on ARCHER2**
+To build the distribution version with detailed overhead logging enabled:
+
 ```bash
-module load PrgEnv-cray
-module load rocm
+make distribution
 ```
 
-#### **🔹 For GCC on Cirrus**
+## Run
+
+Run all OpenACC benchmark methods with the default configuration:
+
 ```bash
-module load gcc/12.3.0
+./microbenchmark
 ```
 
-### **3️⃣ Compile the Benchmark**
-- **For default execution offload to GPU**:
-  ```bash
-  make
-  ```
-- **For OpenMP offloading overhead distribution analysis**:
-  ```bash
-  make microbenchmark_distribution
-  ```
----
+Select methods and benchmark parameters using key-value arguments:
 
-## **🛠 Running the Benchmark**
-### **1️⃣ Default Execution**
 ```bash
-srun microbenchmark
+./microbenchmark Method=0,1,2,3,4,5,6,7,8,9 N=16384 gang_count=64 vector_length=128
 ```
-Runs all OpenMP offloading strategies and outputs a **performance table**.
 
-### **2️⃣ Specifying Methods and Data Size**
-```bash
-srun ./microbenchmark 1 2 3 4 1024
+Optional parameters:
+
+```text
+Method=0,1,...,9
+Delay=min,max
+N=size[,size...]
+gang_count=count[,count...]
+vector_length=length[,length...]
+MAX_ITER=value
+MAX_ARRAY_SIZE=value
 ```
-Runs **methods 1, 2, 3, and 4** with **array size 1024**.
 
-### **3️⃣ Running All Benchmarks and Saving Output**
-```bash
-make run_all
+## Outputs
+
+The benchmark writes:
+
+```text
+raw_times.csv
+overhead_distribution.txt
 ```
-Runs all methods and saves results to `results.txt`.
 
-### **4️⃣ Generating Offloading Overhead Distribution Plot**
-```bash
-make run_plot
+The table printed to stdout reports both:
+
+```text
+BIC intercept | lowest
 ```
-- Executes `microbenchmark_distribution` with **distribution printing enabled**.
-- Saves **overhead values** to `overhead_distribution.txt`.
-  
----
 
-## **📝 Most Recent Modifications**
-### **1️⃣ Changing Compiler Options**
-Modify `Makefile` to switch different offloading method
-- **5:** `target parallel`
-- **9:** `nowait`
+This matches the current `MBopenMP` branch measurement logic.
 
-### **2️⃣ Modifying OpenMP Methods**
-Edit `microbenchmark.c`:
-- Modify `device_target()` to add/remove offloading techniques.
-- Adjust OpenMP `#pragma` directives for different memory mappings.
+## Methods
 
-### **3️⃣ Adding New Features**
-1. Implement a new warmup method in `microbenchmark.c`.
-2. Add new compilation options in `Makefile`.
-3. Submit a pull request via GitHub.
-
----
-
-## **📧 Support & Contact**
-For issues or improvements, please **open an issue** on GitHub or contact:  
-📧 **tuweiyu7749@gmail.com**  
-
-🚀 **Happy benchmarking!** 😊
+| Method | OpenACC form |
+|--------|--------------|
+| 0 | Pure delay kernel in an OpenACC data region |
+| 1 | `copy(a[0:N])` |
+| 2 | `copyin(a[0:N])` |
+| 3 | `copyout(a[0:N])` |
+| 4 | `create(a[0:N])` |
+| 5 | `parallel loop present` |
+| 6 | `parallel loop gang present` |
+| 7 | `parallel loop async present + wait` |
+| 8 | `parallel loop gang vector present` |
+| 9 | `parallel loop num_gangs + vector_length present` |

@@ -1,22 +1,23 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <sys/time.h>
 #include "common.h"
 
 void init(int argc, char **argv)
 {
+    (void)argc;
+    (void)argv;
     printf("Initializing benchmark runtime environment...\n");
 }
 
 #pragma acc routine seq
-void array_delay(int delaylength, double *array)
+void delay_kernel(int delaylength, double *array)
 {
     array[0] = 1.0;
     for (int i = 0; i < delaylength; i++)
     {
         array[0] += i;
     }
-    if (array[0] < 0)
+    if (array[0] < 0.0)
         printf("%f\n", array[0]);
 }
 

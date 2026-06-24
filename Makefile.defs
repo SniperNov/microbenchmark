@@ -1,6 +1,8 @@
-# Compiler and Flags for Cray Programming Environments
+# Compiler and flags for OpenACC builds.
+#
+# On Cray systems, `cc` selects the active programming environment.
+# Outside Cray, default to NVIDIA HPC SDK's nvc.
 
-# Detect PE Environment
 PE_ENV ?= $(shell echo $$PE_ENV)
 
 ifeq ($(PE_ENV),CRAY)
@@ -18,3 +20,5 @@ else
 endif
 
 LDFLAGS =
+CPPFLAGS = -E -O0
+LIBS = -lm

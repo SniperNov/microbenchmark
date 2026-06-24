@@ -1,62 +1,46 @@
 include Makefile.defs
 
-TARGET = microbenchmark
-SRCS = microbenchmark.c common.c
-OBJS = $(SRCS:.c=.o)
+SRC     := src/microbenchmark.c src/common.c
+OBJ     := $(SRC:.c=.o)
 
-# Default value for N (array size)
-N ?= 1024
+BIN     := microbenchmark
+BIN_DISTRIBUTION := microbenchmark_distribution
 
-all: $(TARGET)
+# -------------------------- Build Targets -------------------------------
 
-$(TARGET): $(OBJS)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
+all: $(BIN)
 
-# Compile with offloading overhead distribution enabled
-microbenchmark_dist: microbenchmark.c common.o
-	$(CC) $(CFLAGS) -DPRINT_DISTRIBUTION -o microbenchmark_dist microbenchmark.c common.o -lm $(LDFLAGS)
+# Default build (no overhead logging)
+$(BIN): $(SRC)
+	$(CC) $(CFLAGS) -o $@ $(SRC) $(LDFLAGS) $(LIBS)
 
-# Run and generate plot
-run_plot: microbenchmark_dist
-	./microbenchmark_dist
-	$(PYTHON) plot_overhead.py
+# Distribution build with PRINT_DISTRIBUTION enabled
+distribution: $(SRC)
+	$(CC) $(CFLAGS) -DPRINT_DISTRIBUTION -o $(BIN_DISTRIBUTION) $(SRC) $(LDFLAGS) $(LIBS)
 
-%.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+# Run all benchmark methods and log output
+run_all: $(BIN)
+	mkdir -p Output
+	./$(BIN) Method=0,1,2,3,4,5,6,7,8,9 N=16384 gang_count=64 vector_length=128 > Output/full_run_$(shell date +%Y%m%d_%H%M%S).out 2>&1
 
+# Run overhead logging plot benchmarks
+run_plot: $(BIN_DISTRIBUTION)
+	./$(BIN_DISTRIBUTION) Method=5,6,8,9 N=16384 gang_count=64 vector_length=128
+
+# Help message
 help:
-	@echo "Available make commands:"
-	@echo "  make           - Compile microbenchmark"
-	@echo "  make clean     - Remove compiled files"
-	@echo "  make help      - Show this help message"
-	@echo "  make run_all   - Run all benchmarks and save results"
-	@echo "  make microbenchmark_distribution - Compile with PRINT_DISTRIBUTION enabled"
-	@echo "  make run_plot  - Run microbenchmark and generate a plot"
+	@echo "Usage: make <target>"
 	@echo ""
-	@echo "Usage: ./microbenchmark [method ...] [N]"
-	@echo "  No arguments - Runs all benchmarks with default N=$(N) and outputs a table"
-	@echo "  1 2 3       - Runs only the specified methods and outputs results in a table"
-	@echo ""
-	@echo "Available Methods:"
-	@echo "  1: #pragma acc parallel loop copy(a[0:N])"
-	@echo "  2: #pragma acc parallel loop copyin(a[0:N])"
-	@echo "  3: #pragma acc parallel loop copyout(a[0:N])"
-	@echo "  4: #pragma acc parallel loop create(a[0:N])"
-	@echo "  5: #pragma acc parallel loop"
-	@echo "  6: #pragma acc parallel loop gang copy(a[0:N])"
-	@echo "  7: #pragma acc parallel loop gang vector copy(a[0:N])"
-	@echo "  8: #pragma acc parallel loop num_gangs(64) copy(a[0:N])"
-	@echo "  9: #pragma acc parallel loop async(1) copy(a[0:N]) + wait(1)"
-	@echo " 10: #pragma acc parallel loop num_gangs(8) vector_length(256) copy(a[0:N])"
-	@echo ""
-	@echo "Example:"
-	@echo "  ./microbenchmark 1 2 4 12 $(N)"
-	@echo "    (Runs methods 1, 2, 4, 12 with array size N=$(N))"
+	@echo "Targets:"
+	@echo "  all             - Build main microbenchmark (default)"
+	@echo "  distribution    - Build with overhead distribution logging enabled"
+	@echo "  run_all         - Run all methods and save output to timestamped file"
+	@echo "  run_plot        - Run selected methods with distribution output"
+	@echo "  clean           - Remove binaries and logs"
+	@echo "  help            - Show this help message"
 
-run_all:
-	@echo "Running all benchmarks with N=$(N) and generating results table..."
-	@./microbenchmark 1 2 3 4 5 6 7 8 9 10 11 12 $(N) > results.txt
-	@cat results.txt
-
+# Clean all
 clean:
-	rm -f $(TARGET) microbenchmark_dist *.o results.txt overhead_distribution.txt overhead_distribution.png
+	rm -f $(BIN) $(BIN_DISTRIBUTION) src/*.o *.o *.out overhead_distribution.txt raw_times.csv
+
+.PHONY: all distribution run_all run_plot clean help
