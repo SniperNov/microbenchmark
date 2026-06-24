@@ -89,6 +89,30 @@ lowest observed average timing
 
 Backend code only implements API-specific launch/mapping methods and default configuration names. This keeps OpenMP, OpenACC, and future CUDA tests aligned by construction.
 
+## Execution Flow
+
+When you run:
+
+```bash
+./bin/microbenchmark API=openmp Method=1,2 N=16384 thread_count=32 team_count=4
+```
+
+the suite follows this path:
+
+```text
+bin/microbenchmark
+  -> chooses build/microbenchmark_openmp
+  -> shared driver parses Method/N/Delay/config values
+  -> shared driver generates delay samples
+  -> backend checks that the target device is available
+  -> shared driver warms up the selected method
+  -> shared driver loops over set/run/delay/outer repetition
+  -> backend runs the API-specific target/parallel construct
+  -> shared driver writes raw_times.csv
+  -> shared driver fits BIC intercept and finds lowest timing
+  -> stdout prints "BIC intercept | lowest"
+```
+
 The backend-specific launch controls are:
 
 ```text

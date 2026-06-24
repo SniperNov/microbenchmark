@@ -1,4 +1,3 @@
-#include <ctype.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -31,6 +30,7 @@ static int g_max_delaylength = MAX_DELAYLENGTH;
 static double delays[NUM_SAMPLES];
 static double execution_times[BENCHMARK_SETS][BENCHMARK_RUNS][NUM_SAMPLES][OUTERREPS];
 
+// Command-line options use key=value form, for example Method=1,2 or N=16384.
 static int key_matches(const char *arg, const char *key)
 {
     size_t n = strlen(key);
@@ -87,6 +87,8 @@ static void parse_delay_bounds(char *value)
 
 static void generate_delays(void)
 {
+    // Delay values are log-spaced so the benchmark covers short launch costs
+    // and longer kernel work in the same run.
     double log_min = log2((double)g_min_delaylength);
     double log_max = log2((double)g_max_delaylength);
 
@@ -107,6 +109,8 @@ static void generate_delays(void)
 
 static void shuffle_indices(int *perm, int n, unsigned int seed)
 {
+    // Randomize delay order deterministically. This reduces monotonic drift
+    // effects while keeping runs reproducible.
     if (!seed)
         seed = 12345u;
 
@@ -126,6 +130,8 @@ static void shuffle_indices(int *perm, int n, unsigned int seed)
 static void run_target(int method, int set, int run, double *a, int N,
                        const backend_config_t *config)
 {
+    // One run visits every sampled delay. The backend measures one delay point;
+    // the shared driver stores raw data and keeps the output format identical.
     int perm[NUM_SAMPLES];
     unsigned int seed = 12345u + 97u * (unsigned int)set + 1009u * (unsigned int)(run + 1);
     shuffle_indices(perm, NUM_SAMPLES, seed);
@@ -165,6 +171,8 @@ static void run_target(int method, int set, int run, double *a, int N,
 
 static void warmup_cache(int method, int N, const backend_config_t *config)
 {
+    // Warmup is not recorded. It gives the runtime and target device a chance
+    // to initialize before the measured runs.
     double *a = (double *)malloc((size_t)g_max_array_size * sizeof(double));
     if (!a)
     {
@@ -185,6 +193,8 @@ static void compute_offloading_time(double *intercept_avg, double *intercept_err
                                     double *min_avg, double *min_err,
                                     int method_id, const char *method_name, int N)
 {
+    // For each set/run, fit y = intercept + slope * delay. The BIC search
+    // chooses which tail of the delay curve is most linear.
     FILE *file = fopen(OUTPUT_FILE, "a");
     if (!file)
     {
@@ -319,6 +329,10 @@ static void compute_offloading_time(double *intercept_avg, double *intercept_err
 
 int main(int argc, char **argv)
 {
+    // High-level flow:
+    // 1. Parse shared CLI options and backend-specific launch controls.
+    // 2. Generate delay samples and check the selected device.
+    // 3. For each method/config/N, warm up, measure, write CSV, and summarize.
     int methods[MAX_METHODS], Ns[NUM_SIZES], control_as[NUM_SIZES], control_bs[NUM_SIZES];
     int num_methods = 0, num_Ns = 1, num_control_as = 1, num_control_bs = 1;
     backend_config_t defaults;

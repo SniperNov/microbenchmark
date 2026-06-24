@@ -17,6 +17,7 @@ static const char *method_names[] = {
     "teams parallel",
     "teams + parallel inside"};
 
+// This delay body must be available inside OpenMP target regions.
 #pragma omp declare target
 static void delay_kernel(int delaylength, double *array)
 {
@@ -86,6 +87,8 @@ double backend_run_method(int method, double *a, int N, int delay,
 
     if (method >= 1 && method <= 4)
     {
+        // Methods 1-4 measure the cost of entering a target region together
+        // with a specific OpenMP map clause.
         start = omp_get_wtime();
         for (int irep = 0; irep < inner_reps; irep++)
         {
@@ -120,6 +123,8 @@ double backend_run_method(int method, double *a, int N, int delay,
     }
     else if (method == 0 || (method >= 5 && method <= 11))
     {
+        // Methods 0 and 5-11 keep data mapped outside the timed inner loop.
+        // This focuses the timing on launch/teams/parallel behavior.
         double *tmp = (double *)malloc((size_t)N * sizeof(double));
         if (!tmp)
         {
@@ -138,11 +143,13 @@ double backend_run_method(int method, double *a, int N, int delay,
                 switch (method)
                 {
                 case 0:
+                    // Baseline target launch with only the delay kernel.
 #pragma omp target
                     delay_kernel(delay, a);
                     break;
 
                 case 5:
+                    // One delay per team, controlled by team_count.
 #pragma omp target teams num_teams(team_count)
                     {
                         delay_kernel(delay, &a[omp_get_team_num() * max_array_size / team_count]);
@@ -150,18 +157,21 @@ double backend_run_method(int method, double *a, int N, int delay,
                     break;
 
                 case 6:
+                    // Main worksharing case: teams distribute parallel for.
 #pragma omp target teams distribute parallel for num_teams(team_count) thread_limit(thread_count)
                     for (int i = 0; i < max_iter; i++)
                         delay_kernel(delay, &a[i]);
                     break;
 
                 case 7:
+                    // Asynchronous target launch, followed by taskwait.
 #pragma omp target nowait
                     delay_kernel(delay, a);
 #pragma omp taskwait
                     break;
 
                 case 8:
+                    // Atomic update path, using tmp to isolate the update target.
 #pragma omp target teams distribute parallel for
                     for (int i = 0; i < max_iter; i++)
                     {
@@ -172,6 +182,8 @@ double backend_run_method(int method, double *a, int N, int delay,
                     break;
 
                 case 9:
+                    // Reduction path. Compiler families disagree on syntax,
+                    // so keep the backend-specific variants here.
 #if defined(__NVCOMPILER)
 #pragma omp target teams distribute parallel for reduction(+ : tmp[0 : N])
                     for (int i = 0; i < max_iter; i++)
@@ -201,6 +213,7 @@ double backend_run_method(int method, double *a, int N, int delay,
 #endif
 
                 case 10:
+                    // Explicit teams + inner parallel region.
 #pragma omp target teams num_teams(team_count) thread_limit(thread_count)
                     {
                         int team_id = omp_get_team_num();
@@ -214,6 +227,7 @@ double backend_run_method(int method, double *a, int N, int delay,
 
                 case 11:
                 {
+                    // Repeated inner parallel region; N controls repetition count.
                     int parreps = N;
 #pragma omp target teams num_teams(team_count) thread_limit(thread_count)
                     {

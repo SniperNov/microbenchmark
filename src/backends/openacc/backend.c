@@ -18,6 +18,7 @@ static const char *method_names[] = {
     "parallel num_gangs + vector_length",
     "parallel loop gang vector num_gangs + vector_length"};
 
+// This delay body must be available inside OpenACC compute regions.
 #pragma acc routine seq
 static void delay_kernel(int delaylength, double *array)
 {
@@ -86,6 +87,8 @@ double backend_run_method(int method, double *a, int N, int delay,
 
     if (method >= 1 && method <= 4)
     {
+        // Methods 1-4 measure a compute region together with one OpenACC
+        // data movement clause.
         start = get_time_usec();
         for (int irep = 0; irep < inner_reps; irep++)
         {
@@ -124,6 +127,7 @@ double backend_run_method(int method, double *a, int N, int delay,
     }
     else if (method == 8)
     {
+        // Atomic update uses a separate tmp array, matching the OpenMP intent.
         double *tmp = (double *)malloc((size_t)N * sizeof(double));
         if (!tmp)
         {
@@ -163,6 +167,8 @@ double backend_run_method(int method, double *a, int N, int delay,
     }
     else if (method == 0 || (method >= 5 && method <= 11))
     {
+        // Methods 0 and 5-11 keep data present while timing launch/parallel
+        // shape differences such as async, reduction, gangs, and vectors.
 #pragma acc data copy(a[0:max_array_size])
         {
             start = get_time_usec();
@@ -172,6 +178,7 @@ double backend_run_method(int method, double *a, int N, int delay,
                 switch (method)
                 {
                 case 0:
+                    // Baseline OpenACC parallel launch with only the delay kernel.
 #pragma acc parallel present(a[0:max_array_size])
                     {
                         delay_kernel(delay, a);
@@ -179,6 +186,7 @@ double backend_run_method(int method, double *a, int N, int delay,
                     break;
 
                 case 5:
+                    // Scalar parallel launch, analogous to OpenMP teams(scalar).
 #pragma acc parallel present(a[0:max_array_size])
                     {
                         delay_kernel(delay, a);
@@ -186,12 +194,14 @@ double backend_run_method(int method, double *a, int N, int delay,
                     break;
 
                 case 6:
+                    // Default parallel loop.
 #pragma acc parallel loop present(a[0:max_array_size])
                     for (int i = 0; i < max_iter; ++i)
                         delay_kernel(delay, &a[i]);
                     break;
 
                 case 7:
+                    // Async launch plus explicit wait.
 #pragma acc parallel loop async(1) present(a[0:max_array_size])
                     for (int i = 0; i < max_iter; ++i)
                         delay_kernel(delay, &a[i]);
@@ -200,6 +210,7 @@ double backend_run_method(int method, double *a, int N, int delay,
 
                 case 9:
                 {
+                    // Reduction path using an OpenACC scalar reduction.
                     double reduction_sum = 0.0;
 #pragma acc parallel loop reduction(+ : reduction_sum) present(a[0:max_array_size])
                     for (int i = 0; i < max_iter; ++i)
@@ -213,6 +224,7 @@ double backend_run_method(int method, double *a, int N, int delay,
                 }
 
                 case 10:
+                    // Explicitly control gang and vector dimensions.
 #pragma acc parallel num_gangs(gang_count) vector_length(vector_length) present(a[0:max_array_size])
                     {
                         delay_kernel(delay, a);
@@ -220,6 +232,7 @@ double backend_run_method(int method, double *a, int N, int delay,
                     break;
 
                 case 11:
+                    // Controlled gang/vector worksharing loop.
 #pragma acc parallel loop gang vector num_gangs(gang_count) vector_length(vector_length) present(a[0:max_array_size])
                     for (int i = 0; i < max_iter; ++i)
                         delay_kernel(delay, &a[i]);
