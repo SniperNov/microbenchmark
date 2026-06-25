@@ -11,8 +11,8 @@ void delay_kernel(int delaylength, double *array);
 void compute_offloading_time(double *intercept_avg, double *intercept_err,
                              double *min_avg, double *min_err,
                              int method_id, const char *method_name, int N);
-void warmup_cache(int method, int N, int gang_count, int vector_length);
+void warmup_cache(int method, int N, int gang_count, int worker_count);
 void device_target(int method, int set, int run, double *a, int N,
-                   int gang_count, int vector_length);
+                   int gang_count, int worker_count);
 
 #endif

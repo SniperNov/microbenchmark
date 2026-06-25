@@ -40,7 +40,7 @@ Run all OpenACC benchmark methods with the default configuration:
 Select methods and benchmark parameters using key-value arguments:
 
 ```bash
-./microbenchmark Method=0,1,2,3,4,5,6,7,8,9,10,11 N=16384 gang_count=64 vector_length=128
+./microbenchmark Method=0,1,2,3,4,5,6,7,8,9,10,11 N=16384 gang_count=64 worker_count=128
 ```
 
 Optional parameters:
@@ -50,7 +50,7 @@ Method=0,1,...,11
 Delay=min,max
 N=size[,size...]
 gang_count=count[,count...]
-vector_length=length[,length...]
+worker_count=count[,count...]
 MAX_ITER=value
 MAX_ARRAY_SIZE=value
 ```
@@ -78,14 +78,14 @@ The OpenACC branch follows the same benchmark idea as `MBopenMP`, but the launch
 
 ```text
 MBopenMP team_count     -> MBopenACC gang_count
-MBopenMP thread_count   -> MBopenACC vector_length
+MBopenMP thread_count   -> MBopenACC worker_count
 ```
 
 So the OpenACC controlled-launch methods use:
 
 ```c
 num_gangs(gang_count)
-vector_length(vector_length)
+num_workers(worker_count)
 ```
 
 ## Methods
@@ -102,5 +102,5 @@ vector_length(vector_length)
 | 7 | `parallel loop async present + wait` |
 | 8 | `parallel loop present` with atomic update |
 | 9 | `parallel loop present` with reduction |
-| 10 | `parallel num_gangs(gang_count) vector_length(vector_length)` scalar launch |
-| 11 | `parallel loop gang vector num_gangs(gang_count) vector_length(vector_length)` |
+| 10 | `parallel num_gangs(gang_count) num_workers(worker_count)` with a worker loop |
+| 11 | `parallel num_gangs(gang_count) num_workers(worker_count)` with repeated worker loops |

@@ -63,7 +63,7 @@ def load_distribution_csv(path: str) -> pd.DataFrame:
     Expected final columns:
       method_id, method_name, N, config_a, config_b, set, run, delaylength, orep, exec_time_us
     The input header may name config columns either thread_count/team_count
-    or gang_count/vector_length.
+    or gang_count/worker_count.
     """
     rows = []
     with open(path, "r", encoding="utf-8", errors="ignore") as f:
@@ -203,7 +203,7 @@ def plot(dist: pd.DataFrame, ovh: pd.DataFrame, out_png: str, scale: str, delay_
     N = int(dist["N"].iloc[0])
     method_name = str(dist["method_name"].iloc[0])
     config_columns = [
-        c for c in ("thread_count", "team_count", "gang_count", "vector_length")
+        c for c in ("thread_count", "team_count", "gang_count", "worker_count")
         if c in dist.columns
     ]
     if len(config_columns) >= 2:

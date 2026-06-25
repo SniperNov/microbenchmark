@@ -75,8 +75,8 @@ const char *method_names[] = {
     "async parallel loop + wait",
     "parallel loop atomic",
     "parallel loop reduction",
-    "parallel num_gangs + vector_length",
-    "parallel loop gang vector num_gangs + vector_length"};
+    "parallel num_gangs + num_workers",
+    "parallel worker loop num_gangs + num_workers"};
 
 // Delay sample values used in the benchmark
 double delays[NUM_SAMPLES];
@@ -92,19 +92,19 @@ int main(int argc, char **argv)
     // Number of selected methods from command line
     int num_methods = 0;
 
-    // Arrays for user-selected N, gang_count, vector_length, and methods
-    int Ns[NUM_SIZES], gang_counts[NUM_SIZES], vector_lengths[NUM_SIZES], methods[NUM_METHODS];
+    // Arrays for user-selected N, gang_count, worker_count, and methods
+    int Ns[NUM_SIZES], gang_counts[NUM_SIZES], worker_counts[NUM_SIZES], methods[NUM_METHODS];
 
     // Actual number of values stored in the arrays above
-    int num_Ns = 0, num_gang_configs = 0, num_vector_configs = 0;
+    int num_Ns = 0, num_gang_configs = 0, num_worker_configs = 0;
 
     // Default values
     Ns[0] = N_DEF;
     num_Ns = 1;
     gang_counts[0] = 64;
     num_gang_configs = 1;
-    vector_lengths[0] = 128;
-    num_vector_configs = 1;
+    worker_counts[0] = 128;
+    num_worker_configs = 1;
 
     // Parse command-line arguments
     for (int i = 1; i < argc; ++i)
@@ -189,14 +189,14 @@ int main(int argc, char **argv)
             }
         }
 
-        // Parse vector_length=
-        else if (strncasecmp(argv[i], "vector_length=", 14) == 0)
+        // Parse worker_count=
+        else if (strncasecmp(argv[i], "worker_count=", 13) == 0)
         {
-            num_vector_configs = 0;
-            char *token = strtok(argv[i] + 14, ",");
-            while (token != NULL && num_vector_configs < NUM_SIZES)
+            num_worker_configs = 0;
+            char *token = strtok(argv[i] + 13, ",");
+            while (token != NULL && num_worker_configs < NUM_SIZES)
             {
-                vector_lengths[num_vector_configs++] = atoi(token);
+                worker_counts[num_worker_configs++] = atoi(token);
                 token = strtok(NULL, ",");
             }
         }
@@ -226,13 +226,13 @@ int main(int argc, char **argv)
             maxN = Ns[ni];
     }
 
-    // Largest gang_count * vector_length across all configurations
+    // Largest gang_count * worker_count across all configurations
     int max_prod = 0;
     for (int g = 0; g < num_gang_configs; ++g)
     {
-        for (int v = 0; v < num_vector_configs; ++v)
+        for (int w = 0; w < num_worker_configs; ++w)
         {
-            int prod = gang_counts[g] * vector_lengths[v];
+            int prod = gang_counts[g] * worker_counts[w];
             if (prod > max_prod)
                 max_prod = prod;
         }
@@ -256,7 +256,7 @@ int main(int argc, char **argv)
     if (g_max_array_size < required_array_size)
         g_max_array_size = required_array_size;
 
-    printf("Adjusted limits: MAX_ITER=%d (default=%d, max gangs*vectors=%d, max N=%d), "
+    printf("Adjusted limits: MAX_ITER=%d (default=%d, max gangs*workers=%d, max N=%d), "
            "MAX_ARRAY_SIZE=%d (default=%d)\n",
            g_max_iter, MAX_ITER_DEF, max_prod, maxN,
            g_max_array_size, MAX_ARRAY_SIZE_DEF);
@@ -296,9 +296,9 @@ int main(int argc, char **argv)
     for (int i = 0; i < num_gang_configs; ++i)
         printf("%d%s", gang_counts[i], (i < num_gang_configs - 1) ? ", " : "\n");
 
-    printf("vector_length(s): ");
-    for (int i = 0; i < num_vector_configs; ++i)
-        printf("%d%s", vector_lengths[i], (i < num_vector_configs - 1) ? ", " : "\n");
+    printf("worker_count(s): ");
+    for (int i = 0; i < num_worker_configs; ++i)
+        printf("%d%s", worker_counts[i], (i < num_worker_configs - 1) ? ", " : "\n");
 
     printf("MAX_ITER      : %d  (kernel workload)\n", g_max_iter);
     printf("MAX_ARRAY_SIZE: %d  (mapping/memory space)\n", g_max_array_size);
@@ -329,7 +329,7 @@ int main(int argc, char **argv)
     FILE *raw = fopen(RAW_OUTPUT_FILE, "w");
     if (raw)
     {
-        fprintf(raw, "method_id,method_name,N,gang_count,vector_length,set,run,delaylength,outerreps,exec_time_us\n");
+        fprintf(raw, "method_id,method_name,N,gang_count,worker_count,set,run,delaylength,outerreps,exec_time_us\n");
         fclose(raw);
     }
     else
@@ -370,7 +370,7 @@ int main(int argc, char **argv)
 
         for (int g = 0; g < num_gang_configs; ++g)
         {
-            for (int v = 0; v < num_vector_configs; ++v)
+            for (int w = 0; w < num_worker_configs; ++w)
             {
                 for (int nidx = 0; nidx < num_Ns; ++nidx)
                 {
@@ -388,12 +388,12 @@ int main(int argc, char **argv)
                         a[i] = 0.0;
 
                     // Warm up runtime / device before real measurement
-                    warmup_cache(m, N, gang_counts[g], vector_lengths[v]);
+                    warmup_cache(m, N, gang_counts[g], worker_counts[w]);
 
                     for (int set = 0; set < BENCHMARK_SETS; ++set)
                     {
                         for (int run = 0; run < BENCHMARK_RUNS; ++run)
-                            device_target(m, set, run, a, N, gang_counts[g], vector_lengths[v]);
+                            device_target(m, set, run, a, N, gang_counts[g], worker_counts[w]);
                     }
 
                     // Final averaged results for this method / N
@@ -444,9 +444,9 @@ static void shuffle_indices_local(int *perm, int n, unsigned int seed)
     }
 }
 
-// Run one benchmark method for a given set/run/N/gang/vector configuration
+// Run one benchmark method for a given set/run/N/gang/worker configuration
 void device_target(int method, int set, int run, double *a, int N,
-                   int gang_count, int vector_length)
+                   int gang_count, int worker_count)
 {
     // Generate log-scale sampled delaylengths once
     double log_min = log2((double)g_min_delaylength);
@@ -495,27 +495,23 @@ void device_target(int method, int set, int run, double *a, int N,
                     switch (method)
                     {
                     case 1:
-#pragma acc parallel loop copy(a[0:N])
-                        for (int i = 0; i < g_max_iter; ++i)
-                            delay_kernel((int)delay, &a[i % N]);
+#pragma acc serial copy(a[0:N])
+                        delay_kernel((int)delay, a);
                         break;
 
                     case 2:
-#pragma acc parallel loop copyin(a[0:N])
-                        for (int i = 0; i < g_max_iter; ++i)
-                            delay_kernel((int)delay, &a[i % N]);
+#pragma acc serial copyin(a[0:N])
+                        delay_kernel((int)delay, a);
                         break;
 
                     case 3:
-#pragma acc parallel loop copyout(a[0:N])
-                        for (int i = 0; i < g_max_iter; ++i)
-                            delay_kernel((int)delay, &a[i % N]);
+#pragma acc serial copyout(a[0:N])
+                        delay_kernel((int)delay, a);
                         break;
 
                     case 4:
-#pragma acc parallel loop create(a[0:N])
-                        for (int i = 0; i < g_max_iter; ++i)
-                            delay_kernel((int)delay, &a[i % N]);
+#pragma acc serial create(a[0:N])
+                        delay_kernel((int)delay, a);
                         break;
                     }
 
@@ -528,51 +524,19 @@ void device_target(int method, int set, int run, double *a, int N,
                 end = get_time_usec();
             }
 
-            // Method 8: use a temporary array to isolate atomic-update cost
-            else if (method == 8)
+            // Methods 0 and 5-11: allocate data once, then time kernel launches.
+            else if (method == 0 || (method >= 5 && method <= 11))
             {
-                double *tmp = (double *)malloc(N * sizeof(double));
+                double *tmp = (double *)malloc((size_t)N * sizeof(double));
                 if (!tmp)
                 {
                     fprintf(stderr, "Allocation failed for tmp[N=%d]\n", N);
                     exit(EXIT_FAILURE);
                 }
-
                 for (int i = 0; i < N; ++i)
                     tmp[i] = 0.0;
 
 #pragma acc data copy(a[0:g_max_array_size], tmp[0:N])
-                {
-                    start = get_time_usec();
-
-                    for (int rep = 0; rep < INNERREPS; rep++)
-                    {
-#pragma acc parallel loop present(a[0:g_max_array_size], tmp[0:N])
-                        for (int i = 0; i < g_max_iter; ++i)
-                        {
-                            delay_kernel((int)delay, &a[i]);
-#pragma acc atomic update
-                            tmp[i % N] += 1.0;
-                        }
-
-                        a[0] += 1.0;
-                        if (a[0] < 0.0)
-                        {
-                            printf("%f\n", a[0]);
-                            fflush(stdout);
-                        }
-                    }
-
-                    end = get_time_usec();
-                }
-
-                free(tmp);
-            }
-
-            // Methods 0 and 5-7, 9-11: use data region, then measure launch/execution behaviour
-            else if (method == 0 || (method >= 5 && method <= 11))
-            {
-#pragma acc data copy(a[0:g_max_array_size])
                 {
                     start = get_time_usec();
 
@@ -607,10 +571,20 @@ void device_target(int method, int set, int run, double *a, int N,
 #pragma acc wait(1)
                             break;
 
+                        case 8:
+#pragma acc parallel loop present(a[0:g_max_array_size], tmp[0:N])
+                            for (int i = 0; i < g_max_iter; ++i)
+                            {
+                                delay_kernel((int)delay, &a[i]);
+#pragma acc atomic update
+                                tmp[i % N] += 1.0;
+                            }
+                            break;
+
                         case 9:
                         {
                             double reduction_sum = 0.0;
-#pragma acc parallel loop reduction(+ : reduction_sum) present(a[0:g_max_array_size])
+#pragma acc parallel loop reduction(+ : reduction_sum) present(a[0:N])
                             for (int i = 0; i < g_max_iter; ++i)
                             {
                                 delay_kernel((int)delay, &a[i]);
@@ -622,17 +596,31 @@ void device_target(int method, int set, int run, double *a, int N,
                         }
 
                         case 10:
-#pragma acc parallel num_gangs(gang_count) vector_length(vector_length) present(a[0:g_max_array_size])
+#pragma acc parallel num_gangs(gang_count) num_workers(worker_count) present(a[0:g_max_array_size])
                             {
-                                delay_kernel((int)delay, a);
+#pragma acc loop worker
+                                for (int i = 0; i < worker_count; ++i)
+                                    delay_kernel((int)delay, &a[i]);
                             }
                             break;
 
                         case 11:
-#pragma acc parallel loop gang vector num_gangs(gang_count) vector_length(vector_length) present(a[0:g_max_array_size])
-                            for (int i = 0; i < g_max_iter; ++i)
-                                delay_kernel((int)delay, &a[i]);
+                        {
+                            int parreps = N;
+#pragma acc parallel num_gangs(gang_count) num_workers(worker_count) present(a[0:g_max_array_size])
+                            {
+                                for (int r = 0; r < parreps; ++r)
+                                {
+#pragma acc loop worker
+                                    for (int i = 0; i < worker_count; ++i)
+                                    {
+                                        int idx = i % g_max_array_size;
+                                        delay_kernel((int)delay, &a[idx]);
+                                    }
+                                }
+                            }
                             break;
+                        }
                         }
 
                         a[0] += 1.0;
@@ -645,6 +633,8 @@ void device_target(int method, int set, int run, double *a, int N,
 
                     end = get_time_usec();
                 }
+
+                free(tmp);
             }
 
             // Average time per inner repetition, in microseconds
@@ -661,7 +651,7 @@ void device_target(int method, int set, int run, double *a, int N,
                 {
                     const char *mname = (method >= 0 && method < NUM_METHODS) ? method_names[method] : "UNKNOWN";
                     fprintf(raw, "%d,\"%s\",%d,%d,%d,%d,%d,%.0f,%d,%.9f\n",
-                            method, mname, N, gang_count, vector_length, set, run,
+                            method, mname, N, gang_count, worker_count, set, run,
                             delays[logical], orep, elapsed_us);
                     fclose(raw);
                 }
@@ -838,7 +828,7 @@ void compute_offloading_time(double *intercept_avg, double *intercept_err,
     fclose(file);
 }
 
-void warmup_cache(int method, int N, int gang_count, int vector_length)
+void warmup_cache(int method, int N, int gang_count, int worker_count)
 {
     double *a = (double *)malloc(g_max_array_size * sizeof(double));
     if (!a)
@@ -855,7 +845,7 @@ void warmup_cache(int method, int N, int gang_count, int vector_length)
 
     for (int i = 0; i < WARMUP_ITERATIONS; i++)
     {
-        device_target(method, dummy_set, dummy_run, a, N, gang_count, vector_length);
+        device_target(method, dummy_set, dummy_run, a, N, gang_count, worker_count);
     }
 
     free(a);
