@@ -65,7 +65,7 @@ OpenMP:
 OpenACC:
 
 ```bash
-./bin/microbenchmark API=openacc Method=0,1,2,3,4,5,6,7,8,9,10,11 N=16384 gang_count=64 vector_length=128
+./bin/microbenchmark API=openacc Method=0,1,2,3,4,5,6,7,8,9,10,11 N=16384 gang_count=64 worker_count=128
 ```
 
 If `API=` is omitted, the dispatcher defaults to OpenMP. You can also set:
@@ -117,14 +117,14 @@ The backend-specific launch controls are:
 
 ```text
 OpenMP  : thread_count, team_count
-OpenACC : gang_count, vector_length
+OpenACC : gang_count, worker_count
 ```
 
 Conceptual mapping:
 
 ```text
 OpenMP team_count     -> OpenACC gang_count
-OpenMP thread_count   -> OpenACC vector_length
+OpenMP thread_count   -> OpenACC worker_count
 ```
 
 ## Outputs

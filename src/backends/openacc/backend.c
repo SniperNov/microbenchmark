@@ -15,8 +15,8 @@ static const char *method_names[] = {
     "async parallel loop + wait",
     "parallel loop atomic",
     "parallel loop reduction",
-    "parallel num_gangs + vector_length",
-    "parallel loop gang vector num_gangs + vector_length"};
+    "parallel num_gangs + num_workers",
+    "parallel worker loop num_gangs + num_workers"};
 
 // This delay body must be available inside OpenACC compute regions.
 #pragma acc routine seq
@@ -40,7 +40,7 @@ const char *backend_name(void) { return "openacc"; }
 int backend_num_methods(void) { return 12; }
 const char *backend_method_name(int method) { return method_names[method]; }
 const char *backend_control_a_name(void) { return "gang_count"; }
-const char *backend_control_b_name(void) { return "vector_length"; }
+const char *backend_control_b_name(void) { return "worker_count"; }
 
 void backend_default_config(backend_config_t *config)
 {
@@ -82,40 +82,35 @@ double backend_run_method(int method, double *a, int N, int delay,
                           int inner_reps)
 {
     int gang_count = config->control_a;
-    int vector_length = config->control_b;
+    int worker_count = config->control_b;
     double start = 0.0, end = 0.0;
 
     if (method >= 1 && method <= 4)
     {
-        // Methods 1-4 measure a compute region together with one OpenACC
-        // data movement clause.
+        // Methods 1-4 measure the data clause/serial target entry itself.
         start = get_time_usec();
         for (int irep = 0; irep < inner_reps; irep++)
         {
             switch (method)
             {
             case 1:
-#pragma acc parallel loop copy(a[0:N])
-                for (int i = 0; i < max_iter; ++i)
-                    delay_kernel(delay, &a[i % N]);
+#pragma acc serial copy(a[0:N])
+                delay_kernel(delay, a);
                 break;
 
             case 2:
-#pragma acc parallel loop copyin(a[0:N])
-                for (int i = 0; i < max_iter; ++i)
-                    delay_kernel(delay, &a[i % N]);
+#pragma acc serial copyin(a[0:N])
+                delay_kernel(delay, a);
                 break;
 
             case 3:
-#pragma acc parallel loop copyout(a[0:N])
-                for (int i = 0; i < max_iter; ++i)
-                    delay_kernel(delay, &a[i % N]);
+#pragma acc serial copyout(a[0:N])
+                delay_kernel(delay, a);
                 break;
 
             case 4:
-#pragma acc parallel loop create(a[0:N])
-                for (int i = 0; i < max_iter; ++i)
-                    delay_kernel(delay, &a[i % N]);
+#pragma acc serial create(a[0:N])
+                delay_kernel(delay, a);
                 break;
             }
 
@@ -125,51 +120,20 @@ double backend_run_method(int method, double *a, int N, int delay,
         }
         end = get_time_usec();
     }
-    else if (method == 8)
+    else if (method == 0 || (method >= 5 && method <= 11))
     {
-        // Atomic update uses a separate tmp array, matching the OpenMP intent.
+        // Methods 0 and 5-11 keep data present while timing launch/parallel
+        // shape differences such as async, atomic, reduction, gangs, and workers.
         double *tmp = (double *)malloc((size_t)N * sizeof(double));
         if (!tmp)
         {
             fprintf(stderr, "Allocation failed for tmp[N=%d]\n", N);
             exit(EXIT_FAILURE);
         }
-
         for (int i = 0; i < N; ++i)
             tmp[i] = 0.0;
 
 #pragma acc data copy(a[0:max_array_size], tmp[0:N])
-        {
-            start = get_time_usec();
-
-            for (int rep = 0; rep < inner_reps; rep++)
-            {
-#pragma acc parallel loop present(a[0:max_array_size], tmp[0:N])
-                for (int i = 0; i < max_iter; ++i)
-                {
-                    delay_kernel(delay, &a[i]);
-#pragma acc atomic update
-                    tmp[i % N] += 1.0;
-                }
-
-                a[0] += 1.0;
-                if (a[0] < 0.0)
-                {
-                    printf("%f\n", a[0]);
-                    fflush(stdout);
-                }
-            }
-
-            end = get_time_usec();
-        }
-
-        free(tmp);
-    }
-    else if (method == 0 || (method >= 5 && method <= 11))
-    {
-        // Methods 0 and 5-11 keep data present while timing launch/parallel
-        // shape differences such as async, reduction, gangs, and vectors.
-#pragma acc data copy(a[0:max_array_size])
         {
             start = get_time_usec();
 
@@ -208,11 +172,22 @@ double backend_run_method(int method, double *a, int N, int delay,
 #pragma acc wait(1)
                     break;
 
+                case 8:
+                    // Atomic update path, sharing the same outer data region.
+#pragma acc parallel loop present(a[0:max_array_size], tmp[0:N])
+                    for (int i = 0; i < max_iter; ++i)
+                    {
+                        delay_kernel(delay, &a[i]);
+#pragma acc atomic update
+                        tmp[i % N] += 1.0;
+                    }
+                    break;
+
                 case 9:
                 {
                     // Reduction path using an OpenACC scalar reduction.
                     double reduction_sum = 0.0;
-#pragma acc parallel loop reduction(+ : reduction_sum) present(a[0:max_array_size])
+#pragma acc parallel loop reduction(+ : reduction_sum) present(a[0:N])
                     for (int i = 0; i < max_iter; ++i)
                     {
                         delay_kernel(delay, &a[i]);
@@ -224,19 +199,33 @@ double backend_run_method(int method, double *a, int N, int delay,
                 }
 
                 case 10:
-                    // Explicitly control gang and vector dimensions.
-#pragma acc parallel num_gangs(gang_count) vector_length(vector_length) present(a[0:max_array_size])
+                    // Explicit gang/worker launch with a worker-level loop.
+#pragma acc parallel num_gangs(gang_count) num_workers(worker_count) present(a[0:max_array_size])
                     {
-                        delay_kernel(delay, a);
+#pragma acc loop worker
+                        for (int i = 0; i < worker_count; ++i)
+                            delay_kernel(delay, &a[i]);
                     }
                     break;
 
                 case 11:
-                    // Controlled gang/vector worksharing loop.
-#pragma acc parallel loop gang vector num_gangs(gang_count) vector_length(vector_length) present(a[0:max_array_size])
-                    for (int i = 0; i < max_iter; ++i)
-                        delay_kernel(delay, &a[i]);
+                {
+                    // Repeated worker loop, matching the OpenMP repeated inner parallel case.
+                    int parreps = N;
+#pragma acc parallel num_gangs(gang_count) num_workers(worker_count) present(a[0:max_array_size])
+                    {
+                        for (int r = 0; r < parreps; ++r)
+                        {
+#pragma acc loop worker
+                            for (int i = 0; i < worker_count; ++i)
+                            {
+                                int idx = i % max_array_size;
+                                delay_kernel(delay, &a[idx]);
+                            }
+                        }
+                    }
                     break;
+                }
                 }
 
                 a[0] += 1.0;
@@ -249,6 +238,8 @@ double backend_run_method(int method, double *a, int N, int delay,
 
             end = get_time_usec();
         }
+
+        free(tmp);
     }
 
     return (end - start) / inner_reps;

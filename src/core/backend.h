@@ -5,7 +5,7 @@ typedef struct
 {
     // Backend-specific launch controls.
     // OpenMP:  control_a=thread_count, control_b=team_count
-    // OpenACC: control_a=gang_count,   control_b=vector_length
+    // OpenACC: control_a=gang_count,   control_b=worker_count
     int control_a;
     int control_b;
 } backend_config_t;

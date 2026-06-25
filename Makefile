@@ -73,4 +73,4 @@ help:
 	@echo ""
 	@echo "Run:"
 	@echo "  ./bin/microbenchmark API=openmp Method=0,1 N=16384 thread_count=32 team_count=4"
-	@echo "  ./bin/microbenchmark API=openacc Method=0,1 N=16384 gang_count=64 vector_length=128"
+	@echo "  ./bin/microbenchmark API=openacc Method=0,1 N=16384 gang_count=64 worker_count=128"
