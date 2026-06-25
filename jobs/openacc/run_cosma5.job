@@ -1,59 +1,58 @@
-#!/bin/bash
-#SBATCH --account=d35-wt
-#SBATCH --job-name=ar2_openacc
-#SBATCH --time=4:00:00
+#!/bin/bash -l
+#SBATCH -J cosma5_openacc
+#SBATCH -o result/COSMA5_Output/Logs/%x_%j.out
+#SBATCH -p mi300x
+#SBATCH -A do018
 #SBATCH --nodes=1
-#SBATCH --partition=gpu
-#SBATCH --qos=gpu-exc
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=96
 #SBATCH --gres=gpu:1
 #SBATCH --exclusive
-#SBATCH --output=result/Archer2_Output/Logs/%x_%j.out
+#SBATCH -t 04:00:00
 
 set -e
 
-module load PrgEnv-amd
-module load craype-accel-amd-gfx90a
-module load craype-x86-milan
+cd /cosma/home/do018/dc-tu2/microbenchmark
 
-mkdir -p result/Archer2_Output/Logs
-OUTDIR="result/Archer2_Output/OpenACC"
+export PATH="$HOME/bin:$PATH"
+
+module purge
+
+mkdir -p result/COSMA5_Output/Logs
+OUTDIR="result/COSMA5_Output/OpenACC"
 mkdir -p "$OUTDIR"
 
-JOB_NAME="ar2_openacc"
+JOB_NAME="cosma5_openacc"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 OUTFILE="$OUTDIR/${JOB_NAME}_${TIMESTAMP}.out"
 
-GANGS=104
+GANGS=304
 WORKERS=64
 
 N_DATA="1,4,16,64,256,1024,4096,16384,65536,262144,1048576,4194304,16777216"
-N_ATORED="1,4,16,64"
+N_ATORED="1,2,4,8,16,32,64"
 N_FIXED="16384"
 N_PARREPS="1,2,4,8,16,32,64,128"
 
 DELAY_SHORT="1,8096"
-PLOT_PY="${PLOT_PY:-/work/d35/d35/weiyu24/Microbenchmarking-of-Accelerators-Offloading/microbenchmark/.plotenv/bin/python}"
+PLOT_PY="${PLOT_PY:-/cosma/home/do018/dc-tu2/microbenchmark/.venv/bin/python}"
 
-echo "Running Archer2 MI210 OpenACC benchmark groups..." | tee "$OUTFILE"
+echo "Running COSMA5 MI300X OpenACC benchmark groups..." | tee "$OUTFILE"
+echo "This is an exploratory OpenACC script; adjust modules/compiler if COSMA uses a different OpenACC toolchain." | tee -a "$OUTFILE"
 echo "GANGS=$GANGS WORKERS=$WORKERS" | tee -a "$OUTFILE"
-echo "N_DATA=$N_DATA" | tee -a "$OUTFILE"
-echo "N_ATORED=$N_ATORED" | tee -a "$OUTFILE"
-echo "N_FIXED=$N_FIXED" | tee -a "$OUTFILE"
-echo "DELAY_SHORT=$DELAY_SHORT" | tee -a "$OUTFILE"
 
-echo "Compiling OpenACC backend with Cray CCE..." | tee -a "$OUTFILE"
+echo "Compiling OpenACC backend..." | tee -a "$OUTFILE"
 make clean
-make openacc-distribution OPENACC_DEFS=Makefile.defs.openacc.cray
+make openacc-distribution OPENACC_DEFS=Makefile.defs.openacc.gcc
 
 plot_group () {
     local BASE="$1"
-    local SCALE="$2"
     local CSV="$OUTDIR/distribution_${BASE}.csv"
     local TXT="$OUTDIR/overhead_${BASE}.txt"
     local PNG="$OUTDIR/resultLowest_${BASE}.png"
 
     if [ -f "$CSV" ] && [ -f "$TXT" ] && [ -x "$PLOT_PY" ]; then
-        "$PLOT_PY" ./plots/plot_raw_times.py "$CSV" "$TXT" 1,18 "$SCALE" "$PNG" 2>&1 | tee -a "$OUTFILE"
+        "$PLOT_PY" ./plots/plot_raw_times.py "$CSV" "$TXT" 1,18 lin "$PNG" 2>&1 | tee -a "$OUTFILE"
     else
         echo "Plot skipped for $BASE." | tee -a "$OUTFILE"
     fi
@@ -64,7 +63,6 @@ run_group () {
     local METHODS="$2"
     local NLIST="$3"
     local DELAY_RANGE="$4"
-    local SCALE="${5:-lin}"
 
     local SAFE_DELAY="${DELAY_RANGE//,/to}"
     local BASE="${TAG}_${SAFE_DELAY}_${TIMESTAMP}"
@@ -90,7 +88,7 @@ run_group () {
         mv raw_times.csv "$OUTDIR/distribution_${BASE}.csv"
     fi
 
-    plot_group "$BASE" "$SCALE"
+    plot_group "$BASE"
 }
 
 run_group "M0_M10" "0,10" "$N_FIXED" "$DELAY_SHORT"
@@ -102,5 +100,5 @@ run_group "M8to9" "8,9" "$N_ATORED" "$DELAY_SHORT"
 run_group "M11_parreps" "11" "$N_PARREPS" "$DELAY_SHORT"
 
 echo "" | tee -a "$OUTFILE"
-echo "All Archer2 OpenACC benchmark groups completed." | tee -a "$OUTFILE"
+echo "All COSMA5 OpenACC benchmark groups completed." | tee -a "$OUTFILE"
 echo "Results saved under $OUTDIR" | tee -a "$OUTFILE"

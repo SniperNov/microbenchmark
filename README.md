@@ -137,3 +137,43 @@ overhead_distribution.txt
 ```
 
 Job scripts should move these into `result/` after each run.
+
+## Job Scripts
+
+OpenMP scripts are under `jobs/openmp/`; OpenACC scripts are under `jobs/openacc/`.
+
+For OpenACC, the current scripts are:
+
+```text
+jobs/openacc/run_eidf_a100.sh     EIDF A100, NVHPC OpenACC
+jobs/openacc/run_eidf_h100.sh     EIDF H100, NVHPC OpenACC
+jobs/openacc/run_eidf_h200.sh     EIDF H200, NVHPC OpenACC
+jobs/openacc/run_GH.sh            Grace Hopper / GH200, NVHPC OpenACC
+jobs/openacc/run_archer2.job      Archer2 MI210, Cray OpenACC
+jobs/openacc/run_cosma5.job       COSMA5 MI300X, exploratory OpenACC
+```
+
+Run VDI-style scripts directly from the repository root:
+
+```bash
+bash jobs/openacc/run_eidf_h100.sh
+```
+
+Submit Slurm scripts with:
+
+```bash
+sbatch jobs/openacc/run_archer2.job
+sbatch jobs/openacc/run_cosma5.job
+```
+
+The scripts use the same benchmark grouping as the OpenMP runs:
+
+```text
+M0_M10       fixed N launch-control cases
+M1to4        data-clause size sweep
+M5/M6/M7     scalar, loop, and async launch cases
+M8/M9        atomic and reduction cases
+M11_parreps  repeated inner worker-loop case
+```
+
+For OpenACC, `gang_count` is the team-like control and `worker_count` is the thread-like control.
