@@ -172,6 +172,22 @@ overhead_distribution.txt
 
 Job scripts should move these into `result/` after each run.
 
+The platform job scripts save results using:
+
+```text
+result/<Machine>/<API>/<CompilerVersion>/
+```
+
+Examples:
+
+```text
+result/GH200/CUDA/NVCC13_1_115/
+result/GH200/OpenACC/NVC25_5/
+result/H100/OpenMP/GCC13_2_0/
+```
+
+The compiler-version directory is detected by the job script from commands such as `nvcc --version`, `nvc --version`, `gcc -dumpfullversion -dumpversion`, or `cc --version`.
+
 ## Job Scripts
 
 OpenMP scripts are under `jobs/openmp/`; OpenACC scripts are under `jobs/openacc/`.

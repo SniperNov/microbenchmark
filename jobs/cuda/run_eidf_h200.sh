@@ -3,7 +3,13 @@
 
 set -e
 
-OUTDIR="result/EIDF_H200_Output/CUDA"
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+. "$SCRIPT_DIR/../common.sh"
+
+MACHINE="H200"
+API="CUDA"
+COMPILER_TAG=$(compiler_tag_nvcc)
+OUTDIR="result/$MACHINE/$API/$COMPILER_TAG"
 mkdir -p "$OUTDIR"
 
 JOB_NAME="eidf_h200_cuda"
@@ -23,6 +29,10 @@ N_PARREPS="1,2,4,8,16,32,64,128"
 DELAY_SHORT="1,8096"
 
 echo "========== EIDF H200 CUDA configuration ==========" | tee -a "$OUTFILE"
+echo "MACHINE=$MACHINE" | tee -a "$OUTFILE"
+echo "API=$API" | tee -a "$OUTFILE"
+echo "COMPILER_TAG=$COMPILER_TAG" | tee -a "$OUTFILE"
+nvcc --version 2>&1 | tee -a "$OUTFILE"
 echo "BLOCKS=$BLOCKS THREADS=$THREADS" | tee -a "$OUTFILE"
 if command -v nvidia-smi >/dev/null 2>&1; then
     nvidia-smi | tee -a "$OUTFILE"

@@ -24,7 +24,13 @@ module purge
 make clean
 make openmp-distribution
 
-OUTDIR="result/COSMA5_Output/OpenMP"
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+. "$SCRIPT_DIR/../common.sh"
+
+MACHINE="MI300X"
+API="OpenMP"
+COMPILER_TAG=$(compiler_tag_amdclang)
+OUTDIR="result/$MACHINE/$API/$COMPILER_TAG"
 mkdir -p "$OUTDIR"
 mkdir -p "result/COSMA5_Output/Logs"
 

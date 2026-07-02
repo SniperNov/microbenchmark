@@ -19,7 +19,13 @@ export PATH="$HOME/bin:$PATH"
 module purge
 
 mkdir -p result/COSMA5_Output/Logs
-OUTDIR="result/COSMA5_Output/OpenACC"
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+. "$SCRIPT_DIR/../common.sh"
+
+MACHINE="MI300X"
+API="OpenACC"
+COMPILER_TAG=$(compiler_tag_gcc)
+OUTDIR="result/$MACHINE/$API/$COMPILER_TAG"
 mkdir -p "$OUTDIR"
 
 JOB_NAME="cosma5_openacc"

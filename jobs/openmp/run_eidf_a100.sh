@@ -5,7 +5,13 @@ set -e
 
 export OMP_TARGET_OFFLOAD=mandatory
 
-OUTDIR="result/EIDF_A100_Output/OpenMP"
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+. "$SCRIPT_DIR/../common.sh"
+
+MACHINE="A100"
+API="OpenMP"
+COMPILER_TAG=$(compiler_tag_gcc)
+OUTDIR="result/$MACHINE/$API/$COMPILER_TAG"
 mkdir -p "$OUTDIR"
 
 JOB_NAME="eidf_a100_omp"

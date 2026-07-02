@@ -3,7 +3,13 @@
 
 set -e
 
-OUTDIR="result/GH_Output/OpenACC"
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+. "$SCRIPT_DIR/../common.sh"
+
+MACHINE="GH200"
+API="OpenACC"
+COMPILER_TAG=$(compiler_tag_nvc)
+OUTDIR="result/$MACHINE/$API/$COMPILER_TAG"
 mkdir -p "$OUTDIR"
 
 JOB_NAME="gh_openacc"
@@ -24,8 +30,12 @@ DELAY_SHORT="1,8096"
 PLOT_PY="${PLOT_PY:-python3}"
 
 echo "========== Grace Hopper OpenACC configuration ==========" | tee -a "$OUTFILE"
+echo "MACHINE=$MACHINE" | tee -a "$OUTFILE"
+echo "API=$API" | tee -a "$OUTFILE"
+echo "COMPILER_TAG=$COMPILER_TAG" | tee -a "$OUTFILE"
 echo "GANGS=$GANGS" | tee -a "$OUTFILE"
 echo "WORKERS=$WORKERS" | tee -a "$OUTFILE"
+nvc --version 2>&1 | tee -a "$OUTFILE"
 if command -v nvidia-smi >/dev/null 2>&1; then
     nvidia-smi | tee -a "$OUTFILE"
 fi

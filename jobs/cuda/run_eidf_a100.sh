@@ -3,7 +3,13 @@
 
 set -e
 
-OUTDIR="result/EIDF_A100_Output/CUDA"
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+. "$SCRIPT_DIR/../common.sh"
+
+MACHINE="A100"
+API="CUDA"
+COMPILER_TAG=$(compiler_tag_nvcc)
+OUTDIR="result/$MACHINE/$API/$COMPILER_TAG"
 mkdir -p "$OUTDIR"
 
 JOB_NAME="eidf_a100_cuda"
@@ -24,6 +30,10 @@ DELAY_SHORT="1,8096"
 PLOT_PY="${PLOT_PY:-python3}"
 
 echo "========== EIDF A100 CUDA configuration ==========" | tee -a "$OUTFILE"
+echo "MACHINE=$MACHINE" | tee -a "$OUTFILE"
+echo "API=$API" | tee -a "$OUTFILE"
+echo "COMPILER_TAG=$COMPILER_TAG" | tee -a "$OUTFILE"
+nvcc --version 2>&1 | tee -a "$OUTFILE"
 echo "BLOCKS=$BLOCKS" | tee -a "$OUTFILE"
 echo "THREADS=$THREADS" | tee -a "$OUTFILE"
 if command -v nvidia-smi >/dev/null 2>&1; then

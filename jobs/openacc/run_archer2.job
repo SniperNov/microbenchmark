@@ -16,7 +16,13 @@ module load craype-accel-amd-gfx90a
 module load craype-x86-milan
 
 mkdir -p result/Archer2_Output/Logs
-OUTDIR="result/Archer2_Output/OpenACC"
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+. "$SCRIPT_DIR/../common.sh"
+
+MACHINE="MI210"
+API="OpenACC"
+COMPILER_TAG=$(compiler_tag_cray)
+OUTDIR="result/$MACHINE/$API/$COMPILER_TAG"
 mkdir -p "$OUTDIR"
 
 JOB_NAME="ar2_openacc"

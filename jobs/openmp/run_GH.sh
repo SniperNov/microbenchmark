@@ -6,7 +6,13 @@ set -e
 make clean
 make openmp-distribution
 
-OUTDIR="result/GH_Output/OpenMP"
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+. "$SCRIPT_DIR/../common.sh"
+
+MACHINE="GH200"
+API="OpenMP"
+COMPILER_TAG=$(compiler_tag_nvc)
+OUTDIR="result/$MACHINE/$API/$COMPILER_TAG"
 mkdir -p "$OUTDIR"
 
 JOB_NAME="gh_omp"

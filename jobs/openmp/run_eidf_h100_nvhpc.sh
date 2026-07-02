@@ -5,7 +5,13 @@ set -e
 
 export OMP_TARGET_OFFLOAD=mandatory
 
-OUTDIR="result/EIDF_H100NVC_Output/OpenMP"
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+. "$SCRIPT_DIR/../common.sh"
+
+MACHINE="H100"
+API="OpenMP"
+COMPILER_TAG=$(compiler_tag_nvc)
+OUTDIR="result/$MACHINE/$API/$COMPILER_TAG"
 mkdir -p "$OUTDIR"
 
 JOB_NAME="eidf_h100_nvhpc__omp"
