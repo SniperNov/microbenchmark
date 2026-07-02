@@ -55,3 +55,30 @@ compiler_tag_amdclang()
     fi
 }
 
+compiler_tag_sycl()
+{
+    if command -v icpx >/dev/null 2>&1; then
+        version=$(icpx --version 2>/dev/null | sed -n 's/.* \([0-9][0-9.]*\).*/\1/p' | head -n 1)
+        if [ -n "$version" ]; then
+            printf "ICPX%s" "$(sanitize_compiler_tag "$version")"
+        else
+            printf "ICPXunknown"
+        fi
+    elif command -v dpcpp >/dev/null 2>&1; then
+        version=$(dpcpp --version 2>/dev/null | sed -n 's/.* \([0-9][0-9.]*\).*/\1/p' | head -n 1)
+        if [ -n "$version" ]; then
+            printf "DPCPP%s" "$(sanitize_compiler_tag "$version")"
+        else
+            printf "DPCPPunknown"
+        fi
+    elif command -v acpp >/dev/null 2>&1; then
+        version=$(acpp --version 2>/dev/null | sed -n 's/.*version \([0-9][0-9.]*\).*/\1/p' | head -n 1)
+        if [ -n "$version" ]; then
+            printf "ACPP%s" "$(sanitize_compiler_tag "$version")"
+        else
+            printf "ACPPunknown"
+        fi
+    else
+        printf "SYCLunknown"
+    fi
+}

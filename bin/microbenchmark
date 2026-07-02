@@ -34,8 +34,11 @@ case "$api" in
     cuda|CUDA)
         backend="./build/microbenchmark_cuda"
         ;;
+    sycl|SYCL)
+        backend="./build/microbenchmark_sycl"
+        ;;
     *)
-        echo "Unknown API '$api'. Supported APIs: openmp, openacc, cuda" >&2
+        echo "Unknown API '$api'. Supported APIs: openmp, openacc, cuda, sycl" >&2
         exit 2
         ;;
 esac
@@ -46,6 +49,7 @@ if [ ! -x "$backend" ]; then
     echo "  make openmp" >&2
     echo "  make openacc" >&2
     echo "  make cuda" >&2
+    echo "  make sycl" >&2
     echo "  make all" >&2
     exit 1
 fi

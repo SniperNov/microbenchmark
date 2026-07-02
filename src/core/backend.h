@@ -11,6 +11,7 @@ typedef struct
     // OpenMP:  control_a=thread_count, control_b=team_count
     // OpenACC: control_a=gang_count,   control_b=worker_count
     // CUDA:    control_a=block_count,  control_b=thread_count
+    // SYCL:    control_a=group_count,  control_b=local_size
     int control_a;
     int control_b;
 } backend_config_t;

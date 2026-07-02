@@ -8,9 +8,10 @@ Current backends:
 openmp
 openacc
 cuda
+sycl
 ```
 
-Future backends, such as CUDA, can be added behind the same command-line entry point.
+Future backends can be added behind the same command-line entry point.
 
 ## Layout
 
@@ -38,6 +39,7 @@ Build only one backend:
 make openmp
 make openacc
 make cuda
+make sycl
 ```
 
 Build with detailed distribution logging:
@@ -46,6 +48,7 @@ Build with detailed distribution logging:
 make openmp-distribution
 make openacc-distribution
 make cuda-distribution
+make sycl-distribution
 ```
 
 Override compiler definitions when needed:
@@ -54,6 +57,8 @@ Override compiler definitions when needed:
 make openmp OPENMP_DEFS=Makefile.defs.gcc
 make openacc OPENACC_DEFS=Makefile.defs.openacc.nvc
 make cuda CUDA_DEFS=Makefile.defs.cuda.nvcc
+make sycl SYCL_DEFS=Makefile.defs.sycl.dpcpp
+make sycl SYCL_DEFS=Makefile.defs.sycl.dpcpp.cuda
 ```
 
 ## Run
@@ -76,6 +81,12 @@ CUDA:
 
 ```bash
 ./bin/microbenchmark API=cuda Method=0,1,2,3,4,5,6,7,8,9,10,11 N=16384 block_count=108 thread_count=128
+```
+
+SYCL:
+
+```bash
+./bin/microbenchmark API=sycl Method=0,1,2,3,4,5,6,7,8,9,10,11 N=16384 group_count=108 local_size=128
 ```
 
 If `API=` is omitted, the dispatcher defaults to OpenMP. You can also set:
@@ -129,6 +140,7 @@ The backend-specific launch controls are:
 OpenMP  : thread_count, team_count
 OpenACC : gang_count, worker_count
 CUDA    : block_count, thread_count
+SYCL    : group_count, local_size
 ```
 
 Conceptual mapping:
@@ -138,7 +150,30 @@ OpenMP team_count     -> OpenACC gang_count
 OpenMP thread_count   -> OpenACC worker_count
 OpenMP/OpenACC teams  -> CUDA block_count
 OpenMP/OpenACC worker -> CUDA thread_count
+CUDA block_count      -> SYCL group_count
+CUDA thread_count     -> SYCL local_size
 ```
+
+## API-Neutral Method Logic
+
+All backends implement the same research logic. The syntax is different, but the measured idea is the same:
+
+| Method | API-neutral idea |
+|--------|------------------|
+| 0 | smallest device launch baseline |
+| 1 | allocate + host-to-device copy + kernel + device-to-host copy + release |
+| 2 | allocate + host-to-device copy + kernel + release |
+| 3 | allocate + kernel + device-to-host copy + release |
+| 4 | allocate + kernel + release |
+| 5 | one unit of work per team/gang/block/work-group |
+| 6 | parallel loop over many work-items |
+| 7 | asynchronous launch followed by explicit wait |
+| 8 | atomic update |
+| 9 | reduction |
+| 10 | explicit launch shape |
+| 11 | repeated work using explicit launch shape |
+
+OpenMP/OpenACC express data movement with directive clauses. CUDA/SYCL express the same idea with explicit allocation, copy, and free calls.
 
 ## CUDA Backend Notes
 
@@ -160,6 +195,42 @@ CUDA uses explicit runtime calls instead of directive-based target/data regions,
 | 11 | repeated explicit block/thread launch work, with `N` as repetition count | Mimics repeated inner parallel/worker work |
 
 Methods 0, 6, 7, 8, 10, and 11 are the cleanest CUDA counterparts. Methods 1-4 are comparable by intent rather than syntax because CUDA exposes allocation and copy operations explicitly. Method 9 is also comparable by intent, but the implementation must use CUDA reduction mechanics rather than a directive-level reduction clause.
+
+## SYCL Backend Notes
+
+The SYCL backend uses USM explicit memory management, not buffer/accessor. This keeps the data-movement methods close to CUDA:
+
+```text
+sycl::malloc_device
+queue.memcpy host -> device
+queue.parallel_for / queue.single_task
+queue.memcpy device -> host
+sycl::free
+```
+
+SYCL launch-shape terms:
+
+```text
+group_count = number of SYCL work-groups
+local_size  = number of SYCL work-items inside each work-group
+```
+
+This corresponds to CUDA:
+
+```text
+CUDA block_count  -> SYCL group_count
+CUDA thread_count -> SYCL local_size
+```
+
+The SYCL backend uses `queue`, `event`, and `nd_range`:
+
+```text
+queue    = command queue for copies and kernels
+event    = handle for one submitted async operation
+nd_range = explicit global/local kernel shape
+```
+
+Methods 1-4 use `malloc_device` and `queue.memcpy` to match CUDA-style explicit data lifecycle. Method 8 uses `atomic_ref`. Method 9 uses work-group local memory plus one atomic add per group.
 
 ## Outputs
 
@@ -192,6 +263,7 @@ The compiler-version directory is detected by the job script from commands such 
 
 OpenMP scripts are under `jobs/openmp/`; OpenACC scripts are under `jobs/openacc/`.
 CUDA scripts for NVIDIA platforms are under `jobs/cuda/`.
+SYCL scripts are under `jobs/sycl/`.
 
 For OpenACC, the current scripts are:
 
@@ -213,11 +285,21 @@ jobs/cuda/run_eidf_h200.sh        EIDF H200, CUDA
 jobs/cuda/run_GH.sh               Grace Hopper / GH200, CUDA
 ```
 
+For SYCL, the current scripts are:
+
+```text
+jobs/sycl/run_eidf_a100.sh        EIDF A100, SYCL
+jobs/sycl/run_eidf_h100.sh        EIDF H100, SYCL
+jobs/sycl/run_eidf_h200.sh        EIDF H200, SYCL
+jobs/sycl/run_GH.sh               Grace Hopper / GH200, SYCL
+```
+
 Run VDI-style scripts directly from the repository root:
 
 ```bash
 bash jobs/openacc/run_eidf_h100.sh
 bash jobs/cuda/run_eidf_h100.sh
+bash jobs/sycl/run_eidf_h100.sh
 ```
 
 Submit Slurm scripts with:

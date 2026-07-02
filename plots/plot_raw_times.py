@@ -194,7 +194,8 @@ def plot(dist: pd.DataFrame, ovh: pd.DataFrame, out_png: str, scale: str, delay_
     N = int(dist["N"].iloc[0])
     method_name = str(dist["method_name"].iloc[0])
     config_columns = [
-        c for c in ("thread_count", "team_count", "gang_count", "worker_count", "block_count")
+        c for c in ("thread_count", "team_count", "gang_count", "worker_count",
+                    "block_count", "group_count", "local_size")
         if c in dist.columns
     ]
     if len(config_columns) >= 2:

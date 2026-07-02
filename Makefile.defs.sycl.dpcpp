@@ -1,0 +1,5 @@
+CC = icpx
+CFLAGS = -fsycl -O0
+LDFLAGS = -fsycl
+CPPFLAGS = -E -O0
+LIBS = -lm

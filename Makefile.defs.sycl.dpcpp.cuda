@@ -1,0 +1,5 @@
+CC = icpx
+CFLAGS = -fsycl -fsycl-targets=nvptx64-nvidia-cuda -O0
+LDFLAGS = -fsycl -fsycl-targets=nvptx64-nvidia-cuda
+CPPFLAGS = -E -O0
+LIBS = -lm
