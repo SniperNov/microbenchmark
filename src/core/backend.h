@@ -1,11 +1,16 @@
 #ifndef MICROBENCHMARK_BACKEND_H
 #define MICROBENCHMARK_BACKEND_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct
 {
     // Backend-specific launch controls.
     // OpenMP:  control_a=thread_count, control_b=team_count
     // OpenACC: control_a=gang_count,   control_b=worker_count
+    // CUDA:    control_a=block_count,  control_b=thread_count
     int control_a;
     int control_b;
 } backend_config_t;
@@ -29,5 +34,9 @@ double backend_run_method(int method, double *a, int N, int delay,
                           int max_iter, int max_array_size,
                           const backend_config_t *config,
                           int inner_reps);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -31,8 +31,11 @@ case "$api" in
     openacc|OpenACC|acc)
         backend="./build/microbenchmark_openacc"
         ;;
+    cuda|CUDA)
+        backend="./build/microbenchmark_cuda"
+        ;;
     *)
-        echo "Unknown API '$api'. Supported APIs: openmp, openacc" >&2
+        echo "Unknown API '$api'. Supported APIs: openmp, openacc, cuda" >&2
         exit 2
         ;;
 esac
@@ -42,6 +45,7 @@ if [ ! -x "$backend" ]; then
     echo "Run one of:" >&2
     echo "  make openmp" >&2
     echo "  make openacc" >&2
+    echo "  make cuda" >&2
     echo "  make all" >&2
     exit 1
 fi

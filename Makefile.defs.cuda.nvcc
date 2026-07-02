@@ -1,0 +1,5 @@
+CC = nvcc
+CFLAGS = -O0
+LDFLAGS =
+CPPFLAGS = -E -O0
+LIBS = -lm

@@ -7,6 +7,7 @@ Current backends:
 ```text
 openmp
 openacc
+cuda
 ```
 
 Future backends, such as CUDA, can be added behind the same command-line entry point.
@@ -36,6 +37,7 @@ Build only one backend:
 ```bash
 make openmp
 make openacc
+make cuda
 ```
 
 Build with detailed distribution logging:
@@ -43,6 +45,7 @@ Build with detailed distribution logging:
 ```bash
 make openmp-distribution
 make openacc-distribution
+make cuda-distribution
 ```
 
 Override compiler definitions when needed:
@@ -50,6 +53,7 @@ Override compiler definitions when needed:
 ```bash
 make openmp OPENMP_DEFS=Makefile.defs.gcc
 make openacc OPENACC_DEFS=Makefile.defs.openacc.nvc
+make cuda CUDA_DEFS=Makefile.defs.cuda.nvcc
 ```
 
 ## Run
@@ -66,6 +70,12 @@ OpenACC:
 
 ```bash
 ./bin/microbenchmark API=openacc Method=0,1,2,3,4,5,6,7,8,9,10,11 N=16384 gang_count=64 worker_count=128
+```
+
+CUDA:
+
+```bash
+./bin/microbenchmark API=cuda Method=0,1,2,3,4,5,6,7,8,9,10,11 N=16384 block_count=108 thread_count=128
 ```
 
 If `API=` is omitted, the dispatcher defaults to OpenMP. You can also set:
@@ -118,6 +128,7 @@ The backend-specific launch controls are:
 ```text
 OpenMP  : thread_count, team_count
 OpenACC : gang_count, worker_count
+CUDA    : block_count, thread_count
 ```
 
 Conceptual mapping:
@@ -125,7 +136,30 @@ Conceptual mapping:
 ```text
 OpenMP team_count     -> OpenACC gang_count
 OpenMP thread_count   -> OpenACC worker_count
+OpenMP/OpenACC teams  -> CUDA block_count
+OpenMP/OpenACC worker -> CUDA thread_count
 ```
+
+## CUDA Backend Notes
+
+CUDA uses explicit runtime calls instead of directive-based target/data regions, so not every method is a literal translation. The CUDA backend keeps the same measurement driver and method numbering, but maps the API ideas as follows:
+
+| Method | CUDA form | Relationship to OpenMP/OpenACC |
+|--------|-----------|--------------------------------|
+| 0 | one scalar kernel launch | Directly comparable launch baseline |
+| 1 | `cudaMalloc + H2D + kernel + D2H + cudaFree` | Mimics `map(tofrom)` / `copy` lifecycle |
+| 2 | `cudaMalloc + H2D + kernel + cudaFree` | Mimics `map(to)` / `copyin` lifecycle |
+| 3 | `cudaMalloc + kernel + D2H + cudaFree` | Mimics `map(from)` / `copyout` lifecycle |
+| 4 | `cudaMalloc + kernel + cudaFree` | Mimics `map(alloc)` / `create` lifecycle |
+| 5 | one scalar action per CUDA block | Mimics teams/gangs scalar launch |
+| 6 | grid-stride loop kernel | Direct CUDA equivalent of parallel loop worksharing |
+| 7 | stream launch plus stream synchronize | Mimics async launch followed by wait |
+| 8 | grid-stride loop with `atomicAdd` | Direct CUDA atomic analogue |
+| 9 | shared-memory block reduction plus final atomic add | CUDA-style reduction analogue |
+| 10 | explicit `block_count` and `thread_count` launch | Direct CUDA launch-shape measurement |
+| 11 | repeated explicit block/thread launch work, with `N` as repetition count | Mimics repeated inner parallel/worker work |
+
+Methods 0, 6, 7, 8, 10, and 11 are the cleanest CUDA counterparts. Methods 1-4 are comparable by intent rather than syntax because CUDA exposes allocation and copy operations explicitly. Method 9 is also comparable by intent, but the implementation must use CUDA reduction mechanics rather than a directive-level reduction clause.
 
 ## Outputs
 
@@ -141,6 +175,7 @@ Job scripts should move these into `result/` after each run.
 ## Job Scripts
 
 OpenMP scripts are under `jobs/openmp/`; OpenACC scripts are under `jobs/openacc/`.
+CUDA scripts for NVIDIA platforms are under `jobs/cuda/`.
 
 For OpenACC, the current scripts are:
 
@@ -153,10 +188,20 @@ jobs/openacc/run_archer2.job      Archer2 MI210, Cray OpenACC
 jobs/openacc/run_cosma5.job       COSMA5 MI300X, exploratory OpenACC
 ```
 
+For CUDA, the current scripts are:
+
+```text
+jobs/cuda/run_eidf_a100.sh        EIDF A100, CUDA
+jobs/cuda/run_eidf_h100.sh        EIDF H100, CUDA
+jobs/cuda/run_eidf_h200.sh        EIDF H200, CUDA
+jobs/cuda/run_GH.sh               Grace Hopper / GH200, CUDA
+```
+
 Run VDI-style scripts directly from the repository root:
 
 ```bash
 bash jobs/openacc/run_eidf_h100.sh
+bash jobs/cuda/run_eidf_h100.sh
 ```
 
 Submit Slurm scripts with:

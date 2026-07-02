@@ -61,7 +61,7 @@ def load_distribution_csv(path: str) -> pd.DataFrame:
       - or proper 10 headers
       - or 9 fields per row (no orep)
     Expected final columns:
-      method_id, method_name, N, thread_count, team_count, set, run, delaylength, orep, exec_time_us
+      method_id, method_name, N, config_a, config_b, set, run, delaylength, orep, exec_time_us
     """
     rows = []
     with open(path, "r", encoding="utf-8", errors="ignore") as f:
@@ -74,11 +74,11 @@ def load_distribution_csv(path: str) -> pd.DataFrame:
             if not r:
                 continue
 
-            # Common case in your file: 10 fields but only 9 headers
+            # Keep backend-specific config column names from the CSV header.
             if len(r) == 10:
-                method_id, method_name, N, th, tm, setv, runv, delay, orep, exec_us = r
+                method_id, method_name, N, cfg_a, cfg_b, setv, runv, delay, orep, exec_us = r
             elif len(r) == 9:
-                method_id, method_name, N, th, tm, setv, runv, delay, exec_us = r
+                method_id, method_name, N, cfg_a, cfg_b, setv, runv, delay, exec_us = r
                 orep = 0
             else:
                 # skip malformed lines
@@ -88,8 +88,8 @@ def load_distribution_csv(path: str) -> pd.DataFrame:
                 int(method_id),
                 str(method_name),
                 int(N),
-                int(th),
-                int(tm),
+                int(cfg_a),
+                int(cfg_b),
                 int(setv),
                 int(runv),
                 float(delay),
@@ -97,9 +97,11 @@ def load_distribution_csv(path: str) -> pd.DataFrame:
                 float(exec_us),
             ])
 
+    config_a_name = header[3] if len(header) > 3 else "config_a"
+    config_b_name = header[4] if len(header) > 4 else "config_b"
     df = pd.DataFrame(rows, columns=[
-        "method_id","method_name","N","thread_count","team_count",
-        "set","run","delaylength","orep","exec_time_us"
+        "method_id", "method_name", "N", config_a_name, config_b_name,
+        "set", "run", "delaylength", "orep", "exec_time_us"
     ])
     return df
 
@@ -191,8 +193,14 @@ def plot(dist: pd.DataFrame, ovh: pd.DataFrame, out_png: str, scale: str, delay_
     method_id = int(dist["method_id"].iloc[0])
     N = int(dist["N"].iloc[0])
     method_name = str(dist["method_name"].iloc[0])
-    th = int(dist["thread_count"].iloc[0])
-    tm = int(dist["team_count"].iloc[0])
+    config_columns = [
+        c for c in ("thread_count", "team_count", "gang_count", "worker_count", "block_count")
+        if c in dist.columns
+    ]
+    if len(config_columns) >= 2:
+        config_label = f"{config_columns[0]}={int(dist[config_columns[0]].iloc[0])}, {config_columns[1]}={int(dist[config_columns[1]].iloc[0])}"
+    else:
+        config_label = "config unavailable"
 
     if not ovh.empty:
         ovh = ovh[(ovh["method_id"] == method_id) & (ovh["N"] == N)].copy()
@@ -239,7 +247,7 @@ def plot(dist: pd.DataFrame, ovh: pd.DataFrame, out_png: str, scale: str, delay_
         ax.set_xlabel("Delaylength (linear scale)")
         ax.set_ylabel("Execution time (μs)")
 
-    ax.set_title(f"Exec time vs delaylength — Method {method_id}, N={N}, thread={th}, teams={tm}")
+    ax.set_title(f"Exec time vs delaylength — Method {method_id}, N={N}, {config_label}")
     ax.legend(loc="best", frameon=True)
     fig.tight_layout()
     fig.savefig(out_png)
@@ -282,4 +290,4 @@ def main():
 if __name__ == "__main__":
     main()
 
-#/opt/cray/pe/python/3.9.13.1/bin/python plot_raw_times.py '/work/d35/d35/weiyu24/Microbenchmarking-of-Accelerators-Offloading/microbenchmark/MBResult_A/Archer2_Output/distribution_20260205_201826.csv' '/work/d35/d35/weiyu24/Microbenchmarking-of-Accelerators-Offloading/microbenchmark/MBResult_A/Archer2_Output/overhead_20260205_201826.txt' 1,4 lin 
+#/opt/cray/pe/python/3.9.13.1/bin/python plot_raw_times.py '/work/d35/d35/weiyu24/Microbenchmarking-of-Accelerators-Offloading/microbenchmark/MBResult_A/Archer2_Output/distribution_20260205_201826.csv' '/work/d35/d35/weiyu24/Microbenchmarking-of-Accelerators-Offloading/microbenchmark/MBResult_A/Archer2_Output/overhead_20260205_201826.txt' 1,4 lin
