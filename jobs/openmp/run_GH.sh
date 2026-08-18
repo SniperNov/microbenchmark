@@ -40,10 +40,7 @@ echo "Running Grace Hopper OpenMP benchmark groups..." | tee "$OUTFILE"
 # =========================================
 
 PLOT_PY="/work/weiyu/microbenchmark/.venv/bin/python"
-if [ ! -x "$PLOT_PY" ]; then
-    echo "Error: plotting Python not found or not executable: $PLOT_PY"
-    exit 1
-fi
+require_plot_python "$PLOT_PY"
 
 run_group () {
     local TAG="$1"

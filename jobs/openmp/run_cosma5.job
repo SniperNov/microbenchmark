@@ -57,6 +57,7 @@ echo "Running COSMA5 MI300X OpenMP benchmark groups..." | tee "$OUTFILE"
 # =========================================
 
 PLOT_PY="/cosma/home/do018/dc-tu2/microbenchmark/.venv/bin/python"
+require_plot_python "$PLOT_PY"
 
 run_group () {
     local TAG="$1"

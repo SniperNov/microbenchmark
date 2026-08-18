@@ -259,6 +259,17 @@ result/H100/OpenMP/GCC_13_2_0/
 
 The compiler-version directory is detected by the job script from commands such as `nvcc --version`, `nvc --version`, `gcc -dumpfullversion -dumpversion`, or `cc --version`.
 
+Plotting requires NumPy, pandas, and Matplotlib. Install the declared environment
+for a machine checkout before starting a benchmark run:
+
+```bash
+python3 -m venv .venv
+.venv/bin/python -m pip install -r plots/requirements.txt
+```
+
+Run scripts check these imports before starting the expensive benchmark and
+report a concise installation command instead of a Python traceback.
+
 ## Job Scripts
 
 OpenMP scripts are under `jobs/openmp/`; OpenACC scripts are under `jobs/openacc/`.

@@ -151,22 +151,22 @@ double backend_run_method(int method, double *a, int N, int delay,
 
                 case 5:
                     // Scalar parallel launch, analogous to OpenMP teams(scalar).
-#pragma acc parallel present(a[0:max_array_size])
+#pragma acc parallel num_gangs(gang_count) present(a[0:max_array_size])
                     {
                         delay_kernel(delay, a);
                     }
                     break;
 
                 case 6:
-                    // Default parallel loop.
-#pragma acc parallel loop present(a[0:max_array_size])
+                    // Parallel loop with the platform's configured launch shape.
+#pragma acc parallel loop num_gangs(gang_count) vector_length(worker_count) present(a[0:max_array_size])
                     for (int i = 0; i < max_iter; ++i)
                         delay_kernel(delay, &a[i]);
                     break;
 
                 case 7:
                     // Async launch plus explicit wait.
-#pragma acc parallel loop async(1) present(a[0:max_array_size])
+#pragma acc parallel loop num_gangs(gang_count) vector_length(worker_count) async(1) present(a[0:max_array_size])
                     for (int i = 0; i < max_iter; ++i)
                         delay_kernel(delay, &a[i]);
 #pragma acc wait(1)
@@ -174,7 +174,7 @@ double backend_run_method(int method, double *a, int N, int delay,
 
                 case 8:
                     // Atomic update path, sharing the same outer data region.
-#pragma acc parallel loop present(a[0:max_array_size], tmp[0:N])
+#pragma acc parallel loop num_gangs(gang_count) vector_length(worker_count) present(a[0:max_array_size], tmp[0:N])
                     for (int i = 0; i < max_iter; ++i)
                     {
                         delay_kernel(delay, &a[i]);
@@ -187,7 +187,7 @@ double backend_run_method(int method, double *a, int N, int delay,
                 {
                     // Reduction path using an OpenACC scalar reduction.
                     double reduction_sum = 0.0;
-#pragma acc parallel loop reduction(+ : reduction_sum) present(a[0:N])
+#pragma acc parallel loop num_gangs(gang_count) vector_length(worker_count) reduction(+ : reduction_sum) present(a[0:max_array_size])
                     for (int i = 0; i < max_iter; ++i)
                     {
                         delay_kernel(delay, &a[i]);

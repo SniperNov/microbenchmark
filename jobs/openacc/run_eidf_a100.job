@@ -11,6 +11,9 @@
 
 set -euo pipefail
 
+export ACC_DEVICE_TYPE=nvidia
+unset NVCOMPILER_ACC_NOTIFY NVCOMPILER_ACC_TIME
+
 if [ -n "${SLURM_JOB_ID:-}" ]; then
     cd "${SLURM_SUBMIT_DIR:?Submit the job from the repository root}"
 else
@@ -36,23 +39,14 @@ archive_run_provenance "$0" "$OUTDIR" "$JOB_NAME" "$TIMESTAMP"
 
 echo "Running EIDF A100 OpenACC benchmark groups..." | tee "$OUTFILE"
 
-PLOT_PY="${PLOT_PY:-python3}"
+PLOT_PY="${PLOT_PY:-$PWD/.venv/bin/python}"
+require_plot_python "$PLOT_PY"
 
-echo "========== EIDF A100 OpenACC configuration ==========" | tee -a "$OUTFILE"
-echo "MACHINE=$MACHINE" | tee -a "$OUTFILE"
-echo "API=$API" | tee -a "$OUTFILE"
-echo "COMPILER_TAG=$COMPILER_TAG" | tee -a "$OUTFILE"
-nvc --version 2>&1 | tee -a "$OUTFILE"
-echo "GANGS=$GANGS" | tee -a "$OUTFILE"
-echo "WORKERS=$WORKERS" | tee -a "$OUTFILE"
-if command -v nvidia-smi >/dev/null 2>&1; then
-    nvidia-smi | tee -a "$OUTFILE"
-fi
-echo "=====================================================" | tee -a "$OUTFILE"
+log_run_configuration "$OUTFILE" "$MACHINE" "$API" "$COMPILER_TAG" "$GANGS" "$WORKERS"
 
 echo "Compiling OpenACC backend with NVHPC..." | tee -a "$OUTFILE"
-make clean
-make openacc-distribution OPENACC_DEFS=Makefile.defs.openacc.nvc
+make -s clean
+make -s openacc-distribution OPENACC_DEFS=Makefile.defs.openacc.nvc
 
 plot_group () {
     local BASE="$1"

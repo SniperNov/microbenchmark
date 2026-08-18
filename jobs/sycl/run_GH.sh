@@ -28,7 +28,8 @@ archive_run_provenance "$0" "$OUTDIR" "$JOB_NAME" "$TIMESTAMP"
 
 echo "Running Grace Hopper SYCL benchmark groups..." | tee "$OUTFILE"
 
-PLOT_PY="${PLOT_PY:-python3}"
+PLOT_PY="${PLOT_PY:-$PWD/.venv/bin/python}"
+require_plot_python "$PLOT_PY"
 
 echo "========== Grace Hopper SYCL configuration ==========" | tee -a "$OUTFILE"
 echo "MACHINE=$MACHINE" | tee -a "$OUTFILE"

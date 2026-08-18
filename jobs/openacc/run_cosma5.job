@@ -40,14 +40,14 @@ OUTFILE="$OUTDIR/${JOB_NAME}_${TIMESTAMP}.out"
 archive_run_provenance "$0" "$OUTDIR" "$JOB_NAME" "$TIMESTAMP"
 
 PLOT_PY="${PLOT_PY:-/cosma/home/do018/dc-tu2/microbenchmark/.venv/bin/python}"
+require_plot_python "$PLOT_PY"
 
 echo "Running COSMA5 MI300X OpenACC benchmark groups..." | tee "$OUTFILE"
-echo "This is an exploratory OpenACC script; adjust modules/compiler if COSMA uses a different OpenACC toolchain." | tee -a "$OUTFILE"
-echo "GANGS=$GANGS WORKERS=$WORKERS" | tee -a "$OUTFILE"
+log_run_configuration "$OUTFILE" "$MACHINE" "$API" "$COMPILER_TAG" "$GANGS" "$WORKERS"
 
 echo "Compiling OpenACC backend..." | tee -a "$OUTFILE"
-make clean
-make openacc-distribution OPENACC_DEFS=Makefile.defs.openacc.gcc
+make -s clean
+make -s openacc-distribution OPENACC_DEFS=Makefile.defs.openacc.gcc
 
 plot_group () {
     local BASE="$1"

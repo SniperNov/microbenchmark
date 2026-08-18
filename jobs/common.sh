@@ -122,6 +122,39 @@ set_platform_launch_parameters()
     esac
 }
 
+require_plot_python()
+{
+    plot_python="$1"
+    if ! command -v "$plot_python" >/dev/null 2>&1; then
+        echo "ERROR: plotting Python is not executable: $plot_python" >&2
+        return 1
+    fi
+    if ! "$plot_python" -c 'import numpy, pandas, matplotlib' >/dev/null 2>&1; then
+        echo "ERROR: plotting requires numpy, pandas, and matplotlib." >&2
+        echo "Install them with: $plot_python -m pip install numpy pandas matplotlib" >&2
+        return 1
+    fi
+}
+
+log_run_configuration()
+{
+    config_log="$1"
+    machine="$2"
+    api="$3"
+    compiler="$4"
+    groups="$5"
+    width="$6"
+
+    printf '%s %s: compiler=%s groups=%s width=%s\n' \
+        "$machine" "$api" "$compiler" "$groups" "$width" | tee -a "$config_log"
+    if command -v nvidia-smi >/dev/null 2>&1; then
+        gpu_summary=$(nvidia-smi --query-gpu=name,driver_version --format=csv,noheader 2>/dev/null | head -n 1)
+        if [ -n "$gpu_summary" ]; then
+            printf 'GPU: %s\n' "$gpu_summary" | tee -a "$config_log"
+        fi
+    fi
+}
+
 archive_run_provenance()
 {
     script_path="$1"

@@ -1,5 +1,5 @@
 CC = nvc
-CFLAGS = -acc -Minfo=accel -O0
+CFLAGS = -acc -O0
 LDFLAGS =
 CPPFLAGS = -E -O0
 LIBS = -lm

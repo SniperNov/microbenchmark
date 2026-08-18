@@ -39,17 +39,14 @@ OUTFILE="$OUTDIR/${JOB_NAME}_${TIMESTAMP}.out"
 archive_run_provenance "$0" "$OUTDIR" "$JOB_NAME" "$TIMESTAMP"
 
 PLOT_PY="${PLOT_PY:-/work/d35/d35/weiyu24/Microbenchmarking-of-Accelerators-Offloading/microbenchmark/.plotenv/bin/python}"
+require_plot_python "$PLOT_PY"
 
 echo "Running Archer2 MI210 OpenACC benchmark groups..." | tee "$OUTFILE"
-echo "GANGS=$GANGS WORKERS=$WORKERS" | tee -a "$OUTFILE"
-echo "N_DATA=$N_DATA" | tee -a "$OUTFILE"
-echo "N_ATORED=$N_ATORED" | tee -a "$OUTFILE"
-echo "N_FIXED=$N_FIXED" | tee -a "$OUTFILE"
-echo "DELAY_SHORT=$DELAY_SHORT" | tee -a "$OUTFILE"
+log_run_configuration "$OUTFILE" "$MACHINE" "$API" "$COMPILER_TAG" "$GANGS" "$WORKERS"
 
 echo "Compiling OpenACC backend with Cray CCE..." | tee -a "$OUTFILE"
-make clean
-make openacc-distribution OPENACC_DEFS=Makefile.defs.openacc.cray
+make -s clean
+make -s openacc-distribution OPENACC_DEFS=Makefile.defs.openacc.cray
 
 plot_group () {
     local BASE="$1"

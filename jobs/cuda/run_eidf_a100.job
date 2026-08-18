@@ -36,7 +36,8 @@ archive_run_provenance "$0" "$OUTDIR" "$JOB_NAME" "$TIMESTAMP"
 
 echo "Running EIDF A100 CUDA benchmark groups..." | tee "$OUTFILE"
 
-PLOT_PY="${PLOT_PY:-python3}"
+PLOT_PY="${PLOT_PY:-$PWD/.venv/bin/python}"
+require_plot_python "$PLOT_PY"
 
 echo "========== EIDF A100 CUDA configuration ==========" | tee -a "$OUTFILE"
 echo "MACHINE=$MACHINE" | tee -a "$OUTFILE"

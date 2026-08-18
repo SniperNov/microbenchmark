@@ -44,6 +44,7 @@ make clean
 make openmp-distribution
 
 PLOT_PY="/work/d35/d35/weiyu24/Microbenchmarking-of-Accelerators-Offloading/microbenchmark/.plotenv/bin/python"
+require_plot_python "$PLOT_PY"
 
 # -------------------------------
 # Fixed machine configuration
