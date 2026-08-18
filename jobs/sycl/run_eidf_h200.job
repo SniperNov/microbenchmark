@@ -1,30 +1,40 @@
-#!/bin/bash
-# EIDF H100 SYCL run script for VDI sessions.
+#!/bin/bash -l
+#SBATCH --job-name=run_eidf_h200_sycl
+#SBATCH --time=04:00:00
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --exclusive
+#SBATCH --output=slurm-%x-%j.out
 
-set -e
+# EIDF H200 SYCL Slurm job.
 
-SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
-. "$SCRIPT_DIR/../common.sh"
+set -euo pipefail
 
-MACHINE="H100"
+if [ -n "${SLURM_JOB_ID:-}" ]; then
+    cd "${SLURM_SUBMIT_DIR:?Submit the job from the repository root}"
+else
+    cd "$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)"
+fi
+
+. "./jobs/common.sh"
+
+MACHINE="H200"
 API="SYCL"
+set_common_benchmark_parameters
+set_platform_launch_parameters "$MACHINE"
+GROUPS="$PLATFORM_GROUPS"
+LOCAL_SIZE="$PLATFORM_WIDTH"
 COMPILER_TAG=$(compiler_tag_sycl)
 OUTDIR="result/$MACHINE/$API/$COMPILER_TAG"
 mkdir -p "$OUTDIR"
 
-JOB_NAME="eidf_h100_sycl"
+JOB_NAME="eidf_h200_sycl"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 OUTFILE="$OUTDIR/${JOB_NAME}_${TIMESTAMP}.out"
+archive_run_provenance "$0" "$OUTDIR" "$JOB_NAME" "$TIMESTAMP"
 
-GROUPS=132
-LOCAL_SIZE=128
-N_DATA="1,4,16,64,256,1024,4096,8192,16382,32768,65536"
-N_FIXED="16382"
-N_ATORED="16,64,256,1024,4096,8192,16382"
-N_PARREPS="1,2,4,8,16,32,64,128"
-DELAY_SHORT="1,8096"
-
-echo "Running EIDF H100 SYCL benchmark groups..." | tee "$OUTFILE"
+echo "Running EIDF H200 SYCL benchmark groups..." | tee "$OUTFILE"
 make clean
 make sycl-distribution SYCL_DEFS=Makefile.defs.sycl.dpcpp.cuda
 

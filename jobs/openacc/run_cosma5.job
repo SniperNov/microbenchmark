@@ -1,6 +1,6 @@
 #!/bin/bash -l
 #SBATCH -J cosma5_openacc
-#SBATCH -o result/COSMA5_Output/Logs/%x_%j.out
+#SBATCH --output=slurm-%x-%j.out
 #SBATCH -p mi300x
 #SBATCH -A do018
 #SBATCH --nodes=1
@@ -10,20 +10,26 @@
 #SBATCH --exclusive
 #SBATCH -t 04:00:00
 
-set -e
+set -euo pipefail
 
-cd /cosma/home/do018/dc-tu2/microbenchmark
+if [ -n "${SLURM_JOB_ID:-}" ]; then
+    cd "${SLURM_SUBMIT_DIR:?Submit the job from the repository root}"
+else
+    cd "$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)"
+fi
 
 export PATH="$HOME/bin:$PATH"
 
 module purge
 
-mkdir -p result/COSMA5_Output/Logs
-SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
-. "$SCRIPT_DIR/../common.sh"
+. "./jobs/common.sh"
 
 MACHINE="MI300X"
 API="OpenACC"
+set_common_benchmark_parameters
+set_platform_launch_parameters "$MACHINE"
+GANGS="$PLATFORM_GROUPS"
+WORKERS="$PLATFORM_WIDTH"
 COMPILER_TAG=$(compiler_tag_gcc)
 OUTDIR="result/$MACHINE/$API/$COMPILER_TAG"
 mkdir -p "$OUTDIR"
@@ -31,16 +37,8 @@ mkdir -p "$OUTDIR"
 JOB_NAME="cosma5_openacc"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 OUTFILE="$OUTDIR/${JOB_NAME}_${TIMESTAMP}.out"
+archive_run_provenance "$0" "$OUTDIR" "$JOB_NAME" "$TIMESTAMP"
 
-GANGS=304
-WORKERS=64
-
-N_DATA="1,4,16,64,256,1024,4096,16384,65536,262144,1048576,4194304,16777216"
-N_ATORED="1,2,4,8,16,32,64"
-N_FIXED="16384"
-N_PARREPS="1,2,4,8,16,32,64,128"
-
-DELAY_SHORT="1,8096"
 PLOT_PY="${PLOT_PY:-/cosma/home/do018/dc-tu2/microbenchmark/.venv/bin/python}"
 
 echo "Running COSMA5 MI300X OpenACC benchmark groups..." | tee "$OUTFILE"

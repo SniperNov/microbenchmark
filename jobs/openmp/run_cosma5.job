@@ -1,6 +1,6 @@
 #!/bin/bash -l
 #SBATCH -J cosma5_omp
-#SBATCH -o result/COSMA5_Output/Logs/%x_%j.out
+#SBATCH --output=slurm-%x-%j.out
 #SBATCH -p mi300x
 #SBATCH -A do018
 #SBATCH --nodes=1
@@ -10,51 +10,51 @@
 #SBATCH --exclusive
 #SBATCH -t 04:00:00
 
-set -e
+set -euo pipefail
+
+if [ -n "${SLURM_JOB_ID:-}" ]; then
+    cd "${SLURM_SUBMIT_DIR:?Submit the job from the repository root}"
+else
+    cd "$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)"
+fi
 
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 export OMP_TARGET_OFFLOAD=mandatory
-
-cd /cosma/home/do018/dc-tu2/microbenchmark
 
 export PATH="$HOME/bin:$PATH"
 
 module purge
 
-make clean
-make openmp-distribution
-
-SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
-. "$SCRIPT_DIR/../common.sh"
+. "./jobs/common.sh"
 
 MACHINE="MI300X"
 API="OpenMP"
+set_common_benchmark_parameters
+set_platform_launch_parameters "$MACHINE"
+THREADS="$PLATFORM_WIDTH"
+TEAMS="$PLATFORM_GROUPS"
 COMPILER_TAG=$(compiler_tag_amdclang)
 OUTDIR="result/$MACHINE/$API/$COMPILER_TAG"
 mkdir -p "$OUTDIR"
-mkdir -p "result/COSMA5_Output/Logs"
 
 JOB_NAME="cosma5_omp"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 OUTFILE="$OUTDIR/${JOB_NAME}_${TIMESTAMP}.out"
+archive_run_provenance "$0" "$OUTDIR" "$JOB_NAME" "$TIMESTAMP"
+
+make clean
+make openmp-distribution
 
 echo "Running COSMA5 MI300X OpenMP benchmark groups..." | tee "$OUTFILE"
 
 # =========================================
 # Machine-specific configuration: COSMA5 MI300X
 # =========================================
-THREADS=64
-TEAMS=304
 
 # =========================================
 # Experiment configuration
 # Same logical structure as Archer2 and GH
 # =========================================
-N_DATA="1,4,16,64,256,1024,4096,16384,65536,262144,1048576,4194304,16777216"
-N_ATORED="1,2,4,8,16,32,64"
-N_FIXED="16384"
-
-DELAY_SHORT="1,8096"
 
 PLOT_PY="/cosma/home/do018/dc-tu2/microbenchmark/.venv/bin/python"
 
@@ -104,12 +104,10 @@ run_group () {
 # =========================================
 run_group "M0_M10" "0,10" "$N_FIXED" "$DELAY_SHORT"
 
-
 # =========================================
 # Group 1: methods 1-4, data size sweep
 # =========================================
 run_group "M1to4" "1,2,3,4" "$N_DATA"   "$DELAY_SHORT"
-
 
 # =========================================
 # Group 2: methods 5 / 6 / 7, fixed N
@@ -128,7 +126,6 @@ run_group "M8to9" "8,9"     "$N_ATORED" "$DELAY_SHORT"
 # =========================================
 # Group 4: method 11, N is parreps
 # =========================================
-N_PARREPS="1,2,4,8,16,32,64,128"
 
 run_group "M11_parreps" "11" "$N_PARREPS" "$DELAY_SHORT"
 

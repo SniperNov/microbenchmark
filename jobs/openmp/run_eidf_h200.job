@@ -1,36 +1,42 @@
-#!/bin/bash
-# File: run_eidf_nvhpc_h200.sh
+#!/bin/bash -l
+#SBATCH --job-name=run_eidf_h200_openmp
+#SBATCH --time=04:00:00
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --exclusive
+#SBATCH --output=slurm-%x-%j.out
 
-set -e
+set -euo pipefail
+
+if [ -n "${SLURM_JOB_ID:-}" ]; then
+    cd "${SLURM_SUBMIT_DIR:?Submit the job from the repository root}"
+else
+    cd "$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)"
+fi
 
 export OMP_TARGET_OFFLOAD=mandatory
 
-SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
-. "$SCRIPT_DIR/../common.sh"
+. "./jobs/common.sh"
 
 MACHINE="H200"
 API="OpenMP"
-COMPILER_TAG=$(compiler_tag_nvc)
+set_common_benchmark_parameters
+set_platform_launch_parameters "$MACHINE"
+THREADS="$PLATFORM_WIDTH"
+TEAMS="$PLATFORM_GROUPS"
+COMPILER_TAG=$(compiler_tag_gcc)
 OUTDIR="result/$MACHINE/$API/$COMPILER_TAG"
 mkdir -p "$OUTDIR"
 
-JOB_NAME="eidf_h200_nvhpc__omp"
+JOB_NAME="eidf_h200_omp"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 OUTFILE="$OUTDIR/${JOB_NAME}_${TIMESTAMP}.out"
+archive_run_provenance "$0" "$OUTDIR" "$JOB_NAME" "$TIMESTAMP"
 
-echo "Running EIDF H200 NVHPC OpenMP benchmark groups..." | tee "$OUTFILE"
+echo "Running EIDF H200 OpenMP benchmark groups..." | tee "$OUTFILE"
 
-THREADS=32
-TEAMS=132
-
-N_DATA="1,4,16,64,256,1024,4096,8192,16382,32768,65536"
-N_FIXED="16382"
-N_ATORED="16,64,256,1024,4096,8192,16382"
-N_PARREPS="1,2,4,8,16,32,64,128"
-
-DELAY_SHORT="1,8096"
-
-echo "SET UP H200 configuration NVIDIA H200 NVHPC=====" | tee -a "$OUTFILE"
+echo "SET UP H200 configuration= NVIDIA H200 ========" | tee -a "$OUTFILE"
 echo "THREADS=$THREADS" | tee -a "$OUTFILE"
 echo "TEAMS=$TEAMS" | tee -a "$OUTFILE"
 nvidia-smi | tee -a "$OUTFILE"
@@ -39,7 +45,7 @@ echo "=============================================" | tee -a "$OUTFILE"
 echo "Compiling..." | tee -a "$OUTFILE"
 
 make clean
-make openmp-distribution
+make openmp-distribution OPENMP_DEFS=Makefile.defs.gcc
 
 run_group () {
     local TAG="$1"
@@ -64,11 +70,11 @@ run_group () {
         | tee -a "$OUTFILE"
 
     if [ -f overhead_distribution.txt ]; then
-        mv overhead_distribution.txt "$OUTDIR/overheadEIDF_NVC${BASE}.txt"
+        mv overhead_distribution.txt "$OUTDIR/overheadEIDF_${BASE}.txt"
     fi
 
     if [ -f raw_times.csv ]; then
-        mv raw_times.csv "$OUTDIR/distributionEIDF_NVC${BASE}.csv"
+        mv raw_times.csv "$OUTDIR/distributionEIDF_${BASE}.csv"
     fi
 }
 
@@ -82,5 +88,5 @@ run_group "M9" "9" "$N_ATORED" "$DELAY_SHORT"
 run_group "M11_parreps" "11" "$N_PARREPS" "$DELAY_SHORT"
 
 echo "" | tee -a "$OUTFILE"
-echo "All EIDF H200 NVHPC benchmark groups completed." | tee -a "$OUTFILE"
+echo "All EIDF H200 benchmark groups completed." | tee -a "$OUTFILE"
 echo "Results saved under $OUTDIR" | tee -a "$OUTFILE"

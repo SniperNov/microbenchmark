@@ -1,13 +1,22 @@
 #!/bin/bash
 # Grace Hopper / GH200 OpenACC run script.
 
-set -e
+set -euo pipefail
 
-SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
-. "$SCRIPT_DIR/../common.sh"
+if [ -n "${SLURM_JOB_ID:-}" ]; then
+    cd "${SLURM_SUBMIT_DIR:?Submit the job from the repository root}"
+else
+    cd "$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)"
+fi
+
+. "./jobs/common.sh"
 
 MACHINE="GH200"
 API="OpenACC"
+set_common_benchmark_parameters
+set_platform_launch_parameters "$MACHINE"
+GANGS="$PLATFORM_GROUPS"
+WORKERS="$PLATFORM_WIDTH"
 COMPILER_TAG=$(compiler_tag_nvc)
 OUTDIR="result/$MACHINE/$API/$COMPILER_TAG"
 mkdir -p "$OUTDIR"
@@ -15,18 +24,10 @@ mkdir -p "$OUTDIR"
 JOB_NAME="gh_openacc"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 OUTFILE="$OUTDIR/${JOB_NAME}_${TIMESTAMP}.out"
+archive_run_provenance "$0" "$OUTDIR" "$JOB_NAME" "$TIMESTAMP"
 
 echo "Running Grace Hopper OpenACC benchmark groups..." | tee "$OUTFILE"
 
-GANGS=132
-WORKERS=128
-
-N_DATA="1,4,16,64,256,1024,4096,8192,16382,32768,65536"
-N_FIXED="16382"
-N_ATORED="16,64,256,1024,4096,8192,16382"
-N_PARREPS="1,2,4,8,16,32,64,128"
-
-DELAY_SHORT="1,8096"
 PLOT_PY="${PLOT_PY:-python3}"
 
 echo "========== Grace Hopper OpenACC configuration ==========" | tee -a "$OUTFILE"

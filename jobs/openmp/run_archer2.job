@@ -7,9 +7,15 @@
 #SBATCH --qos=gpu-exc
 #SBATCH --gres=gpu:1
 #SBATCH --exclusive
-#SBATCH --output=result/Archer2_Output/Logs/%x_%j.out
+#SBATCH --output=slurm-%x-%j.out
 
-set -e
+set -euo pipefail
+
+if [ -n "${SLURM_JOB_ID:-}" ]; then
+    cd "${SLURM_SUBMIT_DIR:?Submit the job from the repository root}"
+else
+    cd "$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)"
+fi
 
 export OMP_TARGET_OFFLOAD=mandatory
 
@@ -17,14 +23,14 @@ module load PrgEnv-amd
 module load craype-accel-amd-gfx90a
 module load craype-x86-milan
 
-make clean
-make openmp-distribution
-
-SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
-. "$SCRIPT_DIR/../common.sh"
+. "./jobs/common.sh"
 
 MACHINE="MI210"
 API="OpenMP"
+set_common_benchmark_parameters
+set_platform_launch_parameters "$MACHINE"
+THREADS="$PLATFORM_WIDTH"
+TEAMS="$PLATFORM_GROUPS"
 COMPILER_TAG=$(compiler_tag_cray)
 OUTDIR="result/$MACHINE/$API/$COMPILER_TAG"
 mkdir -p "$OUTDIR"
@@ -32,26 +38,24 @@ mkdir -p "$OUTDIR"
 JOB_NAME="ar2_omp"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 OUTFILE="$OUTDIR/${JOB_NAME}_${TIMESTAMP}.out"
+archive_run_provenance "$0" "$OUTDIR" "$JOB_NAME" "$TIMESTAMP"
+
+make clean
+make openmp-distribution
 
 PLOT_PY="/work/d35/d35/weiyu24/Microbenchmarking-of-Accelerators-Offloading/microbenchmark/.plotenv/bin/python"
 
 # -------------------------------
 # Fixed machine configuration
 # -------------------------------
-THREADS=64
-TEAMS=104
 
 # -------------------------------
 # N groups
 # -------------------------------
-N_DATA="1,4,16,64,256,1024,4096,16384,65536,262144,1048576,4194304,16777216"
-N_ATORED="1,4,16,64"
-N_FIXED="16384"
 
 # -------------------------------
 # Delay variations
 # -------------------------------
-DELAY_SHORT="1,8096"
 
 echo "Running Archer2 benchmark sweep..." | tee "$OUTFILE"
 echo "THREADS=$THREADS, TEAMS=$TEAMS" | tee -a "$OUTFILE"
@@ -111,12 +115,10 @@ run_group () {
 # =========================================
 run_group "M0_M10" "0,10" "$N_FIXED" "$DELAY_SHORT"
 
-
 # =========================================
 # Group 1: methods 1-4, data size sweep
 # =========================================
 run_group "M1to4" "1,2,3,4" "$N_DATA"   "$DELAY_SHORT"
-
 
 # =========================================
 # Group 2: methods 5 / 6 / 7, fixed N
@@ -135,7 +137,6 @@ run_group "M8to9" "8,9"     "$N_ATORED" "$DELAY_SHORT"
 # =========================================
 # Group 4: method 11, N is parreps
 # =========================================
-N_PARREPS="1,2,4,8,16,32,64,128"
 
 run_group "M11_parreps" "11" "$N_PARREPS" "$DELAY_SHORT"
 

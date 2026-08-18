@@ -1,16 +1,22 @@
 #!/bin/bash
 # File: GH_run.sh
 
-set -e
+set -euo pipefail
 
-make clean
-make openmp-distribution
+if [ -n "${SLURM_JOB_ID:-}" ]; then
+    cd "${SLURM_SUBMIT_DIR:?Submit the job from the repository root}"
+else
+    cd "$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)"
+fi
 
-SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
-. "$SCRIPT_DIR/../common.sh"
+. "./jobs/common.sh"
 
 MACHINE="GH200"
 API="OpenMP"
+set_common_benchmark_parameters
+set_platform_launch_parameters "$MACHINE"
+THREADS="$PLATFORM_WIDTH"
+TEAMS="$PLATFORM_GROUPS"
 COMPILER_TAG=$(compiler_tag_nvc)
 OUTDIR="result/$MACHINE/$API/$COMPILER_TAG"
 mkdir -p "$OUTDIR"
@@ -18,24 +24,20 @@ mkdir -p "$OUTDIR"
 JOB_NAME="gh_omp"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 OUTFILE="$OUTDIR/${JOB_NAME}_${TIMESTAMP}.out"
+archive_run_provenance "$0" "$OUTDIR" "$JOB_NAME" "$TIMESTAMP"
+
+make clean
+make openmp-distribution
 
 echo "Running Grace Hopper OpenMP benchmark groups..." | tee "$OUTFILE"
 
 # =========================================
 # Machine-specific configuration: Grace Hopper
 # =========================================
-THREADS=32
-TEAMS=132
 
 # =========================================
 # Experiment configuration
 # =========================================
-N_DATA="1,4,16,64,256,1024,4096,8192,16382,32768,65536"
-N_FIXED="16382"
-N_ATORED="16,64,256,1024,4096,8192,16382"
-
-DELAY_SHORT="1,8096"
-DELAY_FULL="1,262144"
 
 PLOT_PY="/work/weiyu/microbenchmark/.venv/bin/python"
 if [ ! -x "$PLOT_PY" ]; then
@@ -62,7 +64,6 @@ run_group () {
         thread_count=$THREADS \
         team_count=$TEAMS \
         | tee -a "$OUTFILE"
-
 
     if [ -f overhead_distribution.txt ]; then
         mv overhead_distribution.txt "$OUTDIR/overhead_${BASE}.txt"
@@ -96,12 +97,10 @@ run_group () {
 # =========================================
 run_group "M0_M10" "0,10" "$N_FIXED" "$DELAY_SHORT"
 
-
 # =========================================
 # Group 1: methods 1-4, data size sweep
 # =========================================
 run_group "M1to4" "1,2,3,4" "$N_DATA"   "$DELAY_SHORT"
-
 
 # =========================================
 # Group 2: methods 5 / 6 / 7, fixed N
@@ -121,10 +120,8 @@ run_group "M8to9" "9"     "$N_ATORED" "$DELAY_SHORT"
 # =========================================
 # Group 4: method 11, N is parreps
 # =========================================
-N_PARREPS="1,2,4,8,16,32,64,128"
 
 run_group "M11_parreps" "11" "$N_PARREPS" "$DELAY_SHORT"
-
 
 echo "" | tee -a "$OUTFILE"
 echo "All benchmark groups completed." | tee -a "$OUTFILE"

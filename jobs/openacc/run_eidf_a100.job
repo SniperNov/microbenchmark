@@ -1,35 +1,44 @@
-#!/bin/bash
-# EIDF H100 OpenACC run script for VDI sessions.
+#!/bin/bash -l
+#SBATCH --job-name=run_eidf_a100_openacc
+#SBATCH --time=04:00:00
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:1
+#SBATCH --exclusive
+#SBATCH --output=slurm-%x-%j.out
 
-set -e
+# EIDF A100 OpenACC Slurm job.
 
-SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
-. "$SCRIPT_DIR/../common.sh"
+set -euo pipefail
 
-MACHINE="H100"
+if [ -n "${SLURM_JOB_ID:-}" ]; then
+    cd "${SLURM_SUBMIT_DIR:?Submit the job from the repository root}"
+else
+    cd "$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)"
+fi
+
+. "./jobs/common.sh"
+
+MACHINE="A100"
 API="OpenACC"
+set_common_benchmark_parameters
+set_platform_launch_parameters "$MACHINE"
+GANGS="$PLATFORM_GROUPS"
+WORKERS="$PLATFORM_WIDTH"
 COMPILER_TAG=$(compiler_tag_nvc)
 OUTDIR="result/$MACHINE/$API/$COMPILER_TAG"
 mkdir -p "$OUTDIR"
 
-JOB_NAME="eidf_h100_openacc"
+JOB_NAME="eidf_a100_openacc"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 OUTFILE="$OUTDIR/${JOB_NAME}_${TIMESTAMP}.out"
+archive_run_provenance "$0" "$OUTDIR" "$JOB_NAME" "$TIMESTAMP"
 
-echo "Running EIDF H100 OpenACC benchmark groups..." | tee "$OUTFILE"
+echo "Running EIDF A100 OpenACC benchmark groups..." | tee "$OUTFILE"
 
-GANGS=132
-WORKERS=128
-
-N_DATA="1,4,16,64,256,1024,4096,8192,16382,32768,65536"
-N_FIXED="16382"
-N_ATORED="16,64,256,1024,4096,8192,16382"
-N_PARREPS="1,2,4,8,16,32,64,128"
-
-DELAY_SHORT="1,8096"
 PLOT_PY="${PLOT_PY:-python3}"
 
-echo "========== EIDF H100 OpenACC configuration ==========" | tee -a "$OUTFILE"
+echo "========== EIDF A100 OpenACC configuration ==========" | tee -a "$OUTFILE"
 echo "MACHINE=$MACHINE" | tee -a "$OUTFILE"
 echo "API=$API" | tee -a "$OUTFILE"
 echo "COMPILER_TAG=$COMPILER_TAG" | tee -a "$OUTFILE"
@@ -101,5 +110,5 @@ run_group "M9" "9" "$N_ATORED" "$DELAY_SHORT"
 run_group "M11_parreps" "11" "$N_PARREPS" "$DELAY_SHORT"
 
 echo "" | tee -a "$OUTFILE"
-echo "All EIDF H100 OpenACC benchmark groups completed." | tee -a "$OUTFILE"
+echo "All EIDF A100 OpenACC benchmark groups completed." | tee -a "$OUTFILE"
 echo "Results saved under $OUTDIR" | tee -a "$OUTFILE"

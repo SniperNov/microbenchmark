@@ -252,9 +252,9 @@ result/<Machine>/<API>/<CompilerVersion>/
 Examples:
 
 ```text
-result/GH200/CUDA/NVCC13_1_115/
-result/GH200/OpenACC/NVC25_5/
-result/H100/OpenMP/GCC13_2_0/
+result/GH200/CUDA/NVCC_13_1_115/
+result/GH200/OpenACC/NVC_26_3/
+result/H100/OpenMP/GCC_13_2_0/
 ```
 
 The compiler-version directory is detected by the job script from commands such as `nvcc --version`, `nvc --version`, `gcc -dumpfullversion -dumpversion`, or `cc --version`.
@@ -268,9 +268,9 @@ SYCL scripts are under `jobs/sycl/`.
 For OpenACC, the current scripts are:
 
 ```text
-jobs/openacc/run_eidf_a100.sh     EIDF A100, NVHPC OpenACC
-jobs/openacc/run_eidf_h100.sh     EIDF H100, NVHPC OpenACC
-jobs/openacc/run_eidf_h200.sh     EIDF H200, NVHPC OpenACC
+jobs/openacc/run_eidf_a100.job     EIDF A100, NVHPC OpenACC
+jobs/openacc/run_eidf_h100.job     EIDF H100, NVHPC OpenACC
+jobs/openacc/run_eidf_h200.job     EIDF H200, NVHPC OpenACC
 jobs/openacc/run_GH.sh            Grace Hopper / GH200, NVHPC OpenACC
 jobs/openacc/run_archer2.job      Archer2 MI210, Cray OpenACC
 jobs/openacc/run_cosma5.job       COSMA5 MI300X, exploratory OpenACC
@@ -279,35 +279,52 @@ jobs/openacc/run_cosma5.job       COSMA5 MI300X, exploratory OpenACC
 For CUDA, the current scripts are:
 
 ```text
-jobs/cuda/run_eidf_a100.sh        EIDF A100, CUDA
-jobs/cuda/run_eidf_h100.sh        EIDF H100, CUDA
-jobs/cuda/run_eidf_h200.sh        EIDF H200, CUDA
+jobs/cuda/run_eidf_a100.job        EIDF A100, CUDA
+jobs/cuda/run_eidf_h100.job        EIDF H100, CUDA
+jobs/cuda/run_eidf_h200.job        EIDF H200, CUDA
 jobs/cuda/run_GH.sh               Grace Hopper / GH200, CUDA
 ```
 
 For SYCL, the current scripts are:
 
 ```text
-jobs/sycl/run_eidf_a100.sh        EIDF A100, SYCL
-jobs/sycl/run_eidf_h100.sh        EIDF H100, SYCL
-jobs/sycl/run_eidf_h200.sh        EIDF H200, SYCL
+jobs/sycl/run_eidf_a100.job        EIDF A100, SYCL
+jobs/sycl/run_eidf_h100.job        EIDF H100, SYCL
+jobs/sycl/run_eidf_h200.job        EIDF H200, SYCL
 jobs/sycl/run_GH.sh               Grace Hopper / GH200, SYCL
 ```
 
-Run VDI-style scripts directly from the repository root:
+All non-GH200 runs are Slurm jobs and must be submitted from the repository
+root. For example:
 
 ```bash
-bash jobs/openacc/run_eidf_h100.sh
-bash jobs/cuda/run_eidf_h100.sh
-bash jobs/sycl/run_eidf_h100.sh
-```
-
-Submit Slurm scripts with:
-
-```bash
+sbatch jobs/openacc/run_eidf_h100.job
+sbatch jobs/cuda/run_eidf_h100.job
+sbatch jobs/sycl/run_eidf_h100.job
 sbatch jobs/openacc/run_archer2.job
-sbatch jobs/openacc/run_cosma5.job
+sbatch jobs/openmp/run_cosma5.job
 ```
+
+GH200 is the only direct-run platform. Its scripts are executable:
+
+```bash
+./jobs/openmp/run_GH.sh
+./jobs/openacc/run_GH.sh
+./jobs/cuda/run_GH.sh
+./jobs/sycl/run_GH.sh
+```
+
+Every run writes all artifacts below
+`result/<machine>/<API>/<compiler_version>/`. In addition to benchmark CSV,
+summary, plot, and log files, the directory contains an immutable copy of the
+executed submission/run script and a Git-state record with the commit, branch,
+working-tree status, and diff. Slurm stdout is moved into the same directory
+when the job exits.
+
+Shared experiment parameters and per-platform launch dimensions are defined in
+`jobs/common.sh`. Every API on the same platform consumes the same platform
+group count and width; API-specific names such as teams/threads, gangs/workers,
+blocks/threads, and groups/local-size are only aliases for that shared pair.
 
 The scripts use the same benchmark grouping as the OpenMP runs:
 
