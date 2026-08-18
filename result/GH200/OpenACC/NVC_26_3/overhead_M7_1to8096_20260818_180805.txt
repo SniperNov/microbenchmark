@@ -1,0 +1,14 @@
+
+[Method=7 async parallel loop + wait N=16382]
+Set=0 Run=0  Lmin=1  Intercept=8.518593 us  Slope=0.026416  R2=0.99996  BIC=-35.736  Lowest=8.100000 us @ delay=3
+Set=0 Run=1  Lmin=1  Intercept=8.460636 us  Slope=0.026374  R2=0.99997  BIC=-41.244  Lowest=8.150000 us @ delay=1
+Set=0 Run=2  Lmin=1  Intercept=8.428174 us  Slope=0.026374  R2=0.99996  BIC=-36.222  Lowest=7.950000 us @ delay=2
+Set=0 Run=3  Lmin=1  Intercept=8.397704 us  Slope=0.026363  R2=0.99997  BIC=-46.261  Lowest=8.000000 us @ delay=2
+Set=0 Run=4  Lmin=1  Intercept=8.438026 us  Slope=0.026372  R2=0.99997  BIC=-42.515  Lowest=8.000000 us @ delay=1
+Set=1 Run=0  Lmin=1  Intercept=8.338146 us  Slope=0.026428  R2=0.99997  BIC=-41.320  Lowest=7.950000 us @ delay=1
+Set=1 Run=1  Lmin=1  Intercept=8.438399 us  Slope=0.026365  R2=0.99997  BIC=-44.621  Lowest=8.050000 us @ delay=1
+Set=1 Run=2  Lmin=1  Intercept=8.383601 us  Slope=0.026367  R2=0.99998  BIC=-47.543  Lowest=8.000000 us @ delay=1
+Set=1 Run=3  Lmin=1  Intercept=8.390404 us  Slope=0.026386  R2=0.99997  BIC=-41.499  Lowest=8.050000 us @ delay=2
+Set=1 Run=4  Lmin=1  Intercept=8.409680 us  Slope=0.026396  R2=0.99997  BIC=-39.987  Lowest=7.950000 us @ delay=1
+Average Intercept = 8.420336 ± 0.048996 us
+Average Lowest    = 8.020000 ± 0.067495 us

@@ -1,0 +1,16 @@
+timestamp=20260818_101459
+hostname=gh02
+slurm_job_id=manual
+slurm_job_name=manual
+script=./jobs/openacc/run_GH.sh
+working_directory=/work/weiyu/microbenchmark
+
+## unified-suite...origin/unified-suite
+commit 5e081d66942491f55970431272b4ac98abf36668
+Author:     Codex <codex@localhost>
+AuthorDate: Tue Aug 18 09:57:11 2026 +0100
+Commit:     Codex <codex@localhost>
+CommitDate: Tue Aug 18 09:57:11 2026 +0100
+
+    Standardize benchmark job submission and provenance
+
