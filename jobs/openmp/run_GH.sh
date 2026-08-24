@@ -26,21 +26,13 @@ TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 OUTFILE="$OUTDIR/${JOB_NAME}_${TIMESTAMP}.out"
 archive_run_provenance "$0" "$OUTDIR" "$JOB_NAME" "$TIMESTAMP"
 
-make clean
-make openmp-distribution
+PLOT_PY="${PLOT_PY:-$PWD/.venv/bin/python}"
+require_plot_python "$PLOT_PY"
+
+make -s clean
+make -s openmp-distribution
 
 echo "Running Grace Hopper OpenMP benchmark groups..." | tee "$OUTFILE"
-
-# =========================================
-# Machine-specific configuration: Grace Hopper
-# =========================================
-
-# =========================================
-# Experiment configuration
-# =========================================
-
-PLOT_PY="/work/weiyu/microbenchmark/.venv/bin/python"
-require_plot_python "$PLOT_PY"
 
 run_group () {
     local TAG="$1"
