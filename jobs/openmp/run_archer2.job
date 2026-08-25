@@ -44,7 +44,10 @@ make -s clean
 make -s openmp-distribution
 
 PLOT_PY="${PLOT_PY:-$PWD/.plotenv/bin/python}"
-require_plot_python "$PLOT_PY"
+PLOT_RESULTS="${PLOT_RESULTS:-0}"
+if [ "$PLOT_RESULTS" = "1" ]; then
+    require_plot_python "$PLOT_PY"
+fi
 
 # -------------------------------
 # Fixed machine configuration
@@ -89,6 +92,10 @@ run_group () {
 
     if [ -f raw_times.csv ]; then
         mv raw_times.csv "$OUTDIR/distribution_${BASE}.csv"
+    fi
+
+    if [ "$PLOT_RESULTS" != "1" ]; then
+        return
     fi
 
     if [ -f "$OUTDIR/distribution_${BASE}.csv" ] && [ -f "$OUTDIR/overhead_${BASE}.txt" ]; then

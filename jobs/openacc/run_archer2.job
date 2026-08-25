@@ -39,7 +39,10 @@ OUTFILE="$OUTDIR/${JOB_NAME}_${TIMESTAMP}.out"
 archive_run_provenance "$0" "$OUTDIR" "$JOB_NAME" "$TIMESTAMP"
 
 PLOT_PY="${PLOT_PY:-$PWD/.plotenv/bin/python}"
-require_plot_python "$PLOT_PY"
+PLOT_RESULTS="${PLOT_RESULTS:-0}"
+if [ "$PLOT_RESULTS" = "1" ]; then
+    require_plot_python "$PLOT_PY"
+fi
 
 echo "Running Archer2 MI210 OpenACC benchmark groups..." | tee "$OUTFILE"
 log_run_configuration "$OUTFILE" "$MACHINE" "$API" "$COMPILER_TAG" "$GANGS" "$WORKERS"
@@ -54,6 +57,10 @@ plot_group () {
     local CSV="$OUTDIR/distribution_${BASE}.csv"
     local TXT="$OUTDIR/overhead_${BASE}.txt"
     local PNG="$OUTDIR/resultLowest_${BASE}.png"
+
+    if [ "$PLOT_RESULTS" != "1" ]; then
+        return
+    fi
 
     if [ -f "$CSV" ] && [ -f "$TXT" ] && [ -x "$PLOT_PY" ]; then
         "$PLOT_PY" ./plots/plot_raw_times.py "$CSV" "$TXT" 1,18 "$SCALE" "$PNG" 2>&1 | tee -a "$OUTFILE"
