@@ -1,0 +1,16 @@
+timestamp=20260818_104145
+hostname=gh02
+slurm_job_id=manual
+slurm_job_name=manual
+script=./jobs/openacc/run_GH.sh
+working_directory=/work/weiyu/microbenchmark
+
+## unified-suite...origin/unified-suite
+commit 6ad41f5ea3fec6388f65f5ce40bcbd23ee71e50f
+Author:     Codex <codex@localhost>
+AuthorDate: Tue Aug 18 11:21:38 2026 +0100
+Commit:     Codex <codex@localhost>
+CommitDate: Tue Aug 18 11:21:38 2026 +0100
+
+    Align OpenACC launch shape and quiet benchmark runs
+
