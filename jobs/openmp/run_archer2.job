@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --account=d35-wt
-#SBATCH --job-name=RunLog
+#SBATCH --job-name=ar2_openmp
 #SBATCH --time=4:00:00
 #SBATCH --nodes=1
 #SBATCH --partition=gpu
@@ -19,7 +19,8 @@ fi
 
 export OMP_TARGET_OFFLOAD=mandatory
 
-module load PrgEnv-amd
+module purge
+module load PrgEnv-amd/8.4.0
 module load craype-accel-amd-gfx90a
 module load craype-x86-milan
 
@@ -31,7 +32,7 @@ set_common_benchmark_parameters
 set_platform_launch_parameters "$MACHINE"
 THREADS="$PLATFORM_WIDTH"
 TEAMS="$PLATFORM_GROUPS"
-COMPILER_TAG=$(compiler_tag_cray)
+COMPILER_TAG=$(compiler_tag_amdclang)
 OUTDIR="result/$MACHINE/$API/$COMPILER_TAG"
 mkdir -p "$OUTDIR"
 
@@ -40,10 +41,10 @@ TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 OUTFILE="$OUTDIR/${JOB_NAME}_${TIMESTAMP}.out"
 archive_run_provenance "$0" "$OUTDIR" "$JOB_NAME" "$TIMESTAMP"
 
-make clean
-make openmp-distribution
+make -s clean
+make -s openmp-distribution
 
-PLOT_PY="/work/d35/d35/weiyu24/Microbenchmarking-of-Accelerators-Offloading/microbenchmark/.plotenv/bin/python"
+PLOT_PY="${PLOT_PY:-$PWD/.plotenv/bin/python}"
 require_plot_python "$PLOT_PY"
 
 # -------------------------------
@@ -59,11 +60,7 @@ require_plot_python "$PLOT_PY"
 # -------------------------------
 
 echo "Running Archer2 benchmark sweep..." | tee "$OUTFILE"
-echo "THREADS=$THREADS, TEAMS=$TEAMS" | tee -a "$OUTFILE"
-echo "N_DATA=$N_DATA" | tee -a "$OUTFILE"
-echo "N_ATORED=$N_ATORED" | tee -a "$OUTFILE"
-echo "N_FIXED=$N_FIXED" | tee -a "$OUTFILE"
-echo "DELAY_SHORT=$DELAY_SHORT" | tee -a "$OUTFILE"
+log_run_configuration "$OUTFILE" "$MACHINE" "$API" "$COMPILER_TAG" "$TEAMS" "$THREADS"
 
 run_group () {
     local TAG="$1"
@@ -77,7 +74,9 @@ run_group () {
     echo "" | tee -a "$OUTFILE"
     echo "===== [$TAG] Method=$METHODS N=$NLIST Delay=$DELAY_RANGE =====" | tee -a "$OUTFILE"
 
-    ./bin/microbenchmark API=openmp \
+    rm -f overhead_distribution.txt raw_times.csv
+
+    srun ./bin/microbenchmark API=openmp \
         Method=$METHODS \
         N=$NLIST \
         Delay=$DELAY_RANGE \

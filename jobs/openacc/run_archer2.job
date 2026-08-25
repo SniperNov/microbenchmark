@@ -17,7 +17,9 @@ else
     cd "$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)"
 fi
 
-module load PrgEnv-amd
+module purge
+module load PrgEnv-cray/8.4.0
+module load cce/16.0.1
 module load craype-accel-amd-gfx90a
 module load craype-x86-milan
 
@@ -38,7 +40,7 @@ TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 OUTFILE="$OUTDIR/${JOB_NAME}_${TIMESTAMP}.out"
 archive_run_provenance "$0" "$OUTDIR" "$JOB_NAME" "$TIMESTAMP"
 
-PLOT_PY="${PLOT_PY:-/work/d35/d35/weiyu24/Microbenchmarking-of-Accelerators-Offloading/microbenchmark/.plotenv/bin/python}"
+PLOT_PY="${PLOT_PY:-$PWD/.plotenv/bin/python}"
 require_plot_python "$PLOT_PY"
 
 echo "Running Archer2 MI210 OpenACC benchmark groups..." | tee "$OUTFILE"
