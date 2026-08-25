@@ -103,8 +103,8 @@ run_group "M7"    "7"       "$N_FIXED"  "$DELAY_SHORT"
 # =========================================
 # Group 3: methods 8 / 9, atomic + reduction
 # =========================================
-run_group "M8to9" "8"     "$N_ATORED" "$DELAY_SHORT"
-run_group "M8to9" "9"     "$N_ATORED" "$DELAY_SHORT"
+run_group "M8" "8"     "$N_ATORED" "$DELAY_SHORT"
+run_group "M9" "9"     "$N_ATORED" "$DELAY_SHORT"
 
 # =========================================
 # Group 4: method 11, N is parreps
