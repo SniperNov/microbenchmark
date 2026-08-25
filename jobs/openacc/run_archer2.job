@@ -17,9 +17,7 @@ else
     cd "$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)"
 fi
 
-module purge
-module load PrgEnv-cray/8.4.0
-module load cce/16.0.1
+module load PrgEnv-cray
 module load craype-accel-amd-gfx90a
 module load craype-x86-milan
 

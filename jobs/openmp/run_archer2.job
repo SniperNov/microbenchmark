@@ -19,8 +19,7 @@ fi
 
 export OMP_TARGET_OFFLOAD=mandatory
 
-module purge
-module load PrgEnv-amd/8.4.0
+module load PrgEnv-amd
 module load craype-accel-amd-gfx90a
 module load craype-x86-milan
 
