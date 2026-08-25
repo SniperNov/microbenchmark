@@ -1,0 +1,256 @@
+Running Grace Hopper OpenMP benchmark groups...
+
+===== [M0_M10] Method=0,10 N=16382 Delay=1,8096 =====
+========== Runtime Configuration ==========
+API           : openmp
+Methods       : 0, 10
+Delay range   : [1, 8096]
+Array size(s) : 16382
+thread_count   : 32
+team_count     : 132
+MAX_ITER      : 16382  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+NUM_SAMPLES   : 20
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  1 available devices
+Host device is -1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                         16382
+                                                BIC intercept | lowest
+pure delay kernel                           10.996±0.063      |     10.794±0.107     
+teams parallel                              10.931±0.039      |     10.750±0.073     
+==========================================
+Finalizing benchmark.
+Plotting M0_M10_1to8096_20260825_103524 ...
+[OK] saved: result/GH200/OpenMP/NVC_26_3/resultLowest_M0_M10_1to8096_20260825_103524.png
+[INFO] x-scale = log
+Plot generated: result/GH200/OpenMP/NVC_26_3/resultLowest_M0_M10_1to8096_20260825_103524.png
+
+===== [M1to4] Method=1,2,3,4 N=1,4,16,64,256,1024,4096,8192,16382,32768,65536 Delay=1,8096 =====
+========== Runtime Configuration ==========
+API           : openmp
+Methods       : 1, 2, 3, 4
+Delay range   : [1, 8096]
+Array size(s) : 1, 4, 16, 64, 256, 1024, 4096, 8192, 16382, 32768, 65536
+thread_count   : 32
+team_count     : 132
+MAX_ITER      : 65536  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+NUM_SAMPLES   : 20
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  1 available devices
+Host device is -1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                             1                             4                            16                            64                           256                          1024                          4096                          8192                         16382                         32768                         65536
+                                                BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest
+map(tofrom: a)                              19.935±0.075      |     21.782±0.135         19.876±0.142      |     21.673±0.145         19.974±0.099      |     21.789±0.237         19.936±0.070      |     21.744±0.119         20.674±0.038      |     22.465±0.128         20.877±0.069      |     22.790±0.076         22.703±0.598      |     23.850±0.098         26.080±0.120      |     25.989±0.096         26.602±0.059      |     28.576±0.136         27.671±0.061      |     29.609±0.097         29.435±0.083      |     31.384±0.120     
+map(to: a)                                  12.238±0.036      |     12.093±0.055         12.218±0.040      |     12.041±0.065         12.181±0.180      |     12.045±0.184         12.289±0.033      |     12.155±0.045         12.980±0.043      |     12.770±0.136         12.890±0.034      |     12.687±0.078         13.719±0.029      |     13.568±0.056         15.879±0.037      |     15.690±0.049         19.224±0.072      |     18.934±0.191         19.822±0.047      |     19.460±0.081         20.554±0.079      |     20.266±0.135     
+map(from: a)                                19.126±0.076      |     21.000±0.095         19.081±0.136      |     20.831±0.105         19.027±0.050      |     20.829±0.135         18.856±0.087      |     20.757±0.114         18.992±0.080      |     20.831±0.134         18.790±0.107      |     20.639±0.126         18.449±0.043      |     20.448±0.091         18.741±0.062      |     20.703±0.075         19.281±0.054      |     21.205±0.089         19.642±0.094      |     21.621±0.096         20.740±0.083      |     22.694±0.091     
+map(alloc: a)                               11.320±0.050      |     11.144±0.072         11.305±0.064      |     11.134±0.104         11.349±0.024      |     11.203±0.065         11.323±0.030      |     11.137±0.084         11.320±0.059      |     11.179±0.115         11.323±0.025      |     11.195±0.055         11.330±0.061      |     11.142±0.099         11.312±0.032      |     11.157±0.075         11.298±0.075      |     11.156±0.090         11.360±0.032      |     11.200±0.067         11.329±0.044      |     11.191±0.047     
+==========================================
+Finalizing benchmark.
+Plotting M1to4_1to8096_20260825_103524 ...
+[OK] saved: result/GH200/OpenMP/NVC_26_3/resultLowest_M1to4_1to8096_20260825_103524.png
+[INFO] x-scale = log
+Plot generated: result/GH200/OpenMP/NVC_26_3/resultLowest_M1to4_1to8096_20260825_103524.png
+
+===== [M5] Method=5 N=16382 Delay=1,8096 =====
+========== Runtime Configuration ==========
+API           : openmp
+Methods       : 5
+Delay range   : [1, 8096]
+Array size(s) : 16382
+thread_count   : 32
+team_count     : 132
+MAX_ITER      : 16382  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+NUM_SAMPLES   : 20
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  1 available devices
+Host device is -1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                         16382
+                                                BIC intercept | lowest
+teams (scalar)                               9.851±0.044      |      9.640±0.094     
+==========================================
+Finalizing benchmark.
+Plotting M5_1to8096_20260825_103524 ...
+[OK] saved: result/GH200/OpenMP/NVC_26_3/resultLowest_M5_1to8096_20260825_103524.png
+[INFO] x-scale = log
+Plot generated: result/GH200/OpenMP/NVC_26_3/resultLowest_M5_1to8096_20260825_103524.png
+
+===== [M6] Method=6 N=16382 Delay=1,8096 =====
+========== Runtime Configuration ==========
+API           : openmp
+Methods       : 6
+Delay range   : [1, 8096]
+Array size(s) : 16382
+thread_count   : 32
+team_count     : 132
+MAX_ITER      : 16382  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+NUM_SAMPLES   : 20
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  1 available devices
+Host device is -1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                         16382
+                                                BIC intercept | lowest
+teams distribute parallel for                8.473±0.050      |      8.081±0.086     
+==========================================
+Finalizing benchmark.
+Plotting M6_1to8096_20260825_103524 ...
+[OK] saved: result/GH200/OpenMP/NVC_26_3/resultLowest_M6_1to8096_20260825_103524.png
+[INFO] x-scale = log
+Plot generated: result/GH200/OpenMP/NVC_26_3/resultLowest_M6_1to8096_20260825_103524.png
+
+===== [M7] Method=7 N=16382 Delay=1,8096 =====
+========== Runtime Configuration ==========
+API           : openmp
+Methods       : 7
+Delay range   : [1, 8096]
+Array size(s) : 16382
+thread_count   : 32
+team_count     : 132
+MAX_ITER      : 16382  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+NUM_SAMPLES   : 20
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  1 available devices
+Host device is -1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                         16382
+                                                BIC intercept | lowest
+nowait                                      11.690±0.073      |     11.353±0.144     
+==========================================
+Finalizing benchmark.
+Plotting M7_1to8096_20260825_103524 ...
+[OK] saved: result/GH200/OpenMP/NVC_26_3/resultLowest_M7_1to8096_20260825_103524.png
+[INFO] x-scale = log
+Plot generated: result/GH200/OpenMP/NVC_26_3/resultLowest_M7_1to8096_20260825_103524.png
+
+===== [M8] Method=8 N=16,64,256,1024,4096,8192,16382 Delay=1,8096 =====
+========== Runtime Configuration ==========
+API           : openmp
+Methods       : 8
+Delay range   : [1, 8096]
+Array size(s) : 16, 64, 256, 1024, 4096, 8192, 16382
+thread_count   : 32
+team_count     : 132
+MAX_ITER      : 16382  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+NUM_SAMPLES   : 20
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  1 available devices
+Host device is -1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                            16                            64                           256                          1024                          4096                          8192                         16382
+                                                BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest
+teams atomic                                13.144±0.041      |     12.914±0.041         10.735±0.051      |     10.527±0.074          9.589±0.050      |      9.375±0.062          8.708±0.022      |      8.529±0.065          8.530±0.033      |      8.370±0.064          8.514±0.022      |      8.348±0.051          8.499±0.022      |      8.339±0.041     
+==========================================
+Finalizing benchmark.
+Plotting M8_1to8096_20260825_103524 ...
+[OK] saved: result/GH200/OpenMP/NVC_26_3/resultLowest_M8_1to8096_20260825_103524.png
+[INFO] x-scale = log
+Plot generated: result/GH200/OpenMP/NVC_26_3/resultLowest_M8_1to8096_20260825_103524.png
+
+===== [M9] Method=9 N=16,64,256,1024,4096,8192,16382 Delay=1,8096 =====
+========== Runtime Configuration ==========
+API           : openmp
+Methods       : 9
+Delay range   : [1, 8096]
+Array size(s) : 16, 64, 256, 1024, 4096, 8192, 16382
+thread_count   : 32
+team_count     : 132
+MAX_ITER      : 16382  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+NUM_SAMPLES   : 20
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  1 available devices
+Host device is -1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                            16                            64                           256                          1024                          4096                          8192                         16382
+                                                BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest
+teams reduction                             25.739±0.208      |     25.995±0.098         56.878±0.331      |     57.571±0.067        171.921±0.108      |    171.764±0.152        727.524±0.688      |    725.924±0.467       2843.186±0.795      |   2840.481±0.926       5676.957±0.838      |   5672.317±1.686      12936.831±1.570      |  12930.522±2.692     
+==========================================
+Finalizing benchmark.
+Plotting M9_1to8096_20260825_103524 ...
+[OK] saved: result/GH200/OpenMP/NVC_26_3/resultLowest_M9_1to8096_20260825_103524.png
+[INFO] x-scale = log
+Plot generated: result/GH200/OpenMP/NVC_26_3/resultLowest_M9_1to8096_20260825_103524.png
+
+===== [M11_parreps] Method=11 N=1,2,4,8,16,32,64,128 Delay=1,8096 =====
+========== Runtime Configuration ==========
+API           : openmp
+Methods       : 11
+Delay range   : [1, 8096]
+Array size(s) : 1, 2, 4, 8, 16, 32, 64, 128
+thread_count   : 32
+team_count     : 132
+MAX_ITER      : 6656  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+NUM_SAMPLES   : 20
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  1 available devices
+Host device is -1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                             1                             2                             4                             8                            16                            32                            64                           128
+                                                BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest        BIC intercept | lowest
+teams + parallel inside                     11.092±0.054      |     10.885±0.098         12.154±0.041      |     11.921±0.093         14.263±0.038      |     13.840±0.107         18.575±0.068      |     17.958±0.084         26.888±0.066      |     25.970±0.096         43.405±0.060      |     41.687±0.153         76.717±0.152      |     72.919±0.117        142.968±0.090      |    135.316±0.095     
+==========================================
+Finalizing benchmark.
+Plotting M11_parreps_1to8096_20260825_103524 ...
+[OK] saved: result/GH200/OpenMP/NVC_26_3/resultLowest_M11_parreps_1to8096_20260825_103524.png
+[INFO] x-scale = log
+Plot generated: result/GH200/OpenMP/NVC_26_3/resultLowest_M11_parreps_1to8096_20260825_103524.png
+
+All benchmark groups completed.
+Results saved under result/GH200/OpenMP/NVC_26_3

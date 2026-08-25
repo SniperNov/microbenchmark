@@ -1,0 +1,16 @@
+timestamp=20260825_103524
+hostname=gh02
+slurm_job_id=manual
+slurm_job_name=manual
+script=./jobs/openmp/run_GH.sh
+working_directory=/work/weiyu/microbenchmark
+
+## unified-suite...origin/unified-suite
+commit fb158194914ab00f68cb86195c2aa89cfb9dbac1
+Author:     Weiyu Tu <tuweiyu7749@gmail.com>
+AuthorDate: Tue Aug 25 10:29:49 2026 +0000
+Commit:     Weiyu Tu <tuweiyu7749@gmail.com>
+CommitDate: Tue Aug 25 10:29:49 2026 +0000
+
+    Separate OpenMP method 8 and 9 results
+
