@@ -1,0 +1,16 @@
+timestamp=20261013_154336
+hostname=job-openmp-benchfwgdt-86g6g
+slurm_job_id=manual
+slurm_job_name=manual
+script=jobs/openacc/run_eidf_a100.job
+working_directory=/mnt/dev/microbenchmark
+
+## unified-suite...origin/unified-suite
+commit a44347045e84bce510579b5277969a1a63d52dd4
+Author:     Weiyu Tu <tuweiyu7749@gmail.com>
+AuthorDate: Tue Oct 13 15:26:37 2026 +0000
+Commit:     Weiyu Tu <tuweiyu7749@gmail.com>
+CommitDate: Tue Oct 13 15:26:37 2026 +0000
+
+    Add H100 OpenACC and OpenMP NVHPC results
+
