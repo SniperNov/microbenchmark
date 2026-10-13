@@ -29,23 +29,34 @@ COMPILER_TAG=$(compiler_tag_nvc)
 OUTDIR="result/$MACHINE/$API/$COMPILER_TAG"
 mkdir -p "$OUTDIR"
 
-JOB_NAME="eidf_h100_nvhpc__omp"
+JOB_NAME="eidf_h100_openmp"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 OUTFILE="$OUTDIR/${JOB_NAME}_${TIMESTAMP}.out"
 archive_run_provenance "$0" "$OUTDIR" "$JOB_NAME" "$TIMESTAMP"
 
 echo "Running EIDF H100 NVHPC OpenMP benchmark groups..." | tee "$OUTFILE"
 
-echo "SET UP H100 configuration NVIDIA H100 NVHPC=====" | tee -a "$OUTFILE"
-echo "THREADS=$THREADS" | tee -a "$OUTFILE"
-echo "TEAMS=$TEAMS" | tee -a "$OUTFILE"
-nvidia-smi | tee -a "$OUTFILE"
-echo "=============================================" | tee -a "$OUTFILE"
+PLOT_PY="${PLOT_PY:-$PWD/.venv/bin/python}"
+require_plot_python "$PLOT_PY"
 
-echo "Compiling..." | tee -a "$OUTFILE"
+log_run_configuration "$OUTFILE" "$MACHINE" "$API" "$COMPILER_TAG" "$TEAMS" "$THREADS"
 
-make clean
-make openmp-distribution
+echo "Compiling OpenMP backend with NVHPC..." | tee -a "$OUTFILE"
+make -s clean
+make -s openmp-distribution OPENMP_DEFS=Makefile.defs.nvc
+
+plot_group () {
+    local BASE="$1"
+    local CSV="$OUTDIR/distributionEIDF_${BASE}.csv"
+    local TXT="$OUTDIR/overheadEIDF_${BASE}.txt"
+    local PNG="$OUTDIR/resultLowestEIDF_${BASE}.png"
+
+    if [ -f "$CSV" ] && [ -f "$TXT" ] && command -v "$PLOT_PY" >/dev/null 2>&1; then
+        "$PLOT_PY" ./plots/plot_raw_times.py "$CSV" "$TXT" 1,18 log "$PNG" 2>&1 | tee -a "$OUTFILE"
+    else
+        echo "Plot skipped for $BASE." | tee -a "$OUTFILE"
+    fi
+}
 
 run_group () {
     local TAG="$1"
@@ -70,12 +81,14 @@ run_group () {
         | tee -a "$OUTFILE"
 
     if [ -f overhead_distribution.txt ]; then
-        mv overhead_distribution.txt "$OUTDIR/overheadEIDF_NVC${BASE}.txt"
+        mv overhead_distribution.txt "$OUTDIR/overheadEIDF_${BASE}.txt"
     fi
 
     if [ -f raw_times.csv ]; then
-        mv raw_times.csv "$OUTDIR/distributionEIDF_NVC${BASE}.csv"
+        mv raw_times.csv "$OUTDIR/distributionEIDF_${BASE}.csv"
     fi
+
+    plot_group "$BASE"
 }
 
 run_group "M0_M10" "0,10" "$N_FIXED" "$DELAY_SHORT"
@@ -88,5 +101,5 @@ run_group "M9" "9" "$N_ATORED" "$DELAY_SHORT"
 run_group "M11_parreps" "11" "$N_PARREPS" "$DELAY_SHORT"
 
 echo "" | tee -a "$OUTFILE"
-echo "All EIDF H100 NVHPC benchmark groups completed." | tee -a "$OUTFILE"
+echo "All EIDF H100 OpenMP benchmark groups completed." | tee -a "$OUTFILE"
 echo "Results saved under $OUTDIR" | tee -a "$OUTFILE"

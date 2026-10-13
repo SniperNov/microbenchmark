@@ -279,6 +279,14 @@ OpenMP scripts are under `jobs/openmp/`; OpenACC scripts are under `jobs/openacc
 CUDA scripts for NVIDIA platforms are under `jobs/cuda/`.
 SYCL scripts are under `jobs/sycl/`.
 
+For directly comparable NVHPC OpenMP runs on EIDF, use:
+
+```text
+jobs/openmp/run_eidf_a100_nvhpc.job  EIDF A100, NVHPC OpenMP
+jobs/openmp/run_eidf_h100_nvhpc.job  EIDF H100, NVHPC OpenMP
+jobs/openmp/run_eidf_h200_nvhpc.job  EIDF H200, NVHPC OpenMP
+```
+
 For OpenACC, the current scripts are:
 
 ```text
