@@ -102,7 +102,7 @@ set_common_benchmark_parameters()
     N_FIXED="16382"
     N_ATORED="1,2,4,8,16,32,64"
     N_PARREPS="1,2,4,8,16,32,64,128"
-    DELAY_SHORT="1,8096"
+    DELAY_SHORT="1,8192"
 }
 
 # Platform topology. Every API on a platform must consume the same pair.

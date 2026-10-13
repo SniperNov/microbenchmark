@@ -9,9 +9,9 @@
 #define RAW_OUTPUT_FILE "raw_times.csv"
 
 #define N_DEF 16382
-#define NUM_SAMPLES 20
+#define MAX_DELAY_POINTS 32
 #define MIN_DELAYLENGTH 1
-#define MAX_DELAYLENGTH 8096
+#define MAX_DELAYLENGTH 8192
 #define INNERREPS 20
 #define MAX_ITER_DEF 6656
 #define MAX_ARRAY_SIZE_DEF 65536
@@ -19,6 +19,7 @@
 #define WARMUP_ITERATIONS 10
 #define BENCHMARK_SETS 2
 #define BENCHMARK_RUNS 5
+#define NUM_SAMPLES (BENCHMARK_SETS * BENCHMARK_RUNS)
 #define NUM_SIZES 16
 #define MAX_METHODS 32
 
@@ -27,8 +28,9 @@ static int g_max_array_size = MAX_ARRAY_SIZE_DEF;
 static int g_min_delaylength = MIN_DELAYLENGTH;
 static int g_max_delaylength = MAX_DELAYLENGTH;
 
-static double delays[NUM_SAMPLES];
-static double execution_times[BENCHMARK_SETS][BENCHMARK_RUNS][NUM_SAMPLES][OUTERREPS];
+static int g_num_delay_points = 0;
+static double delays[MAX_DELAY_POINTS];
+static double execution_times[BENCHMARK_SETS][BENCHMARK_RUNS][MAX_DELAY_POINTS][OUTERREPS];
 
 // Command-line options use key=value form, for example Method=1,2 or N=16384.
 static int key_matches(const char *arg, const char *key)
@@ -87,23 +89,30 @@ static void parse_delay_bounds(char *value)
 
 static void generate_delays(void)
 {
-    // Delay values are log-spaced so the benchmark covers short launch costs
-    // and longer kernel work in the same run.
-    double log_min = log2((double)g_min_delaylength);
-    double log_max = log2((double)g_max_delaylength);
-
-    for (int i = 0; i < NUM_SAMPLES; ++i)
+    // The paper protocol uses non-zero powers of two. Requiring power-of-two
+    // bounds prevents a nominal range such as 1..8096 from silently producing
+    // a different, implementation-defined sampling grid.
+    if (g_min_delaylength <= 0 || g_max_delaylength < g_min_delaylength ||
+        (g_min_delaylength & (g_min_delaylength - 1)) != 0 ||
+        (g_max_delaylength & (g_max_delaylength - 1)) != 0)
     {
-        if (i == 0)
-            delays[i] = g_min_delaylength;
-        else if (i == NUM_SAMPLES - 1)
-            delays[i] = g_max_delaylength;
-        else
+        fprintf(stderr,
+                "Delay bounds must be positive powers of two (got %d,%d).\n",
+                g_min_delaylength, g_max_delaylength);
+        exit(EXIT_FAILURE);
+    }
+
+    g_num_delay_points = 0;
+    for (int delay = g_min_delaylength; delay <= g_max_delaylength; delay *= 2)
+    {
+        if (g_num_delay_points >= MAX_DELAY_POINTS)
         {
-            double ratio = (double)i / (NUM_SAMPLES - 1);
-            double log_val = log_min + (log_max - log_min) * ratio;
-            delays[i] = pow(2.0, log_val);
+            fprintf(stderr, "Too many delay points (maximum %d).\n", MAX_DELAY_POINTS);
+            exit(EXIT_FAILURE);
         }
+        delays[g_num_delay_points++] = (double)delay;
+        if (delay > g_max_delaylength / 2)
+            break;
     }
 }
 
@@ -132,11 +141,11 @@ static void run_target(int method, int set, int run, double *a, int N,
 {
     // One run visits every sampled delay. The backend measures one delay point;
     // the shared driver stores raw data and keeps the output format identical.
-    int perm[NUM_SAMPLES];
+    int perm[MAX_DELAY_POINTS];
     unsigned int seed = 12345u + 97u * (unsigned int)set + 1009u * (unsigned int)(run + 1);
-    shuffle_indices(perm, NUM_SAMPLES, seed);
+    shuffle_indices(perm, g_num_delay_points, seed);
 
-    for (int sidx = 0; sidx < NUM_SAMPLES; ++sidx)
+    for (int sidx = 0; sidx < g_num_delay_points; ++sidx)
     {
         int logical = perm[sidx];
         int delay = (int)delays[logical];
@@ -208,17 +217,15 @@ static void compute_offloading_time(double *intercept_avg, double *intercept_err
 
     int total_runs = BENCHMARK_SETS * BENCHMARK_RUNS;
     double intercepts[total_runs];
-    double mins[total_runs];
     double sum_intercept = 0.0, sumsq_intercept = 0.0;
-    double sum_min = 0.0, sumsq_min = 0.0;
     int idx = 0;
 
     for (int set = 0; set < BENCHMARK_SETS; ++set)
     {
         for (int run = 0; run < BENCHMARK_RUNS; ++run)
         {
-            double avg_y[NUM_SAMPLES];
-            for (int i = 0; i < NUM_SAMPLES; ++i)
+            double avg_y[MAX_DELAY_POINTS];
+            for (int i = 0; i < g_num_delay_points; ++i)
             {
                 double sum = 0.0;
                 for (int orep = 0; orep < OUTERREPS; ++orep)
@@ -228,7 +235,7 @@ static void compute_offloading_time(double *intercept_avg, double *intercept_err
 
             double run_min = avg_y[0];
             double run_min_delay = delays[0];
-            for (int i = 1; i < NUM_SAMPLES; ++i)
+            for (int i = 1; i < g_num_delay_points; ++i)
             {
                 if (avg_y[i] < run_min)
                 {
@@ -242,14 +249,14 @@ static void compute_offloading_time(double *intercept_avg, double *intercept_err
             double best_a = 0.0, best_b = 0.0, best_R2 = 0.0;
 
             const double MIN_KEEP_RATIO = 0.5;
-            int min_keep = (NUM_SAMPLES <= 10) ? 5 : (int)ceil(NUM_SAMPLES * MIN_KEEP_RATIO);
+            int min_keep = (g_num_delay_points <= 10) ? 5 : (int)ceil(g_num_delay_points * MIN_KEEP_RATIO);
 
-            for (int k = 0; k <= NUM_SAMPLES - min_keep; ++k)
+            for (int k = 0; k <= g_num_delay_points - min_keep; ++k)
             {
-                int n = NUM_SAMPLES - k;
+                int n = g_num_delay_points - k;
                 double sum_x = 0.0, sum_y = 0.0, sum_xx = 0.0, sum_xy = 0.0;
 
-                for (int i = k; i < NUM_SAMPLES; ++i)
+                for (int i = k; i < g_num_delay_points; ++i)
                 {
                     sum_x += delays[i];
                     sum_y += avg_y[i];
@@ -266,7 +273,7 @@ static void compute_offloading_time(double *intercept_avg, double *intercept_err
                 double rss = 0.0, tss = 0.0;
                 double mean_y = sum_y / n;
 
-                for (int i = k; i < NUM_SAMPLES; ++i)
+                for (int i = k; i < g_num_delay_points; ++i)
                 {
                     double yhat = a + b * delays[i];
                     double e = avg_y[i] - yhat;
@@ -293,9 +300,7 @@ static void compute_offloading_time(double *intercept_avg, double *intercept_err
             }
 
             intercepts[idx] = best_a;
-            mins[idx] = run_min;
             sum_intercept += best_a;
-            sum_min += run_min;
 
 #ifdef PRINT_DISTRIBUTION
             fprintf(file,
@@ -308,20 +313,57 @@ static void compute_offloading_time(double *intercept_avg, double *intercept_err
     }
 
     *intercept_avg = sum_intercept / idx;
-    *min_avg = sum_min / idx;
+
+    // Paper estimator: average the ten timing samples independently at each
+    // delay, then choose the smallest observed per-delay mean. The reported
+    // uncertainty is the sample standard deviation at that selected delay.
+    int best_delay = 0;
+    double best_mean = INFINITY;
+    double best_sd = 0.0;
+    for (int d = 0; d < g_num_delay_points; ++d)
+    {
+        double sum = 0.0;
+        int count = 0;
+        for (int set = 0; set < BENCHMARK_SETS; ++set)
+            for (int run = 0; run < BENCHMARK_RUNS; ++run)
+                for (int orep = 0; orep < OUTERREPS; ++orep)
+                {
+                    sum += execution_times[set][run][d][orep];
+                    count++;
+                }
+
+        double mean = sum / count;
+        double sumsq = 0.0;
+        for (int set = 0; set < BENCHMARK_SETS; ++set)
+            for (int run = 0; run < BENCHMARK_RUNS; ++run)
+                for (int orep = 0; orep < OUTERREPS; ++orep)
+                {
+                    double delta = execution_times[set][run][d][orep] - mean;
+                    sumsq += delta * delta;
+                }
+        double sd = (count > 1) ? sqrt(sumsq / (count - 1)) : 0.0;
+
+        if (mean < best_mean)
+        {
+            best_delay = d;
+            best_mean = mean;
+            best_sd = sd;
+        }
+    }
+    *min_avg = best_mean;
+    *min_err = best_sd;
 
     for (int i = 0; i < idx; ++i)
     {
         sumsq_intercept += (intercepts[i] - *intercept_avg) * (intercepts[i] - *intercept_avg);
-        sumsq_min += (mins[i] - *min_avg) * (mins[i] - *min_avg);
     }
 
     *intercept_err = (idx > 1) ? sqrt(sumsq_intercept / (idx - 1)) : 0.0;
-    *min_err = (idx > 1) ? sqrt(sumsq_min / (idx - 1)) : 0.0;
 
 #ifdef PRINT_DISTRIBUTION
     fprintf(file, "Average Intercept = %.6f ± %.6f us\n", *intercept_avg, *intercept_err);
-    fprintf(file, "Average Lowest    = %.6f ± %.6f us\n", *min_avg, *min_err);
+    fprintf(file, "Minimum Delay Mean = %.6f ± %.6f us @ delay=%.0f (%d samples)\n",
+            *min_avg, *min_err, delays[best_delay], NUM_SAMPLES);
 #endif
 
     fclose(file);
@@ -456,7 +498,8 @@ int main(int argc, char **argv)
 
     printf("MAX_ITER      : %d  (kernel workload)\n", g_max_iter);
     printf("MAX_ARRAY_SIZE: %d  (mapping/memory space)\n", g_max_array_size);
-    printf("NUM_SAMPLES   : %d\n", NUM_SAMPLES);
+    printf("DELAY_POINTS  : %d (powers of two)\n", g_num_delay_points);
+    printf("NUM_SAMPLES   : %d (per delay)\n", NUM_SAMPLES);
     printf("OUTERREPS     : %d\n", OUTERREPS);
     printf("WARMUP_ITERS  : %d\n", WARMUP_ITERATIONS);
     printf("BENCHMARK_SETS: %d\n", BENCHMARK_SETS);
@@ -486,7 +529,7 @@ int main(int argc, char **argv)
 
     printf("%-40s", "");
     for (int i = 0; i < num_Ns; ++i)
-        printf("%30s", "BIC intercept | lowest");
+        printf("%30s", "BIC intercept | min mean");
     printf("\n");
     fflush(stdout);
 

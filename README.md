@@ -100,12 +100,13 @@ export MICROBENCHMARK_API=openacc
 The OpenMP and OpenACC backends use one shared benchmark driver:
 
 ```text
-log-spaced delay samples
+power-of-two delay points from 1 through 8192
 deterministic shuffled delay order
 warmup iterations before measured runs
+10 timing samples at each delay point
 raw_times.csv output
-BIC-selected linear intercept
-lowest observed average timing
+minimum per-delay sample mean (paper result)
+BIC-selected linear intercept (diagnostic only)
 ```
 
 Backend code only implements API-specific launch/mapping methods and default configuration names. This keeps OpenMP, OpenACC, and future CUDA tests aligned by construction.
@@ -130,8 +131,10 @@ bin/microbenchmark
   -> shared driver loops over set/run/delay/outer repetition
   -> backend runs the API-specific target/parallel construct
   -> shared driver writes raw_times.csv
-  -> shared driver fits BIC intercept and finds lowest timing
-  -> stdout prints "BIC intercept | lowest"
+  -> shared driver averages the 10 samples at each delay
+  -> shared driver selects the minimum per-delay mean
+  -> shared driver also fits a diagnostic BIC intercept
+  -> stdout prints "BIC intercept | min mean"
 ```
 
 The backend-specific launch controls are:
