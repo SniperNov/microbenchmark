@@ -287,6 +287,14 @@ jobs/openmp/run_eidf_h100_nvhpc.job  EIDF H100, NVHPC OpenMP
 jobs/openmp/run_eidf_h200_nvhpc.job  EIDF H200, NVHPC OpenMP
 ```
 
+For GCC OpenMP offload runs on EIDF, use:
+
+```text
+jobs/openmp/run_eidf_a100.job  EIDF A100, GCC OpenMP
+jobs/openmp/run_eidf_h100.job  EIDF H100, GCC OpenMP
+jobs/openmp/run_eidf_h200.job  EIDF H200, GCC OpenMP
+```
+
 For OpenACC, the current scripts are:
 
 ```text

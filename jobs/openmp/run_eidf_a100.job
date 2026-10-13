@@ -29,23 +29,34 @@ COMPILER_TAG=$(compiler_tag_gcc)
 OUTDIR="result/$MACHINE/$API/$COMPILER_TAG"
 mkdir -p "$OUTDIR"
 
-JOB_NAME="eidf_a100_omp"
+JOB_NAME="eidf_a100_gcc_openmp"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 OUTFILE="$OUTDIR/${JOB_NAME}_${TIMESTAMP}.out"
 archive_run_provenance "$0" "$OUTDIR" "$JOB_NAME" "$TIMESTAMP"
 
-echo "Running EIDF A100 OpenMP benchmark groups..." | tee "$OUTFILE"
+echo "Running EIDF A100 GCC OpenMP benchmark groups..." | tee "$OUTFILE"
 
-echo "========== EIDF A100 configuration ==========" | tee -a "$OUTFILE"
-echo "THREADS=$THREADS" | tee -a "$OUTFILE"
-echo "TEAMS=$TEAMS" | tee -a "$OUTFILE"
-nvidia-smi | tee -a "$OUTFILE"
-echo "=============================================" | tee -a "$OUTFILE"
+PLOT_PY="${PLOT_PY:-$PWD/.venv/bin/python}"
+require_plot_python "$PLOT_PY"
 
-echo "Compiling..." | tee -a "$OUTFILE"
+log_run_configuration "$OUTFILE" "$MACHINE" "$API" "$COMPILER_TAG" "$TEAMS" "$THREADS"
 
-make clean
-make openmp-distribution OPENMP_DEFS=Makefile.defs.gcc
+echo "Compiling OpenMP backend with GCC..." | tee -a "$OUTFILE"
+make -s clean
+make -s openmp-distribution OPENMP_DEFS=Makefile.defs.gcc
+
+plot_group () {
+    local BASE="$1"
+    local CSV="$OUTDIR/distributionEIDF_${BASE}.csv"
+    local TXT="$OUTDIR/overheadEIDF_${BASE}.txt"
+    local PNG="$OUTDIR/resultLowestEIDF_${BASE}.png"
+
+    if [ -f "$CSV" ] && [ -f "$TXT" ] && command -v "$PLOT_PY" >/dev/null 2>&1; then
+        "$PLOT_PY" ./plots/plot_raw_times.py "$CSV" "$TXT" 1,18 log "$PNG" 2>&1 | tee -a "$OUTFILE"
+    else
+        echo "Plot skipped for $BASE." | tee -a "$OUTFILE"
+    fi
+}
 
 run_group () {
     local TAG="$1"
@@ -76,6 +87,8 @@ run_group () {
     if [ -f raw_times.csv ]; then
         mv raw_times.csv "$OUTDIR/distributionEIDF_${BASE}.csv"
     fi
+
+    plot_group "$BASE"
 }
 
 run_group "M0_M10" "0,10" "$N_FIXED" "$DELAY_SHORT"
@@ -88,5 +101,5 @@ run_group "M9" "9" "$N_ATORED" "$DELAY_SHORT"
 run_group "M11_parreps" "11" "$N_PARREPS" "$DELAY_SHORT"
 
 echo "" | tee -a "$OUTFILE"
-echo "All EIDF A100 benchmark groups completed." | tee -a "$OUTFILE"
+echo "All EIDF A100 GCC OpenMP benchmark groups completed." | tee -a "$OUTFILE"
 echo "Results saved under $OUTDIR" | tee -a "$OUTFILE"
