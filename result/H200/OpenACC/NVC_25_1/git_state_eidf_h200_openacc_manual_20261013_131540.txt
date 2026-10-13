@@ -1,0 +1,16 @@
+timestamp=20261013_131540
+hostname=job-openmp-benchzdn5x-4xfpz
+slurm_job_id=manual
+slurm_job_name=manual
+script=jobs/openacc/run_eidf_h200.job
+working_directory=/mnt/dev/microbenchmark
+
+## unified-suite...origin/unified-suite
+commit f3fc881fbeff4e88ae97b8cced4cef18aaadfb87
+Author:     Weiyu Tu <babe@Weiyus-MacBook-Pro.local>
+AuthorDate: Tue Oct 13 13:54:12 2026 +0100
+Commit:     Weiyu Tu <babe@Weiyus-MacBook-Pro.local>
+CommitDate: Tue Oct 13 13:54:12 2026 +0100
+
+    Align benchmark sampling with paper protocol
+
