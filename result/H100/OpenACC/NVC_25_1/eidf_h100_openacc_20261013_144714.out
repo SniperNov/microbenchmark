@@ -1,0 +1,251 @@
+Running EIDF H100 OpenACC benchmark groups...
+H100 OpenACC: compiler=NVC_25_1 groups=132 width=32
+GPU: NVIDIA H100 80GB HBM3, 590.48.01
+Compiling OpenACC backend with NVHPC...
+
+===== [M0_M10] Method=0,10 N=16382 Delay=1,8192 =====
+========== Runtime Configuration ==========
+API           : openacc
+Methods       : 0, 10
+Delay range   : [1, 8192]
+Array size(s) : 16382
+gang_count     : 132
+worker_count   : 32
+MAX_ITER      : 16382  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+DELAY_POINTS  : 14 (powers of two)
+NUM_SAMPLES   : 10 (per delay)
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+OpenACC device type: 4
+Number of available devices: 1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                         16382
+                                              BIC intercept | min mean
+pure delay kernel                           16.403±0.269      |     16.180±0.672     
+parallel num_gangs + num_workers            16.560±0.505      |     16.300±0.939     
+==========================================
+Finalizing benchmark.
+[OK] saved: result/H100/OpenACC/NVC_25_1/resultLowestEIDF_M0_M10_1to8192_20261013_144714.png
+[INFO] x-scale = log
+
+===== [M1to4] Method=1,2,3,4 N=1,4,16,64,256,1024,4096,8192,16382,32768,65536 Delay=1,8192 =====
+========== Runtime Configuration ==========
+API           : openacc
+Methods       : 1, 2, 3, 4
+Delay range   : [1, 8192]
+Array size(s) : 1, 4, 16, 64, 256, 1024, 4096, 8192, 16382, 32768, 65536
+gang_count     : 132
+worker_count   : 32
+MAX_ITER      : 65536  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+DELAY_POINTS  : 14 (powers of two)
+NUM_SAMPLES   : 10 (per delay)
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+OpenACC device type: 4
+Number of available devices: 1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                             1                             4                            16                            64                           256                          1024                          4096                          8192                         16382                         32768                         65536
+                                              BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean
+copy(a[0:N])                                36.420±0.755      |     35.845±0.968         36.432±0.794      |     35.720±0.576         37.115±0.777      |     36.620±1.191         36.736±0.762      |     35.830±0.550         37.890±0.527      |     37.440±1.159         42.150±0.245      |     40.800±1.414         55.847±1.258      |     55.435±1.357         73.261±1.519      |     72.055±2.147         85.600±1.133      |     84.295±1.522        126.478±2.049      |    126.010±2.042        203.148±2.439      |    201.520±2.247     
+copyin(a[0:N])                              22.839±0.420      |     22.200±0.556         23.203±0.602      |     22.960±0.903         23.465±0.659      |     23.245±1.227         23.186±0.568      |     22.335±0.592         23.633±0.303      |     23.385±0.486         24.042±0.470      |     23.495±0.902         28.592±0.519      |     28.100±0.836         34.028±0.509      |     33.935±0.586         38.536±0.686      |     38.345±0.962         49.068±0.609      |     48.930±1.066         71.063±0.806      |     70.760±1.315     
+copyout(a[0:N])                             30.949±0.462      |     30.035±0.769         30.351±3.600      |     30.880±0.727         31.197±0.263      |     30.550±0.902         30.883±0.442      |     30.670±0.879         30.903±0.699      |     30.345±1.546         30.858±0.935      |     30.300±1.241         35.043±0.602      |     34.825±1.034         39.405±0.630      |     38.705±0.735         45.079±0.738      |     44.445±1.261         59.025±0.692      |     58.945±1.038         87.081±1.490      |     85.360±1.499     
+create(a[0:N])                              17.034±0.667      |     17.080±1.069         17.211±0.620      |     17.065±0.743         17.057±0.367      |     16.640±0.735         16.838±0.477      |     16.475±0.712         17.151±0.321      |     16.580±0.464         16.956±0.428      |     16.580±1.170         17.159±0.261      |     16.550±1.280         17.092±0.479      |     16.935±0.833         16.403±0.362      |     16.055±0.547         16.931±0.739      |     16.685±1.138         16.657±0.312      |     16.270±0.382     
+==========================================
+Finalizing benchmark.
+[OK] saved: result/H100/OpenACC/NVC_25_1/resultLowestEIDF_M1to4_1to8192_20261013_144714.png
+[INFO] x-scale = log
+
+===== [M5] Method=5 N=16382 Delay=1,8192 =====
+========== Runtime Configuration ==========
+API           : openacc
+Methods       : 5
+Delay range   : [1, 8192]
+Array size(s) : 16382
+gang_count     : 132
+worker_count   : 32
+MAX_ITER      : 16382  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+DELAY_POINTS  : 14 (powers of two)
+NUM_SAMPLES   : 10 (per delay)
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+OpenACC device type: 4
+Number of available devices: 1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                         16382
+                                              BIC intercept | min mean
+parallel (scalar)                           17.829±0.182      |     17.550±0.443     
+==========================================
+Finalizing benchmark.
+[OK] saved: result/H100/OpenACC/NVC_25_1/resultLowestEIDF_M5_1to8192_20261013_144714.png
+[INFO] x-scale = log
+
+===== [M6] Method=6 N=16382 Delay=1,8192 =====
+========== Runtime Configuration ==========
+API           : openacc
+Methods       : 6
+Delay range   : [1, 8192]
+Array size(s) : 16382
+gang_count     : 132
+worker_count   : 32
+MAX_ITER      : 16382  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+DELAY_POINTS  : 14 (powers of two)
+NUM_SAMPLES   : 10 (per delay)
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+OpenACC device type: 4
+Number of available devices: 1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                         16382
+                                              BIC intercept | min mean
+parallel loop                               15.592±0.177      |     14.850±0.430     
+==========================================
+Finalizing benchmark.
+[OK] saved: result/H100/OpenACC/NVC_25_1/resultLowestEIDF_M6_1to8192_20261013_144714.png
+[INFO] x-scale = log
+
+===== [M7] Method=7 N=16382 Delay=1,8192 =====
+========== Runtime Configuration ==========
+API           : openacc
+Methods       : 7
+Delay range   : [1, 8192]
+Array size(s) : 16382
+gang_count     : 132
+worker_count   : 32
+MAX_ITER      : 16382  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+DELAY_POINTS  : 14 (powers of two)
+NUM_SAMPLES   : 10 (per delay)
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+OpenACC device type: 4
+Number of available devices: 1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                         16382
+                                              BIC intercept | min mean
+async parallel loop + wait                  16.539±0.643      |     15.965±0.627     
+==========================================
+Finalizing benchmark.
+[OK] saved: result/H100/OpenACC/NVC_25_1/resultLowestEIDF_M7_1to8192_20261013_144714.png
+[INFO] x-scale = log
+
+===== [M8] Method=8 N=1,2,4,8,16,32,64 Delay=1,8192 =====
+========== Runtime Configuration ==========
+API           : openacc
+Methods       : 8
+Delay range   : [1, 8192]
+Array size(s) : 1, 2, 4, 8, 16, 32, 64
+gang_count     : 132
+worker_count   : 32
+MAX_ITER      : 6656  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+DELAY_POINTS  : 14 (powers of two)
+NUM_SAMPLES   : 10 (per delay)
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+OpenACC device type: 4
+Number of available devices: 1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                             1                             2                             4                             8                            16                            32                            64
+                                              BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean
+parallel loop atomic                        28.691±0.255      |     30.125±0.473         25.095±1.593      |     25.480±1.254         21.848±0.338      |     21.880±1.088         20.694±0.409      |     20.785±0.585         21.118±0.490      |     21.505±0.630         21.147±0.271      |     21.190±0.572         20.583±0.204      |     20.550±0.405     
+==========================================
+Finalizing benchmark.
+[OK] saved: result/H100/OpenACC/NVC_25_1/resultLowestEIDF_M8_1to8192_20261013_144714.png
+[INFO] x-scale = log
+
+===== [M9] Method=9 N=1,2,4,8,16,32,64 Delay=1,8192 =====
+========== Runtime Configuration ==========
+API           : openacc
+Methods       : 9
+Delay range   : [1, 8192]
+Array size(s) : 1, 2, 4, 8, 16, 32, 64
+gang_count     : 132
+worker_count   : 32
+MAX_ITER      : 6656  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+DELAY_POINTS  : 14 (powers of two)
+NUM_SAMPLES   : 10 (per delay)
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+OpenACC device type: 4
+Number of available devices: 1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                             1                             2                             4                             8                            16                            32                            64
+                                              BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean
+parallel loop reduction                     46.624±0.544      |     48.635±1.708         46.456±0.907      |     48.735±0.991         46.561±0.804      |     48.935±0.983         47.407±1.418      |     49.310±0.724         47.892±0.858      |     50.020±0.918         47.900±1.134      |     50.000±1.644         47.521±0.980      |     50.160±1.809     
+==========================================
+Finalizing benchmark.
+[OK] saved: result/H100/OpenACC/NVC_25_1/resultLowestEIDF_M9_1to8192_20261013_144714.png
+[INFO] x-scale = log
+
+===== [M11_parreps] Method=11 N=1,2,4,8,16,32,64,128 Delay=1,8192 =====
+========== Runtime Configuration ==========
+API           : openacc
+Methods       : 11
+Delay range   : [1, 8192]
+Array size(s) : 1, 2, 4, 8, 16, 32, 64, 128
+gang_count     : 132
+worker_count   : 32
+MAX_ITER      : 6656  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+DELAY_POINTS  : 14 (powers of two)
+NUM_SAMPLES   : 10 (per delay)
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+OpenACC device type: 4
+Number of available devices: 1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                             1                             2                             4                             8                            16                            32                            64                           128
+                                              BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean
+parallel worker loop num_gangs + num_workers    16.394±0.287      |     16.220±0.518         16.731±0.421      |     16.230±0.803         16.742±0.249      |     16.300±0.621         17.725±0.308      |     17.010±0.740         19.688±1.001      |     18.875±0.875         22.873±0.366      |     20.900±0.342         29.664±0.337      |     26.510±0.549         43.520±0.372      |     37.160±0.511     
+==========================================
+Finalizing benchmark.
+[OK] saved: result/H100/OpenACC/NVC_25_1/resultLowestEIDF_M11_parreps_1to8192_20261013_144714.png
+[INFO] x-scale = log
+
+All EIDF H100 OpenACC benchmark groups completed.
+Results saved under result/H100/OpenACC/NVC_25_1
