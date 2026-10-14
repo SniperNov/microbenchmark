@@ -1,0 +1,9 @@
+2026-10-14T20:25:57Z trial_01 openmp_reference
+2026-10-14T20:25:57Z trial_01 cuda_ptxas_O3
+2026-10-14T20:25:59Z trial_01 cuda_ptxas_O0
+2026-10-14T20:26:02Z trial_02 cuda_ptxas_O0
+2026-10-14T20:26:05Z trial_02 cuda_ptxas_O3
+2026-10-14T20:26:07Z trial_02 openmp_reference
+2026-10-14T20:26:07Z trial_03 cuda_ptxas_O3
+2026-10-14T20:26:09Z trial_03 openmp_reference
+2026-10-14T20:26:09Z trial_03 cuda_ptxas_O0

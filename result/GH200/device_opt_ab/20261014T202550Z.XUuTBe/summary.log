@@ -1,0 +1,14 @@
+PASS: 4200 raw samples; exact coverage, unique keys, finite positive times, matched workload and requested controls
+Tail fit: Delay=1024,2048,4096,8192; slope units ns/Delay
+m0 openmp_reference   baseline         b=6.606006 +/- 0.001510 (SD across 3 trials)
+m0 cuda_ptxas_O3      baseline         b=5.988369 +/- 0.008197 (SD across 3 trials)
+m0 cuda_ptxas_O3      kernel_execution b=5.948967 +/- 0.002897 (SD across 3 trials)
+m0 cuda_ptxas_O0      baseline         b=37.002625 +/- 0.005878 (SD across 3 trials)
+m0 cuda_ptxas_O0      kernel_execution b=37.006020 +/- 0.010771 (SD across 3 trials)
+m6 openmp_reference   baseline         b=26.267356 +/- 0.012451 (SD across 3 trials)
+m6 cuda_ptxas_O3      baseline         b=26.902323 +/- 0.006759 (SD across 3 trials)
+m6 cuda_ptxas_O3      kernel_execution b=26.914038 +/- 0.013429 (SD across 3 trials)
+m6 cuda_ptxas_O0      baseline         b=148.003070 +/- 0.005314 (SD across 3 trials)
+m6 cuda_ptxas_O0      kernel_execution b=147.992339 +/- 0.004918 (SD across 3 trials)
+No plots generated. Original raw samples remain in separate baseline/kernel_execution directories.
+ptxas O0 is an assembler-stage sensitivity test, not proof that all CUDA device optimizations match NVC -O0.

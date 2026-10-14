@@ -1,0 +1,8 @@
+
+Fatbin elf code:
+================
+arch = sm_90
+code version = [1,8]
+host = linux
+compile_size = 64bit
+identifier = /tmp/pgcudafatd-ijjVqtimcS.o

@@ -1,0 +1,28 @@
+
+[Method=0 pure delay kernel N=16382]
+Set=0 Run=0  Lmin=1  Intercept=7.475784 us  Slope=0.006020  R2=0.99995  BIC=-61.173  Lowest=7.462450 us @ delay=4
+Set=0 Run=1  Lmin=1  Intercept=7.529689 us  Slope=0.006052  R2=0.99987  BIC=-47.088  Lowest=7.396851 us @ delay=2
+Set=0 Run=2  Lmin=1  Intercept=7.518728 us  Slope=0.006011  R2=0.99980  BIC=-41.077  Lowest=7.379300 us @ delay=2
+Set=0 Run=3  Lmin=1  Intercept=7.553944 us  Slope=0.006019  R2=0.99972  BIC=-36.472  Lowest=7.441699 us @ delay=1
+Set=0 Run=4  Lmin=1  Intercept=7.489027 us  Slope=0.006042  R2=0.99980  BIC=-41.256  Lowest=7.395250 us @ delay=1
+Set=1 Run=0  Lmin=1  Intercept=7.481728 us  Slope=0.006002  R2=0.99994  BIC=-57.460  Lowest=7.342451 us @ delay=1
+Set=1 Run=1  Lmin=1  Intercept=7.561668 us  Slope=0.006031  R2=0.99974  BIC=-37.276  Lowest=7.464050 us @ delay=2
+Set=1 Run=2  Lmin=1  Intercept=7.538236 us  Slope=0.006029  R2=0.99988  BIC=-48.540  Lowest=7.384050 us @ delay=2
+Set=1 Run=3  Lmin=1  Intercept=7.488523 us  Slope=0.006012  R2=0.99984  BIC=-44.594  Lowest=7.308850 us @ delay=2
+Set=1 Run=4  Lmin=1  Intercept=7.548937 us  Slope=0.005964  R2=0.99991  BIC=-51.867  Lowest=7.355299 us @ delay=1
+Average Intercept = 7.518626 ± 0.032498 us
+Minimum Delay Mean = 7.428870 ± 0.064639 us @ delay=2 (10 samples)
+
+[Method=6 teams distribute thread loop N=16382]
+Set=0 Run=0  Lmin=1  Intercept=8.452020 us  Slope=0.026960  R2=0.99999  BIC=-41.330  Lowest=8.262451 us @ delay=2
+Set=0 Run=1  Lmin=1  Intercept=8.481327 us  Slope=0.026993  R2=0.99998  BIC=-32.575  Lowest=8.292900 us @ delay=2
+Set=0 Run=2  Lmin=1  Intercept=8.429819 us  Slope=0.026981  R2=0.99999  BIC=-39.314  Lowest=8.185701 us @ delay=1
+Set=0 Run=3  Lmin=1  Intercept=8.496878 us  Slope=0.026947  R2=0.99999  BIC=-41.981  Lowest=8.180901 us @ delay=1
+Set=0 Run=4  Lmin=1  Intercept=8.413222 us  Slope=0.027063  R2=0.99999  BIC=-41.005  Lowest=8.208051 us @ delay=1
+Set=1 Run=0  Lmin=1  Intercept=8.422734 us  Slope=0.026988  R2=0.99998  BIC=-31.685  Lowest=8.140900 us @ delay=4
+Set=1 Run=1  Lmin=1  Intercept=8.444122 us  Slope=0.026980  R2=0.99997  BIC=-28.142  Lowest=8.145700 us @ delay=1
+Set=1 Run=2  Lmin=1  Intercept=8.423380 us  Slope=0.026966  R2=0.99999  BIC=-42.650  Lowest=8.254451 us @ delay=1
+Set=1 Run=3  Lmin=1  Intercept=8.473374 us  Slope=0.027001  R2=0.99998  BIC=-30.078  Lowest=8.102499 us @ delay=1
+Set=1 Run=4  Lmin=1  Intercept=8.435402 us  Slope=0.026965  R2=0.99999  BIC=-44.729  Lowest=8.216100 us @ delay=1
+Average Intercept = 8.447228 ± 0.028111 us
+Minimum Delay Mean = 8.221040 ± 0.071762 us @ delay=1 (10 samples)

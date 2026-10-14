@@ -1,0 +1,281 @@
+method_id,method_name,N,thread_count,team_count,set,run,delaylength,outerreps,exec_time_us
+0,"pure delay kernel",16382,32,132,0,0,4,0,11.098384857
+0,"pure delay kernel",16382,32,132,0,0,1024,0,17.702579498
+0,"pure delay kernel",16382,32,132,0,0,1,0,10.848045349
+0,"pure delay kernel",16382,32,132,0,0,32,0,10.848045349
+0,"pure delay kernel",16382,32,132,0,0,64,0,11.503696442
+0,"pure delay kernel",16382,32,132,0,0,2048,0,25.045871735
+0,"pure delay kernel",16382,32,132,0,0,512,0,14.305114746
+0,"pure delay kernel",16382,32,132,0,0,8192,0,65.553188324
+0,"pure delay kernel",16382,32,132,0,0,16,0,11.098384857
+0,"pure delay kernel",16382,32,132,0,0,2,0,11.193752289
+0,"pure delay kernel",16382,32,132,0,0,256,0,12.707710266
+0,"pure delay kernel",16382,32,132,0,0,8,0,11.003017426
+0,"pure delay kernel",16382,32,132,0,0,4096,0,38.599967957
+0,"pure delay kernel",16382,32,132,0,0,128,0,11.909008026
+0,"pure delay kernel",16382,32,132,0,1,1024,0,17.595291138
+0,"pure delay kernel",16382,32,132,0,1,8,0,10.955333710
+0,"pure delay kernel",16382,32,132,0,1,32,0,11.098384857
+0,"pure delay kernel",16382,32,132,0,1,1,0,10.848045349
+0,"pure delay kernel",16382,32,132,0,1,8192,0,65.147876740
+0,"pure delay kernel",16382,32,132,0,1,128,0,11.694431305
+0,"pure delay kernel",16382,32,132,0,1,64,0,11.157989502
+0,"pure delay kernel",16382,32,132,0,1,2048,0,24.294853210
+0,"pure delay kernel",16382,32,132,0,1,512,0,13.947486877
+0,"pure delay kernel",16382,32,132,0,1,256,0,12.552738190
+0,"pure delay kernel",16382,32,132,0,1,2,0,10.657310486
+0,"pure delay kernel",16382,32,132,0,1,4096,0,37.944316864
+0,"pure delay kernel",16382,32,132,0,1,16,0,10.800361633
+0,"pure delay kernel",16382,32,132,0,1,4,0,10.693073273
+0,"pure delay kernel",16382,32,132,0,2,1,0,10.800361633
+0,"pure delay kernel",16382,32,132,0,2,4,0,10.693073273
+0,"pure delay kernel",16382,32,132,0,2,16,0,10.848045349
+0,"pure delay kernel",16382,32,132,0,2,64,0,11.146068573
+0,"pure delay kernel",16382,32,132,0,2,2048,0,24.950504303
+0,"pure delay kernel",16382,32,132,0,2,8,0,10.752677917
+0,"pure delay kernel",16382,32,132,0,2,8192,0,64.754486084
+0,"pure delay kernel",16382,32,132,0,2,2,0,10.550022125
+0,"pure delay kernel",16382,32,132,0,2,256,0,12.350082397
+0,"pure delay kernel",16382,32,132,0,2,1024,0,17.702579498
+0,"pure delay kernel",16382,32,132,0,2,512,0,14.293193817
+0,"pure delay kernel",16382,32,132,0,2,4096,0,38.039684296
+0,"pure delay kernel",16382,32,132,0,2,32,0,10.907649994
+0,"pure delay kernel",16382,32,132,0,2,128,0,11.599063873
+0,"pure delay kernel",16382,32,132,0,3,2,0,10.955333710
+0,"pure delay kernel",16382,32,132,0,3,256,0,12.552738190
+0,"pure delay kernel",16382,32,132,0,3,1,0,10.991096497
+0,"pure delay kernel",16382,32,132,0,3,32,0,10.943412781
+0,"pure delay kernel",16382,32,132,0,3,16,0,10.848045349
+0,"pure delay kernel",16382,32,132,0,3,4096,0,38.301944733
+0,"pure delay kernel",16382,32,132,0,3,128,0,11.694431305
+0,"pure delay kernel",16382,32,132,0,3,512,0,14.400482178
+0,"pure delay kernel",16382,32,132,0,3,8,0,11.098384857
+0,"pure delay kernel",16382,32,132,0,3,2048,0,24.497509003
+0,"pure delay kernel",16382,32,132,0,3,8192,0,65.255165100
+0,"pure delay kernel",16382,32,132,0,3,64,0,11.157989502
+0,"pure delay kernel",16382,32,132,0,3,1024,0,17.690658569
+0,"pure delay kernel",16382,32,132,0,3,4,0,10.752677917
+0,"pure delay kernel",16382,32,132,0,4,16,0,10.848045349
+0,"pure delay kernel",16382,32,132,0,4,64,0,11.110305786
+0,"pure delay kernel",16382,32,132,0,4,4,0,10.645389557
+0,"pure delay kernel",16382,32,132,0,4,32,0,10.991096497
+0,"pure delay kernel",16382,32,132,0,4,1,0,10.848045349
+0,"pure delay kernel",16382,32,132,0,4,512,0,14.054775238
+0,"pure delay kernel",16382,32,132,0,4,2,0,10.752677917
+0,"pure delay kernel",16382,32,132,0,4,256,0,12.755393982
+0,"pure delay kernel",16382,32,132,0,4,8,0,10.955333710
+0,"pure delay kernel",16382,32,132,0,4,128,0,11.599063873
+0,"pure delay kernel",16382,32,132,0,4,1024,0,17.654895782
+0,"pure delay kernel",16382,32,132,0,4,4096,0,38.146972656
+0,"pure delay kernel",16382,32,132,0,4,8192,0,64.957141876
+0,"pure delay kernel",16382,32,132,0,4,2048,0,24.747848511
+0,"pure delay kernel",16382,32,132,1,0,2,0,10.848045349
+0,"pure delay kernel",16382,32,132,1,0,8,0,10.859966278
+0,"pure delay kernel",16382,32,132,1,0,128,0,11.348724365
+0,"pure delay kernel",16382,32,132,1,0,32,0,10.955333710
+0,"pure delay kernel",16382,32,132,1,0,4,0,10.752677917
+0,"pure delay kernel",16382,32,132,1,0,64,0,11.146068573
+0,"pure delay kernel",16382,32,132,1,0,8192,0,65.302848816
+0,"pure delay kernel",16382,32,132,1,0,16,0,10.895729065
+0,"pure delay kernel",16382,32,132,1,0,512,0,14.495849609
+0,"pure delay kernel",16382,32,132,1,0,1024,0,17.642974854
+0,"pure delay kernel",16382,32,132,1,0,2048,0,24.652481079
+0,"pure delay kernel",16382,32,132,1,0,256,0,12.350082397
+0,"pure delay kernel",16382,32,132,1,0,1,0,10.657310486
+0,"pure delay kernel",16382,32,132,1,0,4096,0,37.992000580
+0,"pure delay kernel",16382,32,132,1,1,1,0,10.657310486
+0,"pure delay kernel",16382,32,132,1,1,4,0,10.597705841
+0,"pure delay kernel",16382,32,132,1,1,16,0,11.050701141
+0,"pure delay kernel",16382,32,132,1,1,8192,0,65.147876740
+0,"pure delay kernel",16382,32,132,1,1,256,0,12.505054474
+0,"pure delay kernel",16382,32,132,1,1,64,0,11.253356934
+0,"pure delay kernel",16382,32,132,1,1,2048,0,24.855136871
+0,"pure delay kernel",16382,32,132,1,1,4096,0,38.254261017
+0,"pure delay kernel",16382,32,132,1,1,8,0,10.848045349
+0,"pure delay kernel",16382,32,132,1,1,1024,0,17.607212067
+0,"pure delay kernel",16382,32,132,1,1,32,0,10.895729065
+0,"pure delay kernel",16382,32,132,1,1,512,0,14.054775238
+0,"pure delay kernel",16382,32,132,1,1,2,0,10.693073273
+0,"pure delay kernel",16382,32,132,1,1,128,0,11.658668518
+0,"pure delay kernel",16382,32,132,1,2,2,0,10.848045349
+0,"pure delay kernel",16382,32,132,1,2,8,0,10.895729065
+0,"pure delay kernel",16382,32,132,1,2,256,0,12.505054474
+0,"pure delay kernel",16382,32,132,1,2,2048,0,24.795532227
+0,"pure delay kernel",16382,32,132,1,2,32,0,11.050701141
+0,"pure delay kernel",16382,32,132,1,2,16,0,10.943412781
+0,"pure delay kernel",16382,32,132,1,2,1,0,10.752677917
+0,"pure delay kernel",16382,32,132,1,2,8192,0,64.897537231
+0,"pure delay kernel",16382,32,132,1,2,128,0,11.551380157
+0,"pure delay kernel",16382,32,132,1,2,4,0,10.752677917
+0,"pure delay kernel",16382,32,132,1,2,512,0,14.197826385
+0,"pure delay kernel",16382,32,132,1,2,1024,0,17.654895782
+0,"pure delay kernel",16382,32,132,1,2,64,0,10.895729065
+0,"pure delay kernel",16382,32,132,1,2,4096,0,38.146972656
+0,"pure delay kernel",16382,32,132,1,3,16,0,10.740756989
+0,"pure delay kernel",16382,32,132,1,3,2,0,10.597705841
+0,"pure delay kernel",16382,32,132,1,3,4,0,11.050701141
+0,"pure delay kernel",16382,32,132,1,3,256,0,12.445449829
+0,"pure delay kernel",16382,32,132,1,3,1,0,10.597705841
+0,"pure delay kernel",16382,32,132,1,3,1024,0,17.595291138
+0,"pure delay kernel",16382,32,132,1,3,32,0,10.848045349
+0,"pure delay kernel",16382,32,132,1,3,512,0,14.197826385
+0,"pure delay kernel",16382,32,132,1,3,4096,0,37.944316864
+0,"pure delay kernel",16382,32,132,1,3,8,0,10.955333710
+0,"pure delay kernel",16382,32,132,1,3,64,0,11.301040649
+0,"pure delay kernel",16382,32,132,1,3,2048,0,24.461746216
+0,"pure delay kernel",16382,32,132,1,3,8192,0,64.992904663
+0,"pure delay kernel",16382,32,132,1,3,128,0,11.444091797
+0,"pure delay kernel",16382,32,132,1,4,256,0,12.600421906
+0,"pure delay kernel",16382,32,132,1,4,1024,0,17.452239990
+0,"pure delay kernel",16382,32,132,1,4,32,0,10.895729065
+0,"pure delay kernel",16382,32,132,1,4,64,0,11.098384857
+0,"pure delay kernel",16382,32,132,1,4,2,0,10.693073273
+0,"pure delay kernel",16382,32,132,1,4,16,0,10.693073273
+0,"pure delay kernel",16382,32,132,1,4,128,0,11.491775513
+0,"pure delay kernel",16382,32,132,1,4,512,0,14.150142670
+0,"pure delay kernel",16382,32,132,1,4,4,0,10.955333710
+0,"pure delay kernel",16382,32,132,1,4,2048,0,24.855136871
+0,"pure delay kernel",16382,32,132,1,4,8,0,10.848045349
+0,"pure delay kernel",16382,32,132,1,4,1,0,10.645389557
+0,"pure delay kernel",16382,32,132,1,4,8192,0,64.909458160
+0,"pure delay kernel",16382,32,132,1,4,4096,0,37.801265717
+6,"teams distribute parallel for",16382,32,132,0,0,4,0,8.594989777
+6,"teams distribute parallel for",16382,32,132,0,0,1024,0,36.299228668
+6,"teams distribute parallel for",16382,32,132,0,0,1,0,8.451938629
+6,"teams distribute parallel for",16382,32,132,0,0,32,0,9.405612946
+6,"teams distribute parallel for",16382,32,132,0,0,64,0,10.156631470
+6,"teams distribute parallel for",16382,32,132,0,0,2048,0,62.644481659
+6,"teams distribute parallel for",16382,32,132,0,0,512,0,22.244453430
+6,"teams distribute parallel for",16382,32,132,0,0,8192,0,224.351882935
+6,"teams distribute parallel for",16382,32,132,0,0,16,0,8.702278137
+6,"teams distribute parallel for",16382,32,132,0,0,2,0,8.153915405
+6,"teams distribute parallel for",16382,32,132,0,0,256,0,15.294551849
+6,"teams distribute parallel for",16382,32,132,0,0,8,0,8.606910706
+6,"teams distribute parallel for",16382,32,132,0,0,4096,0,116.503238678
+6,"teams distribute parallel for",16382,32,132,0,0,128,0,11.646747589
+6,"teams distribute parallel for",16382,32,132,0,1,1024,0,35.750865936
+6,"teams distribute parallel for",16382,32,132,0,1,8,0,8.547306061
+6,"teams distribute parallel for",16382,32,132,0,1,32,0,9.298324585
+6,"teams distribute parallel for",16382,32,132,0,1,1,0,8.201599121
+6,"teams distribute parallel for",16382,32,132,0,1,8192,0,224.053859711
+6,"teams distribute parallel for",16382,32,132,0,1,128,0,11.599063873
+6,"teams distribute parallel for",16382,32,132,0,1,64,0,10.049343109
+6,"teams distribute parallel for",16382,32,132,0,1,2048,0,62.692165375
+6,"teams distribute parallel for",16382,32,132,0,1,512,0,22.351741791
+6,"teams distribute parallel for",16382,32,132,0,1,256,0,15.294551849
+6,"teams distribute parallel for",16382,32,132,0,1,2,0,8.451938629
+6,"teams distribute parallel for",16382,32,132,0,1,4096,0,116.646289825
+6,"teams distribute parallel for",16382,32,132,0,1,16,0,8.797645569
+6,"teams distribute parallel for",16382,32,132,0,1,4,0,8.404254913
+6,"teams distribute parallel for",16382,32,132,0,2,1,0,8.058547974
+6,"teams distribute parallel for",16382,32,132,0,2,4,0,8.451938629
+6,"teams distribute parallel for",16382,32,132,0,2,16,0,8.809566498
+6,"teams distribute parallel for",16382,32,132,0,2,64,0,10.049343109
+6,"teams distribute parallel for",16382,32,132,0,2,2048,0,62.751770020
+6,"teams distribute parallel for",16382,32,132,0,2,8,0,8.547306061
+6,"teams distribute parallel for",16382,32,132,0,2,8192,0,224.244594574
+6,"teams distribute parallel for",16382,32,132,0,2,2,0,8.344650269
+6,"teams distribute parallel for",16382,32,132,0,2,256,0,15.401840210
+6,"teams distribute parallel for",16382,32,132,0,2,1024,0,36.203861237
+6,"teams distribute parallel for",16382,32,132,0,2,512,0,22.196769714
+6,"teams distribute parallel for",16382,32,132,0,2,4096,0,116.610527039
+6,"teams distribute parallel for",16382,32,132,0,2,32,0,9.202957153
+6,"teams distribute parallel for",16382,32,132,0,2,128,0,11.706352234
+6,"teams distribute parallel for",16382,32,132,0,3,2,0,8.296966553
+6,"teams distribute parallel for",16382,32,132,0,3,256,0,15.294551849
+6,"teams distribute parallel for",16382,32,132,0,3,1,0,8.094310760
+6,"teams distribute parallel for",16382,32,132,0,3,32,0,9.191036224
+6,"teams distribute parallel for",16382,32,132,0,3,16,0,8.797645569
+6,"teams distribute parallel for",16382,32,132,0,3,4096,0,116.848945618
+6,"teams distribute parallel for",16382,32,132,0,3,128,0,11.646747589
+6,"teams distribute parallel for",16382,32,132,0,3,512,0,22.053718567
+6,"teams distribute parallel for",16382,32,132,0,3,8,0,8.404254913
+6,"teams distribute parallel for",16382,32,132,0,3,2048,0,62.739849091
+6,"teams distribute parallel for",16382,32,132,0,3,8192,0,224.792957306
+6,"teams distribute parallel for",16382,32,132,0,3,64,0,10.001659393
+6,"teams distribute parallel for",16382,32,132,0,3,1024,0,35.643577576
+6,"teams distribute parallel for",16382,32,132,0,3,4,0,8.451938629
+6,"teams distribute parallel for",16382,32,132,0,4,16,0,8.702278137
+6,"teams distribute parallel for",16382,32,132,0,4,64,0,10.144710541
+6,"teams distribute parallel for",16382,32,132,0,4,4,0,8.440017700
+6,"teams distribute parallel for",16382,32,132,0,4,32,0,9.047985077
+6,"teams distribute parallel for",16382,32,132,0,4,1,0,8.296966553
+6,"teams distribute parallel for",16382,32,132,0,4,512,0,22.399425507
+6,"teams distribute parallel for",16382,32,132,0,4,2,0,8.392333984
+6,"teams distribute parallel for",16382,32,132,0,4,256,0,15.199184418
+6,"teams distribute parallel for",16382,32,132,0,4,8,0,8.404254913
+6,"teams distribute parallel for",16382,32,132,0,4,128,0,11.801719666
+6,"teams distribute parallel for",16382,32,132,0,4,1024,0,35.738945007
+6,"teams distribute parallel for",16382,32,132,0,4,4096,0,116.395950317
+6,"teams distribute parallel for",16382,32,132,0,4,8192,0,223.898887634
+6,"teams distribute parallel for",16382,32,132,0,4,2048,0,62.561035156
+6,"teams distribute parallel for",16382,32,132,1,0,2,0,8.296966553
+6,"teams distribute parallel for",16382,32,132,1,0,8,0,8.392333984
+6,"teams distribute parallel for",16382,32,132,1,0,128,0,11.706352234
+6,"teams distribute parallel for",16382,32,132,1,0,32,0,9.191036224
+6,"teams distribute parallel for",16382,32,132,1,0,4,0,8.499622345
+6,"teams distribute parallel for",16382,32,132,1,0,64,0,10.156631470
+6,"teams distribute parallel for",16382,32,132,1,0,8192,0,224.399566650
+6,"teams distribute parallel for",16382,32,132,1,0,16,0,8.797645569
+6,"teams distribute parallel for",16382,32,132,1,0,512,0,22.447109222
+6,"teams distribute parallel for",16382,32,132,1,0,1024,0,35.750865936
+6,"teams distribute parallel for",16382,32,132,1,0,2048,0,62.596797943
+6,"teams distribute parallel for",16382,32,132,1,0,256,0,15.246868134
+6,"teams distribute parallel for",16382,32,132,1,0,1,0,8.106231689
+6,"teams distribute parallel for",16382,32,132,1,0,4096,0,116.741657257
+6,"teams distribute parallel for",16382,32,132,1,1,1,0,8.201599121
+6,"teams distribute parallel for",16382,32,132,1,1,4,0,8.499622345
+6,"teams distribute parallel for",16382,32,132,1,1,16,0,8.702278137
+6,"teams distribute parallel for",16382,32,132,1,1,8192,0,224.256515503
+6,"teams distribute parallel for",16382,32,132,1,1,256,0,15.306472778
+6,"teams distribute parallel for",16382,32,132,1,1,64,0,10.001659393
+6,"teams distribute parallel for",16382,32,132,1,1,2048,0,62.751770020
+6,"teams distribute parallel for",16382,32,132,1,1,4096,0,116.443634033
+6,"teams distribute parallel for",16382,32,132,1,1,8,0,8.594989777
+6,"teams distribute parallel for",16382,32,132,1,1,1024,0,36.203861237
+6,"teams distribute parallel for",16382,32,132,1,1,32,0,9.250640869
+6,"teams distribute parallel for",16382,32,132,1,1,512,0,22.399425507
+6,"teams distribute parallel for",16382,32,132,1,1,2,0,8.404254913
+6,"teams distribute parallel for",16382,32,132,1,1,128,0,11.646747589
+6,"teams distribute parallel for",16382,32,132,1,2,2,0,8.249282837
+6,"teams distribute parallel for",16382,32,132,1,2,8,0,8.606910706
+6,"teams distribute parallel for",16382,32,132,1,2,256,0,15.306472778
+6,"teams distribute parallel for",16382,32,132,1,2,2048,0,63.002109528
+6,"teams distribute parallel for",16382,32,132,1,2,32,0,9.250640869
+6,"teams distribute parallel for",16382,32,132,1,2,16,0,8.654594421
+6,"teams distribute parallel for",16382,32,132,1,2,1,0,8.201599121
+6,"teams distribute parallel for",16382,32,132,1,2,8192,0,224.149227142
+6,"teams distribute parallel for",16382,32,132,1,2,128,0,11.801719666
+6,"teams distribute parallel for",16382,32,132,1,2,4,0,8.499622345
+6,"teams distribute parallel for",16382,32,132,1,2,512,0,22.542476654
+6,"teams distribute parallel for",16382,32,132,1,2,1024,0,36.048889160
+6,"teams distribute parallel for",16382,32,132,1,2,64,0,10.192394257
+6,"teams distribute parallel for",16382,32,132,1,2,4096,0,116.801261902
+6,"teams distribute parallel for",16382,32,132,1,3,16,0,8.749961853
+6,"teams distribute parallel for",16382,32,132,1,3,2,0,8.106231689
+6,"teams distribute parallel for",16382,32,132,1,3,4,0,8.499622345
+6,"teams distribute parallel for",16382,32,132,1,3,256,0,15.246868134
+6,"teams distribute parallel for",16382,32,132,1,3,1,0,8.141994476
+6,"teams distribute parallel for",16382,32,132,1,3,1024,0,35.798549652
+6,"teams distribute parallel for",16382,32,132,1,3,32,0,9.202957153
+6,"teams distribute parallel for",16382,32,132,1,3,512,0,22.149085999
+6,"teams distribute parallel for",16382,32,132,1,3,4096,0,116.491317749
+6,"teams distribute parallel for",16382,32,132,1,3,8,0,8.356571198
+6,"teams distribute parallel for",16382,32,132,1,3,64,0,10.204315186
+6,"teams distribute parallel for",16382,32,132,1,3,2048,0,62.596797943
+6,"teams distribute parallel for",16382,32,132,1,3,8192,0,224.542617798
+6,"teams distribute parallel for",16382,32,132,1,3,128,0,11.944770813
+6,"teams distribute parallel for",16382,32,132,1,4,256,0,15.342235565
+6,"teams distribute parallel for",16382,32,132,1,4,1024,0,35.846233368
+6,"teams distribute parallel for",16382,32,132,1,4,32,0,9.298324585
+6,"teams distribute parallel for",16382,32,132,1,4,64,0,9.942054749
+6,"teams distribute parallel for",16382,32,132,1,4,2,0,8.249282837
+6,"teams distribute parallel for",16382,32,132,1,4,16,0,8.642673492
+6,"teams distribute parallel for",16382,32,132,1,4,128,0,11.801719666
+6,"teams distribute parallel for",16382,32,132,1,4,512,0,22.244453430
+6,"teams distribute parallel for",16382,32,132,1,4,4,0,8.404254913
+6,"teams distribute parallel for",16382,32,132,1,4,2048,0,63.204765320
+6,"teams distribute parallel for",16382,32,132,1,4,8,0,8.547306061
+6,"teams distribute parallel for",16382,32,132,1,4,1,0,8.094310760
+6,"teams distribute parallel for",16382,32,132,1,4,8192,0,224.149227142
+6,"teams distribute parallel for",16382,32,132,1,4,4096,0,116.503238678

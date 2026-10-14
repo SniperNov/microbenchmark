@@ -1,0 +1,3 @@
+nvc -mp=gpu -O0 -DPRINT_DISTRIBUTION -I src/core src/core/driver.c src/backends/openmp/backend.c -mp=gpu -lm -o /work/weiyu/microbenchmark/result/GH200/device_opt_ab/20261014T202550Z.XUuTBe/bin/openmp_reference 
+src/core/driver.c:
+src/backends/openmp/backend.c:

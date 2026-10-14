@@ -1,0 +1,281 @@
+method_id,method_name,N,block_count,thread_count,set,run,delaylength,outerreps,exec_time_us
+0,"pure delay kernel",16382,132,32,0,0,4,0,7.555250549
+0,"pure delay kernel",16382,132,32,0,0,1024,0,13.873750305
+0,"pure delay kernel",16382,132,32,0,0,1,0,7.601699829
+0,"pure delay kernel",16382,132,32,0,0,32,0,7.715249634
+0,"pure delay kernel",16382,132,32,0,0,64,0,7.955249023
+0,"pure delay kernel",16382,132,32,0,0,2048,0,20.069000244
+0,"pure delay kernel",16382,132,32,0,0,512,0,10.649700928
+0,"pure delay kernel",16382,132,32,0,0,8192,0,56.605349731
+0,"pure delay kernel",16382,132,32,0,0,16,0,7.484851074
+0,"pure delay kernel",16382,132,32,0,0,2,0,7.476849365
+0,"pure delay kernel",16382,132,32,0,0,256,0,9.096099854
+0,"pure delay kernel",16382,132,32,0,0,8,0,7.628900146
+0,"pure delay kernel",16382,132,32,0,0,4096,0,32.217900085
+0,"pure delay kernel",16382,132,32,0,0,128,0,8.505700684
+0,"pure delay kernel",16382,132,32,0,1,1024,0,13.643299866
+0,"pure delay kernel",16382,132,32,0,1,8,0,7.654449463
+0,"pure delay kernel",16382,132,32,0,1,32,0,8.027299500
+0,"pure delay kernel",16382,132,32,0,1,1,0,7.545649719
+0,"pure delay kernel",16382,132,32,0,1,8192,0,56.805351257
+0,"pure delay kernel",16382,132,32,0,1,128,0,8.457649231
+0,"pure delay kernel",16382,132,32,0,1,64,0,7.928050232
+0,"pure delay kernel",16382,132,32,0,1,2048,0,20.160198975
+0,"pure delay kernel",16382,132,32,0,1,512,0,10.550500488
+0,"pure delay kernel",16382,132,32,0,1,256,0,9.012849426
+0,"pure delay kernel",16382,132,32,0,1,2,0,7.766448975
+0,"pure delay kernel",16382,132,32,0,1,4096,0,32.630749512
+0,"pure delay kernel",16382,132,32,0,1,16,0,7.574499512
+0,"pure delay kernel",16382,132,32,0,1,4,0,7.494499207
+0,"pure delay kernel",16382,132,32,0,2,1,0,7.516900635
+0,"pure delay kernel",16382,132,32,0,2,4,0,7.545700073
+0,"pure delay kernel",16382,132,32,0,2,16,0,7.604899597
+0,"pure delay kernel",16382,132,32,0,2,64,0,7.905650330
+0,"pure delay kernel",16382,132,32,0,2,2048,0,20.390600586
+0,"pure delay kernel",16382,132,32,0,2,8,0,7.555300903
+0,"pure delay kernel",16382,132,32,0,2,8192,0,57.024549866
+0,"pure delay kernel",16382,132,32,0,2,2,0,7.468899536
+0,"pure delay kernel",16382,132,32,0,2,256,0,9.094500732
+0,"pure delay kernel",16382,132,32,0,2,1024,0,13.673750305
+0,"pure delay kernel",16382,132,32,0,2,512,0,10.592098999
+0,"pure delay kernel",16382,132,32,0,2,4096,0,32.262750244
+0,"pure delay kernel",16382,132,32,0,2,32,0,7.760099792
+0,"pure delay kernel",16382,132,32,0,2,128,0,8.206500244
+0,"pure delay kernel",16382,132,32,0,3,2,0,7.504049683
+0,"pure delay kernel",16382,132,32,0,3,256,0,9.025650024
+0,"pure delay kernel",16382,132,32,0,3,1,0,7.491249084
+0,"pure delay kernel",16382,132,32,0,3,32,0,7.964900208
+0,"pure delay kernel",16382,132,32,0,3,16,0,7.572898865
+0,"pure delay kernel",16382,132,32,0,3,4096,0,32.611500549
+0,"pure delay kernel",16382,132,32,0,3,128,0,8.284899902
+0,"pure delay kernel",16382,132,32,0,3,512,0,10.499299622
+0,"pure delay kernel",16382,132,32,0,3,8,0,7.521650696
+0,"pure delay kernel",16382,132,32,0,3,2048,0,20.425799561
+0,"pure delay kernel",16382,132,32,0,3,8192,0,57.027749634
+0,"pure delay kernel",16382,132,32,0,3,64,0,7.944099426
+0,"pure delay kernel",16382,132,32,0,3,1024,0,13.721749878
+0,"pure delay kernel",16382,132,32,0,3,4,0,7.587249756
+0,"pure delay kernel",16382,132,32,0,4,16,0,7.689649963
+0,"pure delay kernel",16382,132,32,0,4,64,0,8.150498962
+0,"pure delay kernel",16382,132,32,0,4,4,0,7.552099609
+0,"pure delay kernel",16382,132,32,0,4,32,0,7.860899353
+0,"pure delay kernel",16382,132,32,0,4,1,0,7.739299011
+0,"pure delay kernel",16382,132,32,0,4,512,0,10.913699341
+0,"pure delay kernel",16382,132,32,0,4,2,0,7.601699829
+0,"pure delay kernel",16382,132,32,0,4,256,0,9.308898926
+0,"pure delay kernel",16382,132,32,0,4,8,0,7.587249756
+0,"pure delay kernel",16382,132,32,0,4,128,0,8.280050659
+0,"pure delay kernel",16382,132,32,0,4,1024,0,13.609750366
+0,"pure delay kernel",16382,132,32,0,4,4096,0,32.379550171
+0,"pure delay kernel",16382,132,32,0,4,8192,0,56.880549622
+0,"pure delay kernel",16382,132,32,0,4,2048,0,20.313800049
+0,"pure delay kernel",16382,132,32,1,0,2,0,7.531250000
+0,"pure delay kernel",16382,132,32,1,0,8,0,7.518450928
+0,"pure delay kernel",16382,132,32,1,0,128,0,8.278450012
+0,"pure delay kernel",16382,132,32,1,0,32,0,7.713650513
+0,"pure delay kernel",16382,132,32,1,0,4,0,7.534500122
+0,"pure delay kernel",16382,132,32,1,0,64,0,7.908900452
+0,"pure delay kernel",16382,132,32,1,0,8192,0,57.026148987
+0,"pure delay kernel",16382,132,32,1,0,16,0,7.574449158
+0,"pure delay kernel",16382,132,32,1,0,512,0,10.638499451
+0,"pure delay kernel",16382,132,32,1,0,1024,0,13.681748962
+0,"pure delay kernel",16382,132,32,1,0,2048,0,20.059399414
+0,"pure delay kernel",16382,132,32,1,0,256,0,9.056100464
+0,"pure delay kernel",16382,132,32,1,0,1,0,7.512049866
+0,"pure delay kernel",16382,132,32,1,0,4096,0,32.157099915
+0,"pure delay kernel",16382,132,32,1,1,1,0,7.475250244
+0,"pure delay kernel",16382,132,32,1,1,4,0,7.510450745
+0,"pure delay kernel",16382,132,32,1,1,16,0,7.595249939
+0,"pure delay kernel",16382,132,32,1,1,8192,0,56.539750671
+0,"pure delay kernel",16382,132,32,1,1,256,0,9.035250854
+0,"pure delay kernel",16382,132,32,1,1,64,0,8.032049561
+0,"pure delay kernel",16382,132,32,1,1,2048,0,20.085000610
+0,"pure delay kernel",16382,132,32,1,1,4096,0,32.169900513
+0,"pure delay kernel",16382,132,32,1,1,8,0,7.724850464
+0,"pure delay kernel",16382,132,32,1,1,1024,0,13.680099487
+0,"pure delay kernel",16382,132,32,1,1,32,0,7.654449463
+0,"pure delay kernel",16382,132,32,1,1,512,0,10.881698608
+0,"pure delay kernel",16382,132,32,1,1,2,0,7.520050049
+0,"pure delay kernel",16382,132,32,1,1,128,0,8.435250854
+0,"pure delay kernel",16382,132,32,1,2,2,0,7.683250427
+0,"pure delay kernel",16382,132,32,1,2,8,0,7.552050781
+0,"pure delay kernel",16382,132,32,1,2,256,0,9.129699707
+0,"pure delay kernel",16382,132,32,1,2,2048,0,20.144200134
+0,"pure delay kernel",16382,132,32,1,2,32,0,7.707249451
+0,"pure delay kernel",16382,132,32,1,2,16,0,7.609651184
+0,"pure delay kernel",16382,132,32,1,2,1,0,7.720100403
+0,"pure delay kernel",16382,132,32,1,2,8192,0,56.555751038
+0,"pure delay kernel",16382,132,32,1,2,128,0,8.278450012
+0,"pure delay kernel",16382,132,32,1,2,4,0,7.491250610
+0,"pure delay kernel",16382,132,32,1,2,512,0,10.560099792
+0,"pure delay kernel",16382,132,32,1,2,1024,0,13.734500122
+0,"pure delay kernel",16382,132,32,1,2,64,0,8.059300232
+0,"pure delay kernel",16382,132,32,1,2,4096,0,32.328300476
+0,"pure delay kernel",16382,132,32,1,3,16,0,7.611300659
+0,"pure delay kernel",16382,132,32,1,3,2,0,7.817700195
+0,"pure delay kernel",16382,132,32,1,3,4,0,7.512100220
+0,"pure delay kernel",16382,132,32,1,3,256,0,8.998500061
+0,"pure delay kernel",16382,132,32,1,3,1,0,7.344049072
+0,"pure delay kernel",16382,132,32,1,3,1024,0,13.657699585
+0,"pure delay kernel",16382,132,32,1,3,32,0,7.750498962
+0,"pure delay kernel",16382,132,32,1,3,512,0,10.785699463
+0,"pure delay kernel",16382,132,32,1,3,4096,0,32.499501038
+0,"pure delay kernel",16382,132,32,1,3,8,0,7.560050964
+0,"pure delay kernel",16382,132,32,1,3,64,0,7.860900879
+0,"pure delay kernel",16382,132,32,1,3,2048,0,20.284999084
+0,"pure delay kernel",16382,132,32,1,3,8192,0,56.667750549
+0,"pure delay kernel",16382,132,32,1,3,128,0,8.254499817
+0,"pure delay kernel",16382,132,32,1,4,256,0,9.326449585
+0,"pure delay kernel",16382,132,32,1,4,1024,0,13.811349487
+0,"pure delay kernel",16382,132,32,1,4,32,0,7.742498779
+0,"pure delay kernel",16382,132,32,1,4,64,0,8.153700256
+0,"pure delay kernel",16382,132,32,1,4,2,0,7.513700867
+0,"pure delay kernel",16382,132,32,1,4,16,0,7.550500488
+0,"pure delay kernel",16382,132,32,1,4,128,0,8.555300903
+0,"pure delay kernel",16382,132,32,1,4,512,0,10.585699463
+0,"pure delay kernel",16382,132,32,1,4,4,0,7.532899475
+0,"pure delay kernel",16382,132,32,1,4,2048,0,20.200199890
+0,"pure delay kernel",16382,132,32,1,4,8,0,7.606449890
+0,"pure delay kernel",16382,132,32,1,4,1,0,7.457650757
+0,"pure delay kernel",16382,132,32,1,4,8192,0,56.482150269
+0,"pure delay kernel",16382,132,32,1,4,4096,0,32.217898560
+6,"teams distribute thread loop",16382,132,32,0,0,4,0,8.534500122
+6,"teams distribute thread loop",16382,132,32,0,0,1024,0,36.675550842
+6,"teams distribute thread loop",16382,132,32,0,0,1,0,8.184100342
+6,"teams distribute thread loop",16382,132,32,0,0,32,0,9.408099365
+6,"teams distribute thread loop",16382,132,32,0,0,64,0,10.198500061
+6,"teams distribute thread loop",16382,132,32,0,0,2048,0,63.890199280
+6,"teams distribute thread loop",16382,132,32,0,0,512,0,22.590650940
+6,"teams distribute thread loop",16382,132,32,0,0,8192,0,229.232649231
+6,"teams distribute thread loop",16382,132,32,0,0,16,0,9.012901306
+6,"teams distribute thread loop",16382,132,32,0,0,2,0,8.504049683
+6,"teams distribute thread loop",16382,132,32,0,0,256,0,15.388951111
+6,"teams distribute thread loop",16382,132,32,0,0,8,0,8.601651001
+6,"teams distribute thread loop",16382,132,32,0,0,4096,0,119.385150146
+6,"teams distribute thread loop",16382,132,32,0,0,128,0,11.841700745
+6,"teams distribute thread loop",16382,132,32,0,1,1024,0,36.304350281
+6,"teams distribute thread loop",16382,132,32,0,1,8,0,8.641699219
+6,"teams distribute thread loop",16382,132,32,0,1,32,0,9.225650024
+6,"teams distribute thread loop",16382,132,32,0,1,1,0,8.211248779
+6,"teams distribute thread loop",16382,132,32,0,1,8192,0,229.128599548
+6,"teams distribute thread loop",16382,132,32,0,1,128,0,11.852899170
+6,"teams distribute thread loop",16382,132,32,0,1,64,0,10.241699219
+6,"teams distribute thread loop",16382,132,32,0,1,2048,0,64.304649353
+6,"teams distribute thread loop",16382,132,32,0,1,512,0,22.849850464
+6,"teams distribute thread loop",16382,132,32,0,1,256,0,15.454550171
+6,"teams distribute thread loop",16382,132,32,0,1,2,0,8.336099243
+6,"teams distribute thread loop",16382,132,32,0,1,4096,0,119.561149597
+6,"teams distribute thread loop",16382,132,32,0,1,16,0,9.136099243
+6,"teams distribute thread loop",16382,132,32,0,1,4,0,8.622500610
+6,"teams distribute thread loop",16382,132,32,0,2,1,0,8.187249756
+6,"teams distribute thread loop",16382,132,32,0,2,4,0,8.510449219
+6,"teams distribute thread loop",16382,132,32,0,2,16,0,8.873699951
+6,"teams distribute thread loop",16382,132,32,0,2,64,0,10.072099304
+6,"teams distribute thread loop",16382,132,32,0,2,2048,0,63.818200684
+6,"teams distribute thread loop",16382,132,32,0,2,8,0,8.577648926
+6,"teams distribute thread loop",16382,132,32,0,2,8192,0,229.778199768
+6,"teams distribute thread loop",16382,132,32,0,2,2,0,8.436898804
+6,"teams distribute thread loop",16382,132,32,0,2,256,0,15.438549805
+6,"teams distribute thread loop",16382,132,32,0,2,1024,0,36.909149170
+6,"teams distribute thread loop",16382,132,32,0,2,512,0,22.605000305
+6,"teams distribute thread loop",16382,132,32,0,2,4096,0,119.037950134
+6,"teams distribute thread loop",16382,132,32,0,2,32,0,9.251249695
+6,"teams distribute thread loop",16382,132,32,0,2,128,0,11.873699951
+6,"teams distribute thread loop",16382,132,32,0,3,2,0,8.470498657
+6,"teams distribute thread loop",16382,132,32,0,3,256,0,15.521749878
+6,"teams distribute thread loop",16382,132,32,0,3,1,0,8.785700989
+6,"teams distribute thread loop",16382,132,32,0,3,32,0,9.289698792
+6,"teams distribute thread loop",16382,132,32,0,3,16,0,8.747300720
+6,"teams distribute thread loop",16382,132,32,0,3,4096,0,119.337150574
+6,"teams distribute thread loop",16382,132,32,0,3,128,0,11.945700073
+6,"teams distribute thread loop",16382,132,32,0,3,512,0,22.629000854
+6,"teams distribute thread loop",16382,132,32,0,3,8,0,8.518450928
+6,"teams distribute thread loop",16382,132,32,0,3,2048,0,64.240599060
+6,"teams distribute thread loop",16382,132,32,0,3,8192,0,229.117399597
+6,"teams distribute thread loop",16382,132,32,0,3,64,0,9.955299377
+6,"teams distribute thread loop",16382,132,32,0,3,1024,0,36.430751038
+6,"teams distribute thread loop",16382,132,32,0,3,4,0,8.486500549
+6,"teams distribute thread loop",16382,132,32,0,4,16,0,8.769648743
+6,"teams distribute thread loop",16382,132,32,0,4,64,0,10.131300354
+6,"teams distribute thread loop",16382,132,32,0,4,4,0,8.561650085
+6,"teams distribute thread loop",16382,132,32,0,4,32,0,9.428900146
+6,"teams distribute thread loop",16382,132,32,0,4,1,0,8.328100586
+6,"teams distribute thread loop",16382,132,32,0,4,512,0,22.585848999
+6,"teams distribute thread loop",16382,132,32,0,4,2,0,8.360099792
+6,"teams distribute thread loop",16382,132,32,0,4,256,0,15.550550842
+6,"teams distribute thread loop",16382,132,32,0,4,8,0,8.676901245
+6,"teams distribute thread loop",16382,132,32,0,4,128,0,11.862550354
+6,"teams distribute thread loop",16382,132,32,0,4,1024,0,36.318750000
+6,"teams distribute thread loop",16382,132,32,0,4,4096,0,119.028350830
+6,"teams distribute thread loop",16382,132,32,0,4,8192,0,229.160600281
+6,"teams distribute thread loop",16382,132,32,0,4,2048,0,63.902999878
+6,"teams distribute thread loop",16382,132,32,1,0,2,0,8.345700073
+6,"teams distribute thread loop",16382,132,32,1,0,8,0,8.600050354
+6,"teams distribute thread loop",16382,132,32,1,0,128,0,12.323300171
+6,"teams distribute thread loop",16382,132,32,1,0,32,0,9.209700012
+6,"teams distribute thread loop",16382,132,32,1,0,4,0,8.558499146
+6,"teams distribute thread loop",16382,132,32,1,0,64,0,10.105699158
+6,"teams distribute thread loop",16382,132,32,1,0,8192,0,229.843849182
+6,"teams distribute thread loop",16382,132,32,1,0,16,0,8.894500732
+6,"teams distribute thread loop",16382,132,32,1,0,512,0,22.699398804
+6,"teams distribute thread loop",16382,132,32,1,0,1024,0,36.355549622
+6,"teams distribute thread loop",16382,132,32,1,0,2048,0,63.991049194
+6,"teams distribute thread loop",16382,132,32,1,0,256,0,15.505749512
+6,"teams distribute thread loop",16382,132,32,1,0,1,0,8.260899353
+6,"teams distribute thread loop",16382,132,32,1,0,4096,0,118.873150635
+6,"teams distribute thread loop",16382,132,32,1,1,1,0,8.401699829
+6,"teams distribute thread loop",16382,132,32,1,1,4,0,8.801699829
+6,"teams distribute thread loop",16382,132,32,1,1,16,0,8.852850342
+6,"teams distribute thread loop",16382,132,32,1,1,8192,0,229.335049438
+6,"teams distribute thread loop",16382,132,32,1,1,256,0,15.649749756
+6,"teams distribute thread loop",16382,132,32,1,1,64,0,10.200099182
+6,"teams distribute thread loop",16382,132,32,1,1,2048,0,63.858200073
+6,"teams distribute thread loop",16382,132,32,1,1,4096,0,118.989949036
+6,"teams distribute thread loop",16382,132,32,1,1,8,0,8.680099487
+6,"teams distribute thread loop",16382,132,32,1,1,1024,0,36.445149231
+6,"teams distribute thread loop",16382,132,32,1,1,32,0,9.518501282
+6,"teams distribute thread loop",16382,132,32,1,1,512,0,22.809799194
+6,"teams distribute thread loop",16382,132,32,1,1,2,0,8.635250854
+6,"teams distribute thread loop",16382,132,32,1,1,128,0,11.843299866
+6,"teams distribute thread loop",16382,132,32,1,2,2,0,8.334451294
+6,"teams distribute thread loop",16382,132,32,1,2,8,0,8.931300354
+6,"teams distribute thread loop",16382,132,32,1,2,256,0,15.476950073
+6,"teams distribute thread loop",16382,132,32,1,2,2048,0,64.269398499
+6,"teams distribute thread loop",16382,132,32,1,2,32,0,9.294500732
+6,"teams distribute thread loop",16382,132,32,1,2,16,0,8.752101135
+6,"teams distribute thread loop",16382,132,32,1,2,1,0,8.651300049
+6,"teams distribute thread loop",16382,132,32,1,2,8192,0,229.282199097
+6,"teams distribute thread loop",16382,132,32,1,2,128,0,11.912098694
+6,"teams distribute thread loop",16382,132,32,1,2,4,0,8.326449585
+6,"teams distribute thread loop",16382,132,32,1,2,512,0,22.598599243
+6,"teams distribute thread loop",16382,132,32,1,2,1024,0,36.302751160
+6,"teams distribute thread loop",16382,132,32,1,2,64,0,10.241699219
+6,"teams distribute thread loop",16382,132,32,1,2,4096,0,119.284350586
+6,"teams distribute thread loop",16382,132,32,1,3,16,0,8.900900269
+6,"teams distribute thread loop",16382,132,32,1,3,2,0,8.315299988
+6,"teams distribute thread loop",16382,132,32,1,3,4,0,8.820899963
+6,"teams distribute thread loop",16382,132,32,1,3,256,0,15.484950256
+6,"teams distribute thread loop",16382,132,32,1,3,1,0,8.408049011
+6,"teams distribute thread loop",16382,132,32,1,3,1024,0,36.249949646
+6,"teams distribute thread loop",16382,132,32,1,3,32,0,9.403250122
+6,"teams distribute thread loop",16382,132,32,1,3,512,0,22.515449524
+6,"teams distribute thread loop",16382,132,32,1,3,4096,0,119.069950867
+6,"teams distribute thread loop",16382,132,32,1,3,8,0,8.632099915
+6,"teams distribute thread loop",16382,132,32,1,3,64,0,10.528100586
+6,"teams distribute thread loop",16382,132,32,1,3,2048,0,64.151000977
+6,"teams distribute thread loop",16382,132,32,1,3,8192,0,229.247050476
+6,"teams distribute thread loop",16382,132,32,1,3,128,0,11.953750610
+6,"teams distribute thread loop",16382,132,32,1,4,256,0,15.441751099
+6,"teams distribute thread loop",16382,132,32,1,4,1024,0,36.622749329
+6,"teams distribute thread loop",16382,132,32,1,4,32,0,9.323249817
+6,"teams distribute thread loop",16382,132,32,1,4,64,0,10.145700073
+6,"teams distribute thread loop",16382,132,32,1,4,2,0,8.433650208
+6,"teams distribute thread loop",16382,132,32,1,4,16,0,8.880099487
+6,"teams distribute thread loop",16382,132,32,1,4,128,0,11.840148926
+6,"teams distribute thread loop",16382,132,32,1,4,512,0,22.635398865
+6,"teams distribute thread loop",16382,132,32,1,4,4,0,8.520100403
+6,"teams distribute thread loop",16382,132,32,1,4,2048,0,63.943049622
+6,"teams distribute thread loop",16382,132,32,1,4,8,0,8.928050232
+6,"teams distribute thread loop",16382,132,32,1,4,1,0,8.700900269
+6,"teams distribute thread loop",16382,132,32,1,4,8192,0,229.403849792
+6,"teams distribute thread loop",16382,132,32,1,4,4096,0,119.330749512
