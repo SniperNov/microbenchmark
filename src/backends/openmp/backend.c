@@ -172,7 +172,7 @@ double backend_run_method(int method, double *a, int N, int delay,
 
                 case 8:
                     // Atomic update path, using tmp to isolate the update target.
-#pragma omp target teams distribute parallel for
+#pragma omp target teams distribute parallel for num_teams(team_count) thread_limit(thread_count)
                     for (int i = 0; i < max_iter; i++)
                     {
                         delay_kernel(delay, &a[i]);
@@ -182,35 +182,21 @@ double backend_run_method(int method, double *a, int N, int delay,
                     break;
 
                 case 9:
-                    // Reduction path. Compiler families disagree on syntax,
-                    // so keep the backend-specific variants here.
-#if defined(__NVCOMPILER)
-#pragma omp target teams distribute parallel for reduction(+ : tmp[0 : N])
+                {
+                    // Use the same scalar reduction measured by the OpenACC
+                    // backend.  Array-section reduction is both a different
+                    // operation and prohibitively slow with GCC NVPTX.
+                    double reduction_sum = 0.0;
+#pragma omp target teams distribute parallel for num_teams(team_count) thread_limit(thread_count) reduction(+ : reduction_sum)
                     for (int i = 0; i < max_iter; i++)
                     {
                         delay_kernel(delay, &a[i]);
-                        tmp[i % N] += 1.0;
+                        reduction_sum += 1.0;
                     }
+                    if (reduction_sum < 0.0)
+                        printf("%f\n", reduction_sum);
                     break;
-#elif defined(_CRAYC) || defined(__AMD__) || defined(__clang__)
-#pragma omp target
-#pragma teams distribute reduction(+ : tmp[0 : N])
-#pragma parallel for reduction(+ : tmp[0 : N])
-                    for (int i = 0; i < max_iter; i++)
-                    {
-                        delay_kernel(delay, &a[i]);
-                        tmp[i % N] += 1.0;
-                    }
-                    break;
-#else
-#pragma omp target teams distribute parallel for reduction(+ : tmp[0 : N])
-                    for (int i = 0; i < max_iter; i++)
-                    {
-                        delay_kernel(delay, &a[i]);
-                        tmp[i % N] += 1.0;
-                    }
-                    break;
-#endif
+                }
 
                 case 10:
                     // Explicit teams + inner parallel region.
