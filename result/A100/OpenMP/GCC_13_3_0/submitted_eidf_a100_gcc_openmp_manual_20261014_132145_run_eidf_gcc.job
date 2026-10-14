@@ -1,0 +1,71 @@
+#!/bin/bash -l
+
+# Run inside an EIDF Kubernetes GPU pod. Select A100, H100, or H200 with
+# MACHINE=<platform>. Plotting is intentionally disabled unless PLOT_RESULTS=1.
+
+set -euo pipefail
+
+cd "$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)"
+. "./jobs/common.sh"
+
+MACHINE="${MACHINE:?Set MACHINE to A100, H100, or H200}"
+API="OpenMP"
+case "$MACHINE" in A100|H100|H200) ;; *) echo "Unsupported MACHINE=$MACHINE" >&2; exit 2 ;; esac
+
+export OMP_TARGET_OFFLOAD=mandatory
+require_gcc_nvptx
+
+set_common_benchmark_parameters
+set_platform_launch_parameters "$MACHINE"
+TEAMS="$PLATFORM_GROUPS"
+THREADS="$PLATFORM_WIDTH"
+COMPILER_TAG=$(compiler_tag_gcc)
+OUTDIR="result/$MACHINE/$API/$COMPILER_TAG"
+mkdir -p "$OUTDIR"
+
+JOB_NAME="eidf_${MACHINE,,}_gcc_openmp"
+TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+OUTFILE="$OUTDIR/${JOB_NAME}_${TIMESTAMP}.out"
+archive_run_provenance "$0" "$OUTDIR" "$JOB_NAME" "$TIMESTAMP"
+
+echo "Running EIDF $MACHINE GCC OpenMP benchmark groups..." | tee "$OUTFILE"
+log_run_configuration "$OUTFILE" "$MACHINE" "$API" "$COMPILER_TAG" "$TEAMS" "$THREADS"
+log_gcc_configuration "$OUTFILE"
+
+PLOT_RESULTS="${PLOT_RESULTS:-0}"
+PLOT_PY="${PLOT_PY:-$PWD/.venv/bin/python}"
+if [ "$PLOT_RESULTS" = "1" ]; then require_plot_python "$PLOT_PY"; fi
+
+echo "Compiling OpenMP backend with GCC..." | tee -a "$OUTFILE"
+make -s clean
+make -s openmp-distribution OPENMP_DEFS=Makefile.defs.gcc 2>&1 | tee -a "$OUTFILE"
+
+run_group () {
+    local TAG="$1" METHODS="$2" NLIST="$3" DELAY_RANGE="$4"
+    local SAFE_DELAY="${DELAY_RANGE//,/to}"
+    local BASE="${TAG}_${SAFE_DELAY}_${TIMESTAMP}"
+    local CSV="$OUTDIR/distributionEIDF_${BASE}.csv"
+    local TXT="$OUTDIR/overheadEIDF_${BASE}.txt"
+    local PNG="$OUTDIR/resultLowestEIDF_${BASE}.png"
+
+    printf '\n===== [%s] Method=%s N=%s Delay=%s =====\n' "$TAG" "$METHODS" "$NLIST" "$DELAY_RANGE" | tee -a "$OUTFILE"
+    rm -f overhead_distribution.txt raw_times.csv
+    ./bin/microbenchmark API=openmp Method="$METHODS" N="$NLIST" Delay="$DELAY_RANGE" \
+        thread_count="$THREADS" team_count="$TEAMS" | tee -a "$OUTFILE"
+    test -f overhead_distribution.txt && mv overhead_distribution.txt "$TXT"
+    test -f raw_times.csv && mv raw_times.csv "$CSV"
+    if [ "$PLOT_RESULTS" = "1" ]; then
+        "$PLOT_PY" ./plots/plot_raw_times.py "$CSV" "$TXT" 1,18 log "$PNG" 2>&1 | tee -a "$OUTFILE"
+    fi
+}
+
+run_group "M0_M10" "0,10" "$N_FIXED" "$DELAY_SHORT"
+run_group "M1to4" "1,2,3,4" "$N_DATA" "$DELAY_SHORT"
+run_group "M5" "5" "$N_FIXED" "$DELAY_SHORT"
+run_group "M6" "6" "$N_FIXED" "$DELAY_SHORT"
+run_group "M7" "7" "$N_FIXED" "$DELAY_SHORT"
+run_group "M8" "8" "$N_ATORED" "$DELAY_SHORT"
+run_group "M9" "9" "$N_ATORED" "$DELAY_SHORT"
+run_group "M11_parreps" "11" "$N_PARREPS" "$DELAY_SHORT"
+
+printf '\nAll EIDF %s GCC OpenMP benchmark groups completed.\nResults saved under %s\n' "$MACHINE" "$OUTDIR" | tee -a "$OUTFILE"

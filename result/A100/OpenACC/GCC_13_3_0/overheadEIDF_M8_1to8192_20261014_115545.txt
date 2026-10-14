@@ -1,0 +1,98 @@
+
+[Method=8 parallel loop atomic N=1]
+Set=0 Run=0  Lmin=128  Intercept=4751.148276 us  Slope=0.035166  R2=0.09726  BIC=83.329  Lowest=4465.350000 us @ delay=2048
+Set=0 Run=1  Lmin=128  Intercept=4752.534483 us  Slope=0.036848  R2=0.11631  BIC=82.582  Lowest=4466.450000 us @ delay=2048
+Set=0 Run=2  Lmin=128  Intercept=4749.416954 us  Slope=0.035155  R2=0.10040  BIC=83.078  Lowest=4458.400000 us @ delay=2048
+Set=0 Run=3  Lmin=128  Intercept=4759.502874 us  Slope=0.035767  R2=0.10633  BIC=82.871  Lowest=4472.300000 us @ delay=2048
+Set=0 Run=4  Lmin=128  Intercept=4747.007184 us  Slope=0.036826  R2=0.11295  BIC=82.805  Lowest=4462.350000 us @ delay=2048
+Set=1 Run=0  Lmin=128  Intercept=4753.539368 us  Slope=0.037591  R2=0.11672  BIC=82.833  Lowest=4476.650000 us @ delay=2048
+Set=1 Run=1  Lmin=128  Intercept=4753.107184 us  Slope=0.036507  R2=0.10757  BIC=83.067  Lowest=4451.550000 us @ delay=2048
+Set=1 Run=2  Lmin=128  Intercept=4756.423563 us  Slope=0.036672  R2=0.11135  BIC=82.859  Lowest=4461.650000 us @ delay=2048
+Set=1 Run=3  Lmin=128  Intercept=4757.424713 us  Slope=0.034281  R2=0.09359  BIC=83.270  Lowest=4464.650000 us @ delay=2048
+Set=1 Run=4  Lmin=128  Intercept=4753.052874 us  Slope=0.038068  R2=0.12611  BIC=82.394  Lowest=4492.600000 us @ delay=2048
+Average Intercept = 4753.315747 ± 3.731132 us
+Minimum Delay Mean = 4467.195000 ± 11.292314 us @ delay=2048 (10 samples)
+
+[Method=8 parallel loop atomic N=2]
+Set=0 Run=0  Lmin=128  Intercept=1813.633621 us  Slope=0.128255  R2=0.95617  BIC=64.269  Lowest=1804.750000 us @ delay=512
+Set=0 Run=1  Lmin=128  Intercept=1812.895690 us  Slope=0.128398  R2=0.94955  BIC=65.319  Lowest=1799.800000 us @ delay=512
+Set=0 Run=2  Lmin=128  Intercept=1817.935920 us  Slope=0.127421  R2=0.95261  BIC=64.751  Lowest=1801.450000 us @ delay=512
+Set=0 Run=3  Lmin=128  Intercept=1814.308908 us  Slope=0.128613  R2=0.95019  BIC=65.248  Lowest=1800.950000 us @ delay=512
+Set=0 Run=4  Lmin=128  Intercept=1814.250862 us  Slope=0.128875  R2=0.95060  BIC=65.215  Lowest=1799.450000 us @ delay=512
+Set=1 Run=0  Lmin=128  Intercept=1814.089080 us  Slope=0.128619  R2=0.95055  BIC=65.195  Lowest=1804.250000 us @ delay=512
+Set=1 Run=1  Lmin=128  Intercept=1823.024713 us  Slope=0.126632  R2=0.94889  BIC=65.220  Lowest=1800.400000 us @ delay=512
+Set=1 Run=2  Lmin=128  Intercept=1815.826724 us  Slope=0.127757  R2=0.95034  BIC=65.132  Lowest=1797.950000 us @ delay=512
+Set=1 Run=3  Lmin=128  Intercept=1815.268678 us  Slope=0.127523  R2=0.94701  BIC=65.586  Lowest=1798.500000 us @ delay=512
+Set=1 Run=4  Lmin=128  Intercept=1812.282759 us  Slope=0.128588  R2=0.95098  BIC=65.127  Lowest=1796.900000 us @ delay=512
+Average Intercept = 1815.351695 ± 3.128392 us
+Minimum Delay Mean = 1800.440000 ± 2.544253 us @ delay=512 (10 samples)
+
+[Method=8 parallel loop atomic N=4]
+Set=0 Run=0  Lmin=128  Intercept=639.605747 us  Slope=0.170793  R2=0.98993  BIC=57.744  Lowest=694.050000 us @ delay=128
+Set=0 Run=1  Lmin=128  Intercept=638.546552 us  Slope=0.170714  R2=0.99043  BIC=57.373  Lowest=694.900000 us @ delay=64
+Set=0 Run=2  Lmin=128  Intercept=638.054023 us  Slope=0.170760  R2=0.99041  BIC=57.394  Lowest=694.300000 us @ delay=64
+Set=0 Run=3  Lmin=128  Intercept=638.942816 us  Slope=0.170789  R2=0.99021  BIC=57.542  Lowest=694.800000 us @ delay=128
+Set=0 Run=4  Lmin=128  Intercept=639.274138 us  Slope=0.170644  R2=0.99026  BIC=57.492  Lowest=694.600000 us @ delay=128
+Set=1 Run=0  Lmin=128  Intercept=639.757184 us  Slope=0.170436  R2=0.98993  BIC=57.709  Lowest=695.500000 us @ delay=64
+Set=1 Run=1  Lmin=128  Intercept=637.669828 us  Slope=0.171042  R2=0.99010  BIC=57.645  Lowest=693.600000 us @ delay=64
+Set=1 Run=2  Lmin=128  Intercept=639.562644 us  Slope=0.170445  R2=0.99004  BIC=57.635  Lowest=693.900000 us @ delay=64
+Set=1 Run=3  Lmin=128  Intercept=638.168103 us  Slope=0.170680  R2=0.99022  BIC=57.526  Lowest=694.400000 us @ delay=128
+Set=1 Run=4  Lmin=128  Intercept=640.092529 us  Slope=0.170399  R2=0.98990  BIC=57.728  Lowest=693.850000 us @ delay=64
+Average Intercept = 638.967356 ± 0.821929 us
+Minimum Delay Mean = 694.955000 ± 1.418812 us @ delay=64 (10 samples)
+
+[Method=8 parallel loop atomic N=8]
+Set=0 Run=0  Lmin=128  Intercept=321.948563 us  Slope=0.190490  R2=0.99357  BIC=56.108  Lowest=381.550000 us @ delay=4
+Set=0 Run=1  Lmin=128  Intercept=323.103448 us  Slope=0.190851  R2=0.99343  BIC=56.278  Lowest=381.800000 us @ delay=16
+Set=0 Run=2  Lmin=128  Intercept=325.103448 us  Slope=0.190076  R2=0.99329  BIC=56.370  Lowest=383.150000 us @ delay=32
+Set=0 Run=3  Lmin=128  Intercept=323.350575 us  Slope=0.190360  R2=0.99333  BIC=56.350  Lowest=382.350000 us @ delay=32
+Set=0 Run=4  Lmin=128  Intercept=322.638793 us  Slope=0.190488  R2=0.99388  BIC=55.758  Lowest=381.800000 us @ delay=16
+Set=1 Run=0  Lmin=128  Intercept=322.955172 us  Slope=0.190297  R2=0.99363  BIC=56.025  Lowest=382.900000 us @ delay=16
+Set=1 Run=1  Lmin=128  Intercept=321.289655 us  Slope=0.190617  R2=0.99348  BIC=56.212  Lowest=381.400000 us @ delay=16
+Set=1 Run=2  Lmin=128  Intercept=323.087356 us  Slope=0.190517  R2=0.99325  BIC=56.444  Lowest=381.550000 us @ delay=16
+Set=1 Run=3  Lmin=128  Intercept=320.945690 us  Slope=0.190848  R2=0.99359  BIC=56.113  Lowest=381.200000 us @ delay=16
+Set=1 Run=4  Lmin=128  Intercept=323.206034 us  Slope=0.190542  R2=0.99395  BIC=55.680  Lowest=381.600000 us @ delay=4
+Average Intercept = 322.762874 ± 1.175177 us
+Minimum Delay Mean = 382.095000 ± 0.782606 us @ delay=16 (10 samples)
+
+[Method=8 parallel loop atomic N=16]
+Set=0 Run=0  Lmin=128  Intercept=158.063218 us  Slope=0.201754  R2=0.99804  BIC=48.543  Lowest=206.750000 us @ delay=4
+Set=0 Run=1  Lmin=128  Intercept=158.339655 us  Slope=0.201739  R2=0.99813  BIC=48.230  Lowest=207.150000 us @ delay=2
+Set=0 Run=2  Lmin=128  Intercept=159.316092 us  Slope=0.201519  R2=0.99774  BIC=49.532  Lowest=207.050000 us @ delay=4
+Set=0 Run=3  Lmin=128  Intercept=159.846264 us  Slope=0.202170  R2=0.99796  BIC=48.862  Lowest=207.050000 us @ delay=4
+Set=0 Run=4  Lmin=128  Intercept=156.714655 us  Slope=0.202184  R2=0.99813  BIC=48.279  Lowest=206.900000 us @ delay=4
+Set=1 Run=0  Lmin=128  Intercept=157.355172 us  Slope=0.201988  R2=0.99809  BIC=48.383  Lowest=207.000000 us @ delay=4
+Set=1 Run=1  Lmin=128  Intercept=157.538793 us  Slope=0.201749  R2=0.99807  BIC=48.469  Lowest=206.950000 us @ delay=4
+Set=1 Run=2  Lmin=128  Intercept=158.890517 us  Slope=0.201597  R2=0.99812  BIC=48.262  Lowest=207.050000 us @ delay=16
+Set=1 Run=3  Lmin=128  Intercept=158.556897 us  Slope=0.202107  R2=0.99819  BIC=48.031  Lowest=206.800000 us @ delay=2
+Set=1 Run=4  Lmin=128  Intercept=157.930747 us  Slope=0.201974  R2=0.99812  BIC=48.288  Lowest=207.300000 us @ delay=16
+Average Intercept = 158.255201 ± 0.942659 us
+Minimum Delay Mean = 207.400000 ± 1.110806 us @ delay=4 (10 samples)
+
+[Method=8 parallel loop atomic N=32]
+Set=0 Run=0  Lmin=128  Intercept=97.719253 us  Slope=0.205144  R2=0.99954  BIC=38.709  Lowest=133.650000 us @ delay=4
+Set=0 Run=1  Lmin=128  Intercept=96.774138 us  Slope=0.205222  R2=0.99954  BIC=38.611  Lowest=133.250000 us @ delay=2
+Set=0 Run=2  Lmin=128  Intercept=96.525862 us  Slope=0.204990  R2=0.99953  BIC=38.821  Lowest=132.600000 us @ delay=4
+Set=0 Run=3  Lmin=128  Intercept=96.725862 us  Slope=0.205233  R2=0.99954  BIC=38.601  Lowest=133.950000 us @ delay=4
+Set=0 Run=4  Lmin=128  Intercept=96.713506 us  Slope=0.205020  R2=0.99955  BIC=38.442  Lowest=133.650000 us @ delay=4
+Set=1 Run=0  Lmin=128  Intercept=97.052299 us  Slope=0.205059  R2=0.99957  BIC=38.208  Lowest=133.200000 us @ delay=4
+Set=1 Run=1  Lmin=128  Intercept=96.463218 us  Slope=0.205482  R2=0.99950  BIC=39.215  Lowest=133.900000 us @ delay=4
+Set=1 Run=2  Lmin=128  Intercept=96.446839 us  Slope=0.205092  R2=0.99953  BIC=38.840  Lowest=133.000000 us @ delay=4
+Set=1 Run=3  Lmin=128  Intercept=95.802586 us  Slope=0.206799  R2=0.99945  BIC=40.044  Lowest=133.750000 us @ delay=2
+Set=1 Run=4  Lmin=128  Intercept=96.379310 us  Slope=0.205176  R2=0.99955  BIC=38.430  Lowest=133.600000 us @ delay=8
+Average Intercept = 96.660287 ± 0.495787 us
+Minimum Delay Mean = 133.560000 ± 0.499889 us @ delay=4 (10 samples)
+
+[Method=8 parallel loop atomic N=64]
+Set=0 Run=0  Lmin=1  Intercept=80.429141 us  Slope=0.207596  R2=1.00000  BIC=6.349  Lowest=80.850000 us @ delay=2
+Set=0 Run=1  Lmin=64  Intercept=79.901394 us  Slope=0.207591  R2=1.00000  BIC=-3.050  Lowest=80.500000 us @ delay=1
+Set=0 Run=2  Lmin=16  Intercept=79.603050 us  Slope=0.207522  R2=1.00000  BIC=-6.530  Lowest=79.800000 us @ delay=1
+Set=0 Run=3  Lmin=64  Intercept=79.883424 us  Slope=0.207643  R2=1.00000  BIC=2.569  Lowest=81.500000 us @ delay=8
+Set=0 Run=4  Lmin=128  Intercept=79.613218 us  Slope=0.207601  R2=1.00000  BIC=0.332  Lowest=80.450000 us @ delay=1
+Set=1 Run=0  Lmin=128  Intercept=80.399425 us  Slope=0.207382  R2=1.00000  BIC=-4.005  Lowest=80.900000 us @ delay=1
+Set=1 Run=1  Lmin=128  Intercept=81.204598 us  Slope=0.207165  R2=0.99999  BIC=10.164  Lowest=81.300000 us @ delay=2
+Set=1 Run=2  Lmin=128  Intercept=84.297414 us  Slope=0.207706  R2=0.99979  BIC=33.214  Lowest=81.150000 us @ delay=2
+Set=1 Run=3  Lmin=64  Intercept=80.193881 us  Slope=0.207380  R2=1.00000  BIC=0.859  Lowest=80.400000 us @ delay=2
+Set=1 Run=4  Lmin=128  Intercept=80.327586 us  Slope=0.207413  R2=1.00000  BIC=-2.691  Lowest=81.300000 us @ delay=1
+Average Intercept = 80.585313 ± 1.386923 us
+Minimum Delay Mean = 81.070000 ± 0.685241 us @ delay=1 (10 samples)

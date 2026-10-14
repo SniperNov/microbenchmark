@@ -1,0 +1,16 @@
+timestamp=20261014_115545
+hostname=job-openmp-bench5ss4p-t7sr5
+slurm_job_id=manual
+slurm_job_name=manual
+script=jobs/openacc/run_eidf_gcc.job
+working_directory=/mnt/dev/microbenchmark
+
+## unified-suite...origin/unified-suite
+commit e06ab53ae2ed3b4fc7fd332b0eaa7d8869304aeb
+Author:     Weiyu Tu <babe@Weiyus-MacBook-Pro.local>
+AuthorDate: Wed Oct 14 11:35:18 2026 +0100
+Commit:     Weiyu Tu <babe@Weiyus-MacBook-Pro.local>
+CommitDate: Wed Oct 14 11:35:18 2026 +0100
+
+    Add unified EIDF GCC offload runners
+

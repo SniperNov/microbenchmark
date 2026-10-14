@@ -1,0 +1,251 @@
+Running EIDF A100 GCC OpenMP benchmark groups...
+A100 OpenMP: compiler=GCC_13_3_0 groups=108 width=32
+GPU: NVIDIA A100-SXM4-40GB, 570.124.06
+
+===== GCC offload toolchain =====
+gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+Using built-in specs.
+COLLECT_GCC=gcc
+COLLECT_LTO_WRAPPER=/usr/libexec/gcc/x86_64-linux-gnu/13/lto-wrapper
+OFFLOAD_TARGET_NAMES=nvptx-none:amdgcn-amdhsa
+OFFLOAD_TARGET_DEFAULT=1
+Target: x86_64-linux-gnu
+Configured with: ../src/configure -v --with-pkgversion='Ubuntu 13.3.0-6ubuntu2~24.04.1' --with-bugurl=file:///usr/share/doc/gcc-13/README.Bugs --enable-languages=c,ada,c++,go,d,fortran,objc,obj-c++,m2 --prefix=/usr --with-gcc-major-version-only --program-suffix=-13 --program-prefix=x86_64-linux-gnu- --enable-shared --enable-linker-build-id --libexecdir=/usr/libexec --without-included-gettext --enable-threads=posix --libdir=/usr/lib --enable-nls --enable-bootstrap --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --with-default-libstdcxx-abi=new --enable-libstdcxx-backtrace --enable-gnu-unique-object --disable-vtable-verify --enable-plugin --enable-default-pie --with-system-zlib --enable-libphobos-checking=release --with-target-system-zlib=auto --enable-objc-gc=auto --enable-multiarch --disable-werror --enable-cet --with-arch-32=i686 --with-abi=m64 --with-multilib-list=m32,m64,mx32 --enable-multilib --with-tune=generic --enable-offload-targets=nvptx-none=/build/gcc-13-EldibY/gcc-13-13.3.0/debian/tmp-nvptx/usr,amdgcn-amdhsa=/build/gcc-13-EldibY/gcc-13-13.3.0/debian/tmp-gcn/usr --enable-offload-defaulted --without-cuda-driver --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu --with-build-config=bootstrap-lto-lean --enable-link-serialization=2
+Thread model: posix
+Supported LTO compression algorithms: zlib zstd
+gcc version 13.3.0 (Ubuntu 13.3.0-6ubuntu2~24.04.1) 
+CUDA_VISIBLE_DEVICES=not-set
+ACC_DEVICE_TYPE=not-set
+OMP_TARGET_OFFLOAD=mandatory
+Compiling OpenMP backend with GCC...
+
+===== [M0_M10] Method=0,10 N=16382 Delay=1,8192 =====
+========== Runtime Configuration ==========
+API           : openmp
+Methods       : 0, 10
+Delay range   : [1, 8192]
+Array size(s) : 16382
+thread_count   : 32
+team_count     : 108
+MAX_ITER      : 16382  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+DELAY_POINTS  : 14 (powers of two)
+NUM_SAMPLES   : 10 (per delay)
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  1 available devices
+Host device is 1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                         16382
+                                              BIC intercept | min mean
+pure delay kernel                           27.942±0.340      |     28.214±0.428     
+teams parallel                            9839.483±548.872    |   9209.756±2372.332  
+==========================================
+Finalizing benchmark.
+
+===== [M1to4] Method=1,2,3,4 N=1,4,16,64,256,1024,4096,8192,16382,32768,65536 Delay=1,8192 =====
+========== Runtime Configuration ==========
+API           : openmp
+Methods       : 1, 2, 3, 4
+Delay range   : [1, 8192]
+Array size(s) : 1, 4, 16, 64, 256, 1024, 4096, 8192, 16382, 32768, 65536
+thread_count   : 32
+team_count     : 108
+MAX_ITER      : 65536  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+DELAY_POINTS  : 14 (powers of two)
+NUM_SAMPLES   : 10 (per delay)
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  1 available devices
+Host device is 1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                             1                             4                            16                            64                           256                          1024                          4096                          8192                         16382                         32768                         65536
+                                              BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean
+map(tofrom: a)                              37.596±0.952      |     37.670±1.422         38.441±1.681      |     38.574±1.544         35.848±1.614      |     36.369±1.649         36.365±0.173      |     36.450±0.937         37.584±0.815      |     37.703±1.071         36.272±0.329      |     36.471±0.402         42.395±0.763      |     42.460±0.867         57.477±0.817      |     57.139±0.558         71.629±0.958      |     71.542±1.574         95.552±0.508      |     95.350±0.388        147.839±2.323      |    146.469±2.381     
+map(to: a)                                  24.275±0.943      |     24.804±0.304         25.625±0.214      |     25.584±0.590         25.514±0.062      |     25.527±0.384         25.128±0.513      |     25.190±0.361         25.268±0.177      |     25.422±0.341         25.169±0.531      |     25.364±0.685         28.882±0.523      |     28.807±0.515         38.324±0.663      |     38.236±0.478         45.578±0.757      |     45.598±0.787         54.789±0.925      |     55.132±1.587         74.518±0.901      |     74.874±1.193     
+map(from: a)                                34.354±0.437      |     34.470±0.471         35.340±0.942      |     35.727±1.169         37.287±0.870      |     37.579±1.104         36.447±0.882      |     36.644±1.270         36.652±1.061      |     36.811±0.705         36.265±0.574      |     36.580±0.592         38.964±0.202      |     38.914±0.502         42.649±0.755      |     41.938±0.603         48.553±1.204      |     48.423±0.510         61.214±2.007      |     60.910±0.628        101.299±16.890     |     99.909±16.006    
+map(alloc: a)                               26.785±0.532      |     27.125±0.585         28.462±1.262      |     28.147±0.527         27.308±0.562      |     27.422±0.970         26.568±0.438      |     26.424±0.616         27.932±1.006      |     27.372±0.436         27.922±1.450      |     27.449±0.536         26.493±0.771      |     26.369±0.528         27.322±0.210      |     27.311±0.392         27.160±0.307      |     27.188±0.706         26.277±0.597      |     26.448±0.735         26.372±0.511      |     26.404±0.674     
+==========================================
+Finalizing benchmark.
+
+===== [M5] Method=5 N=16382 Delay=1,8192 =====
+========== Runtime Configuration ==========
+API           : openmp
+Methods       : 5
+Delay range   : [1, 8192]
+Array size(s) : 16382
+thread_count   : 32
+team_count     : 108
+MAX_ITER      : 16382  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+DELAY_POINTS  : 14 (powers of two)
+NUM_SAMPLES   : 10 (per delay)
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  1 available devices
+Host device is 1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                         16382
+                                              BIC intercept | min mean
+teams (scalar)                              39.391±0.606      |     39.582±1.049     
+==========================================
+Finalizing benchmark.
+
+===== [M6] Method=6 N=16382 Delay=1,8192 =====
+========== Runtime Configuration ==========
+API           : openmp
+Methods       : 6
+Delay range   : [1, 8192]
+Array size(s) : 16382
+thread_count   : 32
+team_count     : 108
+MAX_ITER      : 16382  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+DELAY_POINTS  : 14 (powers of two)
+NUM_SAMPLES   : 10 (per delay)
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  1 available devices
+Host device is 1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                         16382
+                                              BIC intercept | min mean
+teams distribute parallel for             8687.817±908.072    |   8519.224±2437.220  
+==========================================
+Finalizing benchmark.
+
+===== [M7] Method=7 N=16382 Delay=1,8192 =====
+========== Runtime Configuration ==========
+API           : openmp
+Methods       : 7
+Delay range   : [1, 8192]
+Array size(s) : 16382
+thread_count   : 32
+team_count     : 108
+MAX_ITER      : 16382  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+DELAY_POINTS  : 14 (powers of two)
+NUM_SAMPLES   : 10 (per delay)
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  1 available devices
+Host device is 1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                         16382
+                                              BIC intercept | min mean
+nowait                                      27.610±0.451      |     27.769±0.602     
+==========================================
+Finalizing benchmark.
+
+===== [M8] Method=8 N=1,2,4,8,16,32,64 Delay=1,8192 =====
+========== Runtime Configuration ==========
+API           : openmp
+Methods       : 8
+Delay range   : [1, 8192]
+Array size(s) : 1, 2, 4, 8, 16, 32, 64
+thread_count   : 32
+team_count     : 108
+MAX_ITER      : 6656  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+DELAY_POINTS  : 14 (powers of two)
+NUM_SAMPLES   : 10 (per delay)
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  1 available devices
+Host device is 1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                             1                             2                             4                             8                            16                            32                            64
+                                              BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean
+teams atomic                             10115.442±950.124    |   9542.520±1055.088    9996.679±365.908    |   9542.213±1574.517    9612.738±1182.232   |   8613.301±2809.019   10056.661±48.956     |   9983.526±125.501     9954.770±454.176    |   9223.188±2501.742    9875.588±540.764    |   9273.271±2515.362   10064.373±209.172    |   9413.986±2575.896  
+==========================================
+Finalizing benchmark.
+
+===== [M9] Method=9 N=1,2,4,8,16,32,64 Delay=1,8192 =====
+========== Runtime Configuration ==========
+API           : openmp
+Methods       : 9
+Delay range   : [1, 8192]
+Array size(s) : 1, 2, 4, 8, 16, 32, 64
+thread_count   : 32
+team_count     : 108
+MAX_ITER      : 6656  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+DELAY_POINTS  : 14 (powers of two)
+NUM_SAMPLES   : 10 (per delay)
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  1 available devices
+Host device is 1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                             1                             2                             4                             8                            16                            32                            64
+                                              BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean
+teams reduction                          10047.016±314.105    |   9766.660±1193.565    9611.358±894.785    |   9192.619±2139.370    9942.683±431.253    |   9179.800±2476.001    9431.454±1080.912   |   9119.968±2455.633    9634.193±1264.201   |   9174.187±2292.779    9567.539±1245.620   |   8594.723±3166.017   10104.143±81.976     |   9795.076±199.449   
+==========================================
+Finalizing benchmark.
+
+===== [M11_parreps] Method=11 N=1,2,4,8,16,32,64,128 Delay=1,8192 =====
+========== Runtime Configuration ==========
+API           : openmp
+Methods       : 11
+Delay range   : [1, 8192]
+Array size(s) : 1, 2, 4, 8, 16, 32, 64, 128
+thread_count   : 32
+team_count     : 108
+MAX_ITER      : 6656  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+DELAY_POINTS  : 14 (powers of two)
+NUM_SAMPLES   : 10 (per delay)
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  1 available devices
+Host device is 1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                             1                             2                             4                             8                            16                            32                            64                           128
+                                              BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean
+teams + parallel inside                   9929.250±473.237    |   9328.318±2458.505    9784.186±888.559    |   9201.466±2485.974    8237.723±1164.817   |   8129.833±2793.754    5652.625±1138.820   |   6649.414±2884.438    4636.917±127.591    |   4572.780±175.191     6770.726±158.073    |   7573.211±157.088    11837.510±664.748    |  13870.048±527.389    20913.193±465.934    |  25210.191±599.702   
+==========================================
+Finalizing benchmark.
+
+All EIDF A100 GCC OpenMP benchmark groups completed.
+Results saved under result/A100/OpenMP/GCC_13_3_0

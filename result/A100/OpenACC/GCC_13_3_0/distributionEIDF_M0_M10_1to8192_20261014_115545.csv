@@ -1,0 +1,281 @@
+method_id,method_name,N,gang_count,worker_count,set,run,delaylength,outerreps,exec_time_us
+0,"pure delay kernel",16382,108,32,0,0,4,0,20.450000000
+0,"pure delay kernel",16382,108,32,0,0,1024,0,123.350000000
+0,"pure delay kernel",16382,108,32,0,0,1,0,18.000000000
+0,"pure delay kernel",16382,108,32,0,0,32,0,21.900000000
+0,"pure delay kernel",16382,108,32,0,0,64,0,24.350000000
+0,"pure delay kernel",16382,108,32,0,0,2048,0,237.950000000
+0,"pure delay kernel",16382,108,32,0,0,512,0,76.550000000
+0,"pure delay kernel",16382,108,32,0,0,8192,0,858.000000000
+0,"pure delay kernel",16382,108,32,0,0,16,0,19.400000000
+0,"pure delay kernel",16382,108,32,0,0,2,0,18.000000000
+0,"pure delay kernel",16382,108,32,0,0,256,0,43.750000000
+0,"pure delay kernel",16382,108,32,0,0,8,0,18.100000000
+0,"pure delay kernel",16382,108,32,0,0,4096,0,436.900000000
+0,"pure delay kernel",16382,108,32,0,0,128,0,30.850000000
+0,"pure delay kernel",16382,108,32,0,1,1024,0,122.600000000
+0,"pure delay kernel",16382,108,32,0,1,8,0,18.250000000
+0,"pure delay kernel",16382,108,32,0,1,32,0,20.650000000
+0,"pure delay kernel",16382,108,32,0,1,1,0,17.500000000
+0,"pure delay kernel",16382,108,32,0,1,8192,0,856.950000000
+0,"pure delay kernel",16382,108,32,0,1,128,0,30.450000000
+0,"pure delay kernel",16382,108,32,0,1,64,0,24.350000000
+0,"pure delay kernel",16382,108,32,0,1,2048,0,235.500000000
+0,"pure delay kernel",16382,108,32,0,1,512,0,71.250000000
+0,"pure delay kernel",16382,108,32,0,1,256,0,43.650000000
+0,"pure delay kernel",16382,108,32,0,1,2,0,17.600000000
+0,"pure delay kernel",16382,108,32,0,1,4096,0,440.300000000
+0,"pure delay kernel",16382,108,32,0,1,16,0,19.300000000
+0,"pure delay kernel",16382,108,32,0,1,4,0,17.550000000
+0,"pure delay kernel",16382,108,32,0,2,1,0,17.300000000
+0,"pure delay kernel",16382,108,32,0,2,4,0,17.400000000
+0,"pure delay kernel",16382,108,32,0,2,16,0,19.800000000
+0,"pure delay kernel",16382,108,32,0,2,64,0,25.400000000
+0,"pure delay kernel",16382,108,32,0,2,2048,0,242.900000000
+0,"pure delay kernel",16382,108,32,0,2,8,0,26.150000000
+0,"pure delay kernel",16382,108,32,0,2,8192,0,856.350000000
+0,"pure delay kernel",16382,108,32,0,2,2,0,19.000000000
+0,"pure delay kernel",16382,108,32,0,2,256,0,51.600000000
+0,"pure delay kernel",16382,108,32,0,2,1024,0,131.550000000
+0,"pure delay kernel",16382,108,32,0,2,512,0,71.300000000
+0,"pure delay kernel",16382,108,32,0,2,4096,0,448.650000000
+0,"pure delay kernel",16382,108,32,0,2,32,0,20.600000000
+0,"pure delay kernel",16382,108,32,0,2,128,0,30.400000000
+0,"pure delay kernel",16382,108,32,0,3,2,0,17.550000000
+0,"pure delay kernel",16382,108,32,0,3,256,0,43.600000000
+0,"pure delay kernel",16382,108,32,0,3,1,0,18.850000000
+0,"pure delay kernel",16382,108,32,0,3,32,0,21.850000000
+0,"pure delay kernel",16382,108,32,0,3,16,0,29.450000000
+0,"pure delay kernel",16382,108,32,0,3,4096,0,437.250000000
+0,"pure delay kernel",16382,108,32,0,3,128,0,37.350000000
+0,"pure delay kernel",16382,108,32,0,3,512,0,70.350000000
+0,"pure delay kernel",16382,108,32,0,3,8,0,28.450000000
+0,"pure delay kernel",16382,108,32,0,3,2048,0,234.400000000
+0,"pure delay kernel",16382,108,32,0,3,8192,0,860.050000000
+0,"pure delay kernel",16382,108,32,0,3,64,0,24.650000000
+0,"pure delay kernel",16382,108,32,0,3,1024,0,127.800000000
+0,"pure delay kernel",16382,108,32,0,3,4,0,19.350000000
+0,"pure delay kernel",16382,108,32,0,4,16,0,19.900000000
+0,"pure delay kernel",16382,108,32,0,4,64,0,24.750000000
+0,"pure delay kernel",16382,108,32,0,4,4,0,18.500000000
+0,"pure delay kernel",16382,108,32,0,4,32,0,20.600000000
+0,"pure delay kernel",16382,108,32,0,4,1,0,17.550000000
+0,"pure delay kernel",16382,108,32,0,4,512,0,70.550000000
+0,"pure delay kernel",16382,108,32,0,4,2,0,17.500000000
+0,"pure delay kernel",16382,108,32,0,4,256,0,43.850000000
+0,"pure delay kernel",16382,108,32,0,4,8,0,18.150000000
+0,"pure delay kernel",16382,108,32,0,4,128,0,30.550000000
+0,"pure delay kernel",16382,108,32,0,4,1024,0,122.350000000
+0,"pure delay kernel",16382,108,32,0,4,4096,0,442.900000000
+0,"pure delay kernel",16382,108,32,0,4,8192,0,857.450000000
+0,"pure delay kernel",16382,108,32,0,4,2048,0,229.650000000
+0,"pure delay kernel",16382,108,32,1,0,2,0,18.550000000
+0,"pure delay kernel",16382,108,32,1,0,8,0,18.750000000
+0,"pure delay kernel",16382,108,32,1,0,128,0,31.350000000
+0,"pure delay kernel",16382,108,32,1,0,32,0,31.400000000
+0,"pure delay kernel",16382,108,32,1,0,4,0,27.800000000
+0,"pure delay kernel",16382,108,32,1,0,64,0,33.850000000
+0,"pure delay kernel",16382,108,32,1,0,8192,0,858.400000000
+0,"pure delay kernel",16382,108,32,1,0,16,0,20.150000000
+0,"pure delay kernel",16382,108,32,1,0,512,0,70.850000000
+0,"pure delay kernel",16382,108,32,1,0,1024,0,122.500000000
+0,"pure delay kernel",16382,108,32,1,0,2048,0,227.350000000
+0,"pure delay kernel",16382,108,32,1,0,256,0,44.100000000
+0,"pure delay kernel",16382,108,32,1,0,1,0,17.600000000
+0,"pure delay kernel",16382,108,32,1,0,4096,0,436.900000000
+0,"pure delay kernel",16382,108,32,1,1,1,0,17.450000000
+0,"pure delay kernel",16382,108,32,1,1,4,0,18.200000000
+0,"pure delay kernel",16382,108,32,1,1,16,0,19.750000000
+0,"pure delay kernel",16382,108,32,1,1,8192,0,857.450000000
+0,"pure delay kernel",16382,108,32,1,1,256,0,44.550000000
+0,"pure delay kernel",16382,108,32,1,1,64,0,24.800000000
+0,"pure delay kernel",16382,108,32,1,1,2048,0,228.100000000
+0,"pure delay kernel",16382,108,32,1,1,4096,0,437.150000000
+0,"pure delay kernel",16382,108,32,1,1,8,0,20.300000000
+0,"pure delay kernel",16382,108,32,1,1,1024,0,124.300000000
+0,"pure delay kernel",16382,108,32,1,1,32,0,21.750000000
+0,"pure delay kernel",16382,108,32,1,1,512,0,71.450000000
+0,"pure delay kernel",16382,108,32,1,1,2,0,18.650000000
+0,"pure delay kernel",16382,108,32,1,1,128,0,32.000000000
+0,"pure delay kernel",16382,108,32,1,2,2,0,27.850000000
+0,"pure delay kernel",16382,108,32,1,2,8,0,20.950000000
+0,"pure delay kernel",16382,108,32,1,2,256,0,46.000000000
+0,"pure delay kernel",16382,108,32,1,2,2048,0,228.500000000
+0,"pure delay kernel",16382,108,32,1,2,32,0,21.700000000
+0,"pure delay kernel",16382,108,32,1,2,16,0,20.150000000
+0,"pure delay kernel",16382,108,32,1,2,1,0,18.800000000
+0,"pure delay kernel",16382,108,32,1,2,8192,0,857.200000000
+0,"pure delay kernel",16382,108,32,1,2,128,0,31.600000000
+0,"pure delay kernel",16382,108,32,1,2,4,0,18.850000000
+0,"pure delay kernel",16382,108,32,1,2,512,0,71.000000000
+0,"pure delay kernel",16382,108,32,1,2,1024,0,124.000000000
+0,"pure delay kernel",16382,108,32,1,2,64,0,25.250000000
+0,"pure delay kernel",16382,108,32,1,2,4096,0,439.700000000
+0,"pure delay kernel",16382,108,32,1,3,16,0,20.550000000
+0,"pure delay kernel",16382,108,32,1,3,2,0,20.200000000
+0,"pure delay kernel",16382,108,32,1,3,4,0,20.450000000
+0,"pure delay kernel",16382,108,32,1,3,256,0,46.050000000
+0,"pure delay kernel",16382,108,32,1,3,1,0,18.550000000
+0,"pure delay kernel",16382,108,32,1,3,1024,0,123.450000000
+0,"pure delay kernel",16382,108,32,1,3,32,0,22.700000000
+0,"pure delay kernel",16382,108,32,1,3,512,0,70.700000000
+0,"pure delay kernel",16382,108,32,1,3,4096,0,438.850000000
+0,"pure delay kernel",16382,108,32,1,3,8,0,19.550000000
+0,"pure delay kernel",16382,108,32,1,3,64,0,25.650000000
+0,"pure delay kernel",16382,108,32,1,3,2048,0,229.000000000
+0,"pure delay kernel",16382,108,32,1,3,8192,0,857.900000000
+0,"pure delay kernel",16382,108,32,1,3,128,0,32.650000000
+0,"pure delay kernel",16382,108,32,1,4,256,0,53.650000000
+0,"pure delay kernel",16382,108,32,1,4,1024,0,124.200000000
+0,"pure delay kernel",16382,108,32,1,4,32,0,21.750000000
+0,"pure delay kernel",16382,108,32,1,4,64,0,25.100000000
+0,"pure delay kernel",16382,108,32,1,4,2,0,18.550000000
+0,"pure delay kernel",16382,108,32,1,4,16,0,20.050000000
+0,"pure delay kernel",16382,108,32,1,4,128,0,33.800000000
+0,"pure delay kernel",16382,108,32,1,4,512,0,72.350000000
+0,"pure delay kernel",16382,108,32,1,4,4,0,20.300000000
+0,"pure delay kernel",16382,108,32,1,4,2048,0,234.050000000
+0,"pure delay kernel",16382,108,32,1,4,8,0,21.050000000
+0,"pure delay kernel",16382,108,32,1,4,1,0,20.300000000
+0,"pure delay kernel",16382,108,32,1,4,8192,0,858.900000000
+0,"pure delay kernel",16382,108,32,1,4,4096,0,438.850000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,0,4,0,80.150000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,0,1024,0,1862.750000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,0,1,0,38.700000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,0,32,0,185.400000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,0,64,0,230.300000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,0,2048,0,3528.250000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,0,512,0,1005.200000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,0,8192,0,13562.750000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,0,16,0,138.600000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,0,2,0,51.350000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,0,256,0,563.050000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,0,8,0,101.250000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,0,4096,0,6890.750000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,0,128,0,368.250000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,1,1024,0,1850.200000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,1,8,0,101.700000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,1,32,0,169.050000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,1,1,0,40.750000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,1,8192,0,13532.550000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,1,128,0,351.300000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,1,64,0,234.500000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,1,2048,0,3562.550000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,1,512,0,1006.250000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,1,256,0,569.050000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,1,2,0,50.450000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,1,4096,0,6896.350000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,1,16,0,130.450000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,1,4,0,70.450000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,2,1,0,39.600000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,2,4,0,71.600000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,2,16,0,129.500000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,2,64,0,246.100000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,2,2048,0,3528.050000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,2,8,0,101.400000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,2,8192,0,13483.600000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,2,2,0,50.050000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,2,256,0,588.850000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,2,1024,0,1872.050000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,2,512,0,1003.150000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,2,4096,0,6870.300000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,2,32,0,185.350000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,2,128,0,352.200000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,3,2,0,48.800000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,3,256,0,558.900000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,3,1,0,39.400000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,3,32,0,167.700000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,3,16,0,131.450000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,3,4096,0,6893.500000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,3,128,0,354.600000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,3,512,0,999.600000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,3,8,0,99.700000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,3,2048,0,3562.700000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,3,8192,0,13503.650000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,3,64,0,244.900000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,3,1024,0,1955.200000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,3,4,0,76.550000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,4,16,0,132.100000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,4,64,0,327.550000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,4,4,0,72.500000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,4,32,0,177.200000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,4,1,0,38.100000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,4,512,0,1000.750000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,4,2,0,50.800000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,4,256,0,584.800000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,4,8,0,113.150000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,4,128,0,359.850000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,4,1024,0,1850.950000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,4,4096,0,6863.700000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,4,8192,0,13549.550000000
+10,"parallel num_gangs + num_workers",16382,108,32,0,4,2048,0,3559.050000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,0,2,0,60.150000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,0,8,0,101.150000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,0,128,0,359.850000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,0,32,0,178.150000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,0,4,0,71.350000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,0,64,0,240.600000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,0,8192,0,13527.600000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,0,16,0,148.850000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,0,512,0,994.650000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,0,1024,0,1883.500000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,0,2048,0,3559.100000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,0,256,0,569.400000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,0,1,0,49.100000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,0,4096,0,6899.650000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,1,1,0,38.700000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,1,4,0,76.250000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,1,16,0,144.450000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,1,8192,0,13545.050000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,1,256,0,575.300000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,1,64,0,241.250000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,1,2048,0,3535.150000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,1,4096,0,6940.300000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,1,8,0,107.650000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,1,1024,0,1863.850000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,1,32,0,177.200000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,1,512,0,1021.300000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,1,2,0,59.750000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,1,128,0,357.950000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,2,2,0,60.550000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,2,8,0,109.800000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,2,256,0,586.100000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,2,2048,0,3544.500000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,2,32,0,173.900000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,2,16,0,130.100000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,2,1,0,38.800000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,2,8192,0,13586.950000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,2,128,0,357.900000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,2,4,0,80.550000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,2,512,0,1020.450000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,2,1024,0,1875.750000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,2,64,0,263.450000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,2,4096,0,6916.300000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,3,16,0,130.350000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,3,2,0,59.200000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,3,4,0,71.750000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,3,256,0,570.700000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,3,1,0,38.100000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,3,1024,0,1867.350000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,3,32,0,190.500000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,3,512,0,1008.600000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,3,4096,0,6883.900000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,3,8,0,108.850000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,3,64,0,232.800000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,3,2048,0,3547.150000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,3,8192,0,13548.450000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,3,128,0,357.200000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,4,256,0,590.800000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,4,1024,0,1851.500000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,4,32,0,179.050000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,4,64,0,243.450000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,4,2,0,59.050000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,4,16,0,130.750000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,4,128,0,369.250000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,4,512,0,994.800000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,4,4,0,91.100000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,4,2048,0,3553.000000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,4,8,0,109.650000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,4,1,0,38.000000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,4,8192,0,13507.100000000
+10,"parallel num_gangs + num_workers",16382,108,32,1,4,4096,0,6904.250000000

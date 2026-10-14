@@ -1,0 +1,16 @@
+timestamp=20261014_132145
+hostname=job-openmp-bench5ss4p-t7sr5
+slurm_job_id=manual
+slurm_job_name=manual
+script=jobs/openmp/run_eidf_gcc.job
+working_directory=/mnt/dev/microbenchmark
+
+## unified-suite...origin/unified-suite
+commit da2ebb16fc965fe7ad07ecd9ed344e0b9327ddd4
+Author:     Weiyu Tu <babe@Weiyus-MacBook-Pro.local>
+AuthorDate: Wed Oct 14 14:14:29 2026 +0100
+Commit:     Weiyu Tu <babe@Weiyus-MacBook-Pro.local>
+CommitDate: Wed Oct 14 14:14:29 2026 +0100
+
+    Align OpenMP atomic and reduction launch semantics
+
