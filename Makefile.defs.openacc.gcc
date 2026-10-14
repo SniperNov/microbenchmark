@@ -1,5 +1,5 @@
-CC = cc
-CFLAGS = -fopenacc -O0
-LDFLAGS = -fopenacc
+CC = gcc
+CFLAGS = -O0 -fopenacc -foffload=nvptx-none -fcf-protection=none -fno-stack-protector -no-pie
+LDFLAGS = -fopenacc -foffload=nvptx-none
 CPPFLAGS = -E -O0
 LIBS = -lm

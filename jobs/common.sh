@@ -46,6 +46,38 @@ compiler_tag_gcc()
     fi
 }
 
+require_gcc_nvptx()
+{
+    if ! command -v gcc >/dev/null 2>&1; then
+        echo "ERROR: gcc is not installed." >&2
+        return 1
+    fi
+
+    gcc_details=$(gcc -v 2>&1 || true)
+    case "$gcc_details" in
+        *nvptx-none*) ;;
+        *)
+            echo "ERROR: this GCC was not configured with the nvptx-none offload target." >&2
+            echo "Install the matching GCC NVPTX offload package before running." >&2
+            return 1
+            ;;
+    esac
+}
+
+log_gcc_configuration()
+{
+    config_log="$1"
+    {
+        echo
+        echo "===== GCC offload toolchain ====="
+        gcc --version | head -n 1
+        gcc -v 2>&1
+        echo "CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES:-not-set}"
+        echo "ACC_DEVICE_TYPE=${ACC_DEVICE_TYPE:-not-set}"
+        echo "OMP_TARGET_OFFLOAD=${OMP_TARGET_OFFLOAD:-not-set}"
+    } >> "$config_log"
+}
+
 compiler_tag_cray()
 {
     version=$(cc --version 2>/dev/null | sed -n 's/.*Version \([0-9][0-9.]*\).*/\1/p' | head -n 1)
