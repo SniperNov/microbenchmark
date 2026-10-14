@@ -1,0 +1,281 @@
+method_id,method_name,N,block_count,thread_count,set,run,delaylength,outerreps,max_iter,max_array_size,inner_reps,device_kernel_us,measurement_mode,actual_block_count,actual_thread_count,alignment_mode
+0,"pure delay kernel",16382,132,32,0,0,4,0,16382,65536,20,4.063999990,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,0,1024,0,16382,65536,20,10.044800024,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,0,1,0,16382,65536,20,4.040000029,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,0,32,0,16382,65536,20,4.187200044,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,0,64,0,16382,65536,20,4.656000086,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,0,2048,0,16382,65536,20,16.371200094,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,0,512,0,16382,65536,20,7.043200079,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,0,8192,0,16382,65536,20,52.673599869,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,0,16,0,16382,65536,20,4.316800041,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,0,2,0,16382,65536,20,3.942400031,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,0,256,0,16382,65536,20,5.439999932,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,0,8,0,16382,65536,20,3.803199995,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,0,4096,0,16382,65536,20,28.671999928,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,0,128,0,16382,65536,20,4.603199940,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,1,1024,0,16382,65536,20,9.983999981,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,1,8,0,16382,65536,20,3.718400002,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,1,32,0,16382,65536,20,4.174400005,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,1,1,0,16382,65536,20,3.886399977,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,1,8192,0,16382,65536,20,52.835199982,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,1,128,0,16382,65536,20,4.489599913,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,1,64,0,16382,65536,20,4.492800019,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,1,2048,0,16382,65536,20,16.072000191,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,1,512,0,16382,65536,20,7.084799930,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,1,256,0,16382,65536,20,5.467199907,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,1,2,0,16382,65536,20,3.694400005,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,1,4096,0,16382,65536,20,28.486400004,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,1,16,0,16382,65536,20,4.284800042,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,1,4,0,16382,65536,20,3.830400016,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,2,1,0,16382,65536,20,3.956799989,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,2,4,0,16382,65536,20,3.697599994,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,2,16,0,16382,65536,20,3.956800071,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,2,64,0,16382,65536,20,4.415999982,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,2,2048,0,16382,65536,20,16.145599866,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,2,8,0,16382,65536,20,3.854399989,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,2,8192,0,16382,65536,20,52.635199763,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,2,2,0,16382,65536,20,3.836800030,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,2,256,0,16382,65536,20,5.419199914,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,2,1024,0,16382,65536,20,10.075199977,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,2,512,0,16382,65536,20,6.761600031,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,2,4096,0,16382,65536,20,28.284799960,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,2,32,0,16382,65536,20,4.291200009,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,2,128,0,16382,65536,20,4.407999991,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,3,2,0,16382,65536,20,3.678399988,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,3,256,0,16382,65536,20,5.183999916,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,3,1,0,16382,65536,20,3.793599992,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,3,32,0,16382,65536,20,3.984000068,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,3,16,0,16382,65536,20,3.792000038,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,3,4096,0,16382,65536,20,27.923200093,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,3,128,0,16382,65536,20,4.345599911,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,3,512,0,16382,65536,20,6.644799956,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,3,8,0,16382,65536,20,3.796800016,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,3,2048,0,16382,65536,20,15.689599933,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,3,8192,0,16382,65536,20,52.286400460,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,3,64,0,16382,65536,20,4.081600008,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,3,1024,0,16382,65536,20,9.782399982,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,3,4,0,16382,65536,20,4.012799996,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,4,16,0,16382,65536,20,3.881600068,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,4,64,0,16382,65536,20,4.328000057,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,4,4,0,16382,65536,20,3.878400009,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,4,32,0,16382,65536,20,3.929600073,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,4,1,0,16382,65536,20,4.097600037,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,4,512,0,16382,65536,20,6.948800036,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,4,2,0,16382,65536,20,3.911999997,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,4,256,0,16382,65536,20,5.377599923,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,4,8,0,16382,65536,20,4.084800021,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,4,128,0,16382,65536,20,4.558399995,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,4,1024,0,16382,65536,20,9.955200134,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,4,4096,0,16382,65536,20,28.502400126,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,4,8192,0,16382,65536,20,53.116799891,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,0,4,2048,0,16382,65536,20,16.327999951,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,0,2,0,16382,65536,20,4.092800047,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,0,8,0,16382,65536,20,4.048000008,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,0,128,0,16382,65536,20,4.563199985,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,0,32,0,16382,65536,20,4.001600051,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,0,4,0,16382,65536,20,3.910400020,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,0,64,0,16382,65536,20,4.236800026,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,0,8192,0,16382,65536,20,52.748800069,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,0,16,0,16382,65536,20,3.968000028,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,0,512,0,16382,65536,20,7.091200026,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,0,1024,0,16382,65536,20,10.107200034,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,0,2048,0,16382,65536,20,15.934400121,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,0,256,0,16382,65536,20,5.332799954,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,0,1,0,16382,65536,20,3.713599977,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,0,4096,0,16382,65536,20,28.604799975,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,1,1,0,16382,65536,20,3.913600033,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,1,4,0,16382,65536,20,3.867199994,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,1,16,0,16382,65536,20,3.979200008,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,1,8192,0,16382,65536,20,52.476800047,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,1,256,0,16382,65536,20,5.342399911,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,1,64,0,16382,65536,20,4.320000042,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,1,2048,0,16382,65536,20,15.910399985,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,1,4096,0,16382,65536,20,28.385599982,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,1,8,0,16382,65536,20,3.708799998,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,1,1024,0,16382,65536,20,9.790400043,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,1,32,0,16382,65536,20,4.244800075,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,1,512,0,16382,65536,20,6.783999945,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,1,2,0,16382,65536,20,3.708800022,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,1,128,0,16382,65536,20,4.665600020,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,2,2,0,16382,65536,20,3.752000001,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,2,8,0,16382,65536,20,3.649600002,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,2,256,0,16382,65536,20,5.158399954,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,2,2048,0,16382,65536,20,15.769600123,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,2,32,0,16382,65536,20,3.848000069,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,2,16,0,16382,65536,20,3.640000022,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,2,1,0,16382,65536,20,3.553599992,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,2,8192,0,16382,65536,20,52.312000468,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,2,128,0,16382,65536,20,4.409599910,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,2,4,0,16382,65536,20,4.009599995,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,2,512,0,16382,65536,20,6.745600048,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,2,1024,0,16382,65536,20,10.088000027,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,2,64,0,16382,65536,20,4.464000033,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,2,4096,0,16382,65536,20,28.310400154,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,3,16,0,16382,65536,20,3.992000024,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,3,2,0,16382,65536,20,3.944000031,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,3,4,0,16382,65536,20,3.907200007,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,3,256,0,16382,65536,20,5.526399962,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,3,1,0,16382,65536,20,3.748800023,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,3,1024,0,16382,65536,20,10.091200098,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,3,32,0,16382,65536,20,4.019200034,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,3,512,0,16382,65536,20,6.905599963,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,3,4096,0,16382,65536,20,28.281600028,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,3,8,0,16382,65536,20,3.971200029,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,3,64,0,16382,65536,20,4.620800016,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,3,2048,0,16382,65536,20,16.094399849,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,3,8192,0,16382,65536,20,52.721599676,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,3,128,0,16382,65536,20,4.934399971,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,4,256,0,16382,65536,20,5.881599942,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,4,1024,0,16382,65536,20,10.184000013,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,4,32,0,16382,65536,20,3.995200060,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,4,64,0,16382,65536,20,4.238400026,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,4,2,0,16382,65536,20,3.745600011,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,4,16,0,16382,65536,20,4.262400023,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,4,128,0,16382,65536,20,4.713599989,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,4,512,0,16382,65536,20,7.015999989,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,4,4,0,16382,65536,20,3.795200016,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,4,2048,0,16382,65536,20,16.160000162,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,4,8,0,16382,65536,20,3.721600003,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,4,1,0,16382,65536,20,3.835200006,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,4,8192,0,16382,65536,20,52.473600395,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+0,"pure delay kernel",16382,132,32,1,4,4096,0,16382,65536,20,28.508799989,same_stream_events_separate_pass,1,1,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,0,4,0,16382,65536,20,4.044800019,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,0,1024,0,16382,65536,20,10.487999907,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,0,1,0,16382,65536,20,4.224000021,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,0,32,0,16382,65536,20,4.283200006,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,0,64,0,16382,65536,20,4.507199989,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,0,2048,0,16382,65536,20,16.097600013,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,0,512,0,16382,65536,20,7.356799976,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,0,8192,0,16382,65536,20,52.823999710,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,0,16,0,16382,65536,20,4.161600035,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,0,2,0,16382,65536,20,4.108800029,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,0,256,0,16382,65536,20,5.590399983,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,0,8,0,16382,65536,20,4.089600046,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,0,4096,0,16382,65536,20,28.560000099,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,0,128,0,16382,65536,20,4.742399952,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,1,1024,0,16382,65536,20,10.403199913,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,1,8,0,16382,65536,20,4.059200047,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,1,32,0,16382,65536,20,4.384000006,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,1,1,0,16382,65536,20,4.275200039,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,1,8192,0,16382,65536,20,52.843200415,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,1,128,0,16382,65536,20,5.057599931,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,1,64,0,16382,65536,20,4.571199999,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,1,2048,0,16382,65536,20,16.169599909,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,1,512,0,16382,65536,20,7.048000046,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,1,256,0,16382,65536,20,5.676800059,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,1,2,0,16382,65536,20,4.249600053,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,1,4096,0,16382,65536,20,28.980799951,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,1,16,0,16382,65536,20,4.147200007,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,1,4,0,16382,65536,20,4.240000027,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,2,1,0,16382,65536,20,4.297600023,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,2,4,0,16382,65536,20,4.436799989,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,2,16,0,16382,65536,20,4.632000020,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,2,64,0,16382,65536,20,4.449600028,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,2,2048,0,16382,65536,20,16.583999712,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,2,8,0,16382,65536,20,4.097600048,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,2,8192,0,16382,65536,20,53.771200031,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,2,2,0,16382,65536,20,4.158400034,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,2,256,0,16382,65536,20,5.705599999,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,2,1024,0,16382,65536,20,10.211200034,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,2,512,0,16382,65536,20,7.083199988,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,2,4096,0,16382,65536,20,28.508800175,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,2,32,0,16382,65536,20,4.340800014,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,2,128,0,16382,65536,20,4.726399947,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,3,2,0,16382,65536,20,3.980800032,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,3,256,0,16382,65536,20,5.540800001,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,3,1,0,16382,65536,20,3.820800025,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,3,32,0,16382,65536,20,4.102399980,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,3,16,0,16382,65536,20,3.950400057,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,3,4096,0,16382,65536,20,28.425599914,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,3,128,0,16382,65536,20,4.886399931,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,3,512,0,16382,65536,20,6.956800027,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,3,8,0,16382,65536,20,3.814400069,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,3,2048,0,16382,65536,20,15.950400289,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,3,8192,0,16382,65536,20,52.508800104,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,3,64,0,16382,65536,20,4.342400061,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,3,1024,0,16382,65536,20,9.791999916,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,3,4,0,16382,65536,20,3.803200065,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,4,16,0,16382,65536,20,3.851200046,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,4,64,0,16382,65536,20,4.268800025,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,4,4,0,16382,65536,20,4.272000038,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,4,32,0,16382,65536,20,4.219200020,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,4,1,0,16382,65536,20,4.191999987,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,4,512,0,16382,65536,20,7.007999974,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,4,2,0,16382,65536,20,4.080000066,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,4,256,0,16382,65536,20,5.649600062,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,4,8,0,16382,65536,20,4.161600035,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,4,128,0,16382,65536,20,4.912000010,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,4,1024,0,16382,65536,20,10.407999950,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,4,4096,0,16382,65536,20,28.996800072,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,4,8192,0,16382,65536,20,52.915199660,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,0,4,2048,0,16382,65536,20,16.315199900,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,0,2,0,16382,65536,20,4.070400016,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,0,8,0,16382,65536,20,4.132800037,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,0,128,0,16382,65536,20,4.961599945,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,0,32,0,16382,65536,20,4.587199981,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,0,4,0,16382,65536,20,4.172800016,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,0,64,0,16382,65536,20,4.438399966,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,0,8192,0,16382,65536,20,53.011200018,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,0,16,0,16382,65536,20,4.124800046,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,0,512,0,16382,65536,20,7.022399968,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,0,1024,0,16382,65536,20,10.135999974,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,0,2048,0,16382,65536,20,16.323199868,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,0,256,0,16382,65536,20,5.681600003,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,0,1,0,16382,65536,20,4.088000034,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,0,4096,0,16382,65536,20,28.486400191,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,1,1,0,16382,65536,20,4.080000054,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,1,4,0,16382,65536,20,4.048000032,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,1,16,0,16382,65536,20,4.211200029,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,1,8192,0,16382,65536,20,52.726399526,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,1,256,0,16382,65536,20,5.657600006,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,1,64,0,16382,65536,20,4.319999996,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,1,2048,0,16382,65536,20,16.092800163,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,1,4096,0,16382,65536,20,28.332800139,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,1,8,0,16382,65536,20,4.110400029,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,1,1024,0,16382,65536,20,10.134400055,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,1,32,0,16382,65536,20,4.096000025,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,1,512,0,16382,65536,20,6.900800043,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,1,2,0,16382,65536,20,3.838400065,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,1,128,0,16382,65536,20,4.630399984,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,2,2,0,16382,65536,20,3.817600023,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,2,8,0,16382,65536,20,4.131200071,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,2,256,0,16382,65536,20,5.507199978,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,2,2048,0,16382,65536,20,16.188800149,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,2,32,0,16382,65536,20,3.992000024,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,2,16,0,16382,65536,20,3.947200056,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,2,1,0,16382,65536,20,3.707200033,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,2,8192,0,16382,65536,20,52.628799342,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,2,128,0,16382,65536,20,4.531199951,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,2,4,0,16382,65536,20,3.832000040,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,2,512,0,16382,65536,20,6.884800037,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,2,1024,0,16382,65536,20,10.051199934,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,2,64,0,16382,65536,20,4.249599983,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,2,4096,0,16382,65536,20,28.569599986,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,3,16,0,16382,65536,20,4.030400049,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,3,2,0,16382,65536,20,3.819200047,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,3,4,0,16382,65536,20,3.916800057,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,3,256,0,16382,65536,20,5.257600010,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,3,1,0,16382,65536,20,3.974400053,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,3,1024,0,16382,65536,20,10.167999985,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,3,32,0,16382,65536,20,4.032000026,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,3,512,0,16382,65536,20,6.782400049,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,3,4096,0,16382,65536,20,28.543999791,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,3,8,0,16382,65536,20,3.849600058,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,3,64,0,16382,65536,20,4.214400018,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,3,2048,0,16382,65536,20,15.875200555,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,3,8192,0,16382,65536,20,52.428799681,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,3,128,0,16382,65536,20,4.614400025,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,4,256,0,16382,65536,20,5.384000018,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,4,1024,0,16382,65536,20,10.390399955,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,4,32,0,16382,65536,20,4.241600051,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,4,64,0,16382,65536,20,4.500800022,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,4,2,0,16382,65536,20,4.091200046,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,4,16,0,16382,65536,20,4.102400062,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,4,128,0,16382,65536,20,4.862399935,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,4,512,0,16382,65536,20,7.153600012,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,4,4,0,16382,65536,20,3.961600049,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,4,2048,0,16382,65536,20,16.355199926,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,4,8,0,16382,65536,20,4.120000009,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,4,1,0,16382,65536,20,4.049600032,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,4,8192,0,16382,65536,20,52.843200043,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified
+10,"kernel launch blocks + threads",16382,132,32,1,4,4096,0,16382,65536,20,28.660800122,same_stream_events_separate_pass,132,32,cuda_static_cyclic_unverified

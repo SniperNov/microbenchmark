@@ -1,0 +1,40 @@
+========== Runtime Configuration ==========
+API           : cuda
+Methods       : 8
+Delay range   : [1, 8192]
+Array size(s) : 1, 2, 4, 8, 16, 32, 64
+block_count    : 132
+thread_count   : 32
+MAX_ITER      : 6656  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+DELAY_POINTS  : 14 (powers of two)
+NUM_SAMPLES   : 10 (per delay)
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+DEVICE_TIMING : same-stream CUDA events in a separate pass; host timing windows unchanged
+==========================================
+Number of available CUDA devices: 1
+CUDA device 0: NVIDIA GH200 480GB
+CUDA SM count: 132
+CUDA launch/schedule has no OpenMP runtime profile; actual participant/owner equivalence is unverified.
+Initializing CUDA benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                             1                             2                             4                             8                            16                            32                            64
+                                              BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean
+kernel atomicAdd                            16.366±0.094      |     19.599±0.105         11.343±0.048      |     13.342±0.094          9.970±0.320      |     11.445±0.114          8.986±0.208      |      9.433±0.045          9.032±0.081      |      9.344±0.113          8.837±0.179      |      9.248±0.096          8.370±0.040      |      8.240±0.098     
+==========================================
+
+========== CUDA Device Profiling (Separate Pass) ==========
+Baseline samples are complete. Events bracket each kernel; allocation and copies are excluded.
+Profiled method=8 N=1 requested blocks=132 threads=32
+Profiled method=8 N=2 requested blocks=132 threads=32
+Profiled method=8 N=4 requested blocks=132 threads=32
+Profiled method=8 N=8 requested blocks=132 threads=32
+Profiled method=8 N=16 requested blocks=132 threads=32
+Profiled method=8 N=32 requested blocks=132 threads=32
+Profiled method=8 N=64 requested blocks=132 threads=32
+Device profiling samples saved to cuda_device_times.csv
+Finalizing CUDA benchmark.

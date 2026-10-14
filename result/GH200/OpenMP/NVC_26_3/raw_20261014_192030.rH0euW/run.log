@@ -1,0 +1,243 @@
+Raw-data output directory: /work/weiyu/microbenchmark/result/GH200/OpenMP/NVC_26_3/raw_20261014_192030.rH0euW
+GH200 OpenMP: compiler=NVC_26_3 groups=132 width=32
+GPU: NVIDIA GH200 480GB, 580.95.05
+make -f Makefile.backend \
+	DEFS=Makefile.defs.nvc \
+	EXTRA_CFLAGS="-DPRINT_DISTRIBUTION" \
+	BIN=build/microbenchmark_openmp \
+	SRC="src/core/driver.c src/backends/openmp/backend.c"
+make[1]: Entering directory '/work/weiyu/microbenchmark'
+nvc -mp=gpu -O0 -DPRINT_DISTRIBUTION -I src/core -o build/microbenchmark_openmp src/core/driver.c src/backends/openmp/backend.c -mp=gpu -lm
+src/core/driver.c:
+src/backends/openmp/backend.c:
+make[1]: Leaving directory '/work/weiyu/microbenchmark'
+
+===== [M0_M10] Method=0,10 N=16382 Delay=1,8192 =====
+========== Runtime Configuration ==========
+API           : openmp
+Methods       : 0, 10
+Delay range   : [1, 8192]
+Array size(s) : 16382
+thread_count   : 32
+team_count     : 132
+MAX_ITER      : 16382  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+DELAY_POINTS  : 14 (powers of two)
+NUM_SAMPLES   : 10 (per delay)
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  1 available devices
+Host device is -1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                         16382
+                                              BIC intercept | min mean
+pure delay kernel                           10.712±0.064      |     10.518±0.152     
+teams parallel                              11.149±0.056      |     11.111±0.215     
+==========================================
+Finalizing benchmark.
+
+===== [M1to4] Method=1,2,3,4 N=1,4,16,64,256,1024,4096,8192,16382,32768,65536 Delay=1,8192 =====
+========== Runtime Configuration ==========
+API           : openmp
+Methods       : 1, 2, 3, 4
+Delay range   : [1, 8192]
+Array size(s) : 1, 4, 16, 64, 256, 1024, 4096, 8192, 16382, 32768, 65536
+thread_count   : 32
+team_count     : 132
+MAX_ITER      : 65536  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+DELAY_POINTS  : 14 (powers of two)
+NUM_SAMPLES   : 10 (per delay)
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  1 available devices
+Host device is -1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                             1                             4                            16                            64                           256                          1024                          4096                          8192                         16382                         32768                         65536
+                                              BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean
+map(tofrom: a)                              20.175±0.162      |     21.802±0.145         20.126±0.199      |     21.729±0.173         20.264±0.184      |     21.914±0.162         20.152±0.213      |     21.884±0.171         20.978±0.151      |     22.420±0.186         21.384±0.115      |     22.839±0.169         23.591±0.105      |     23.901±0.114         24.893±0.080      |     25.921±0.118         27.090±0.118      |     28.530±0.141         28.104±0.154      |     29.579±0.171         29.467±0.172      |     31.159±0.176     
+map(to: a)                                  12.180±0.041      |     11.911±0.119         12.127±0.054      |     11.871±0.144         12.204±0.087      |     12.003±0.180         12.195±0.046      |     11.969±0.081         12.809±0.033      |     12.622±0.138         12.771±0.033      |     12.519±0.085         13.567±0.019      |     13.289±0.121         15.642±0.023      |     15.326±0.073         19.060±0.058      |     18.691±0.128         19.653±0.062      |     19.288±0.190         20.364±0.073      |     19.950±0.335     
+map(from: a)                                19.096±0.082      |     20.782±0.172         19.157±0.179      |     20.760±0.120         18.983±0.155      |     20.493±0.231         19.163±0.156      |     20.831±0.200         19.209±0.159      |     20.821±0.186         19.076±0.125      |     20.663±0.140         19.069±0.064      |     20.515±0.104         19.087±0.078      |     20.534±0.160         19.283±0.128      |     20.769±0.162         20.044±0.056      |     21.551±0.099         21.037±0.058      |     22.523±0.094     
+map(alloc: a)                               11.201±0.055      |     10.955±0.137         11.181±0.072      |     10.902±0.136         11.207±0.083      |     10.936±0.097         11.182±0.052      |     10.910±0.173         11.212±0.048      |     10.984±0.103         11.179±0.038      |     10.955±0.147         11.197±0.041      |     11.011±0.075         11.214±0.041      |     11.005±0.114         11.205±0.039      |     10.957±0.103         11.192±0.049      |     10.955±0.087         11.162±0.081      |     10.881±0.093     
+==========================================
+Finalizing benchmark.
+
+===== [M5] Method=5 N=16382 Delay=1,8192 =====
+========== Runtime Configuration ==========
+API           : openmp
+Methods       : 5
+Delay range   : [1, 8192]
+Array size(s) : 16382
+thread_count   : 32
+team_count     : 132
+MAX_ITER      : 16382  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+DELAY_POINTS  : 14 (powers of two)
+NUM_SAMPLES   : 10 (per delay)
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  1 available devices
+Host device is -1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                         16382
+                                              BIC intercept | min mean
+teams (scalar)                              10.050±0.106      |      9.953±0.158     
+==========================================
+Finalizing benchmark.
+
+===== [M6] Method=6 N=16382 Delay=1,8192 =====
+========== Runtime Configuration ==========
+API           : openmp
+Methods       : 6
+Delay range   : [1, 8192]
+Array size(s) : 16382
+thread_count   : 32
+team_count     : 132
+MAX_ITER      : 16382  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+DELAY_POINTS  : 14 (powers of two)
+NUM_SAMPLES   : 10 (per delay)
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  1 available devices
+Host device is -1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                         16382
+                                              BIC intercept | min mean
+teams distribute parallel for                8.600±0.058      |      8.274±0.080     
+==========================================
+Finalizing benchmark.
+
+===== [M7] Method=7 N=16382 Delay=1,8192 =====
+========== Runtime Configuration ==========
+API           : openmp
+Methods       : 7
+Delay range   : [1, 8192]
+Array size(s) : 16382
+thread_count   : 32
+team_count     : 132
+MAX_ITER      : 16382  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+DELAY_POINTS  : 14 (powers of two)
+NUM_SAMPLES   : 10 (per delay)
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  1 available devices
+Host device is -1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                         16382
+                                              BIC intercept | min mean
+nowait                                      11.618±0.076      |     11.353±0.188     
+==========================================
+Finalizing benchmark.
+
+===== [M8] Method=8 N=1,2,4,8,16,32,64 Delay=1,8192 =====
+========== Runtime Configuration ==========
+API           : openmp
+Methods       : 8
+Delay range   : [1, 8192]
+Array size(s) : 1, 2, 4, 8, 16, 32, 64
+thread_count   : 32
+team_count     : 132
+MAX_ITER      : 6656  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+DELAY_POINTS  : 14 (powers of two)
+NUM_SAMPLES   : 10 (per delay)
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  1 available devices
+Host device is -1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                             1                             2                             4                             8                            16                            32                            64
+                                              BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean
+teams atomic                                20.612±0.042      |     20.528±0.065         14.374±0.051      |     14.248±0.125         12.293±0.044      |     12.182±0.101         10.298±0.038      |     10.175±0.100         10.299±0.035      |     10.209±0.145         10.329±0.039      |     10.219±0.129          9.337±0.054      |      9.261±0.092     
+==========================================
+Finalizing benchmark.
+
+===== [M9] Method=9 N=1,2,4,8,16,32,64 Delay=1,8192 =====
+========== Runtime Configuration ==========
+API           : openmp
+Methods       : 9
+Delay range   : [1, 8192]
+Array size(s) : 1, 2, 4, 8, 16, 32, 64
+thread_count   : 32
+team_count     : 132
+MAX_ITER      : 6656  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+DELAY_POINTS  : 14 (powers of two)
+NUM_SAMPLES   : 10 (per delay)
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  1 available devices
+Host device is -1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                             1                             2                             4                             8                            16                            32                            64
+                                              BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean
+teams reduction                             14.085±0.104      |     13.872±0.188         14.945±0.113      |     14.862±0.401         15.358±0.043      |     15.206±0.239         18.134±0.093      |     18.289±0.237         24.139±0.267      |     24.540±0.227         34.079±0.258      |     34.282±0.318         51.010±0.281      |     51.374±0.431     
+==========================================
+Finalizing benchmark.
+
+===== [M11_parreps] Method=11 N=1,2,4,8,16,32,64,128 Delay=1,8192 =====
+========== Runtime Configuration ==========
+API           : openmp
+Methods       : 11
+Delay range   : [1, 8192]
+Array size(s) : 1, 2, 4, 8, 16, 32, 64, 128
+thread_count   : 32
+team_count     : 132
+MAX_ITER      : 6656  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+DELAY_POINTS  : 14 (powers of two)
+NUM_SAMPLES   : 10 (per delay)
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+==========================================
+There are  1 available devices
+Host device is -1
+Initializing benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                             1                             2                             4                             8                            16                            32                            64                           128
+                                              BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean
+teams + parallel inside                     11.047±0.055      |     10.983±0.109         12.115±0.069      |     11.985±0.083         14.176±0.053      |     13.969±0.125         18.326±0.072      |     17.995±0.135         26.446±0.192      |     25.911±0.260         42.693±0.051      |     41.614±0.144         75.097±0.100      |     73.026±0.263        139.798±0.095      |    135.502±0.215     
+==========================================
+Finalizing benchmark.
+
+Raw-data collection completed: /work/weiyu/microbenchmark/result/GH200/OpenMP/NVC_26_3/raw_20261014_192030.rH0euW

@@ -1,0 +1,2092 @@
+timestamp=20261014_192054
+hostname=gh02
+slurm_job_id=manual
+slurm_job_name=manual
+script=jobs/cuda/run_GH.sh
+working_directory=/work/weiyu/microbenchmark
+
+## unified-suite...origin/unified-suite [behind 16]
+ M Makefile
+ M Makefile.backend
+ M README.md
+ M jobs/common.sh
+ M jobs/cuda/run_GH.sh
+ M jobs/cuda/run_eidf_a100.job
+ M jobs/cuda/run_eidf_h100.job
+ M jobs/cuda/run_eidf_h200.job
+ M jobs/openmp/run_GH.sh
+ M src/backends/cuda/backend.cu
+ M src/backends/openacc/backend.c
+ M src/core/backend.h
+ M src/core/driver.c
+?? plots/plot_cuda_device_times.py
+?? src/backends/cuda/openmp_profile.h
+?? tests/
+commit ae2453fc8b6a7a8c02f47e3d23194b80f65a3992
+Author:     Weiyu Tu <tuweiyu7749@gmail.com>
+AuthorDate: Tue Aug 25 11:35:54 2026 +0000
+Commit:     Weiyu Tu <tuweiyu7749@gmail.com>
+CommitDate: Tue Aug 25 11:35:54 2026 +0000
+
+    Add final GH200 OpenACC and OpenMP NVC 26.3 results
+
+diff --git a/Makefile b/Makefile
+index f99e5a7..df24dd5 100644
+--- a/Makefile
++++ b/Makefile
+@@ -67,11 +67,12 @@ $(OPENACC_BIN): $(OPENACC_SRC) $(OPENACC_DEFS)
+ 		BIN=$@ \
+ 		SRC="$(OPENACC_SRC)"
+ 
+-$(CUDA_BIN): $(CUDA_SRC) $(CUDA_DEFS)
++$(CUDA_BIN): $(CUDA_SRC) $(CUDA_DEFS) src/core/backend.h src/backends/cuda/openmp_profile.h Makefile Makefile.backend
+ 	@mkdir -p $(BUILD_DIR)
+ 	$(MAKE) -f Makefile.backend \
+ 		DEFS=$(CUDA_DEFS) \
+-		EXTRA_CFLAGS="$(EXTRA_CFLAGS)" \
++		EXTRA_CFLAGS="$(EXTRA_CFLAGS) -DMICROBENCHMARK_CUDA" \
++		BACKEND_HEADERS="src/backends/cuda/openmp_profile.h" \
+ 		BIN=$@ \
+ 		SRC="$(CUDA_SRC)"
+ 
+@@ -88,7 +89,7 @@ wrapper:
+ 
+ clean:
+ 	rm -rf $(BUILD_DIR)
+-	rm -f raw_times.csv overhead_distribution.txt
++	rm -f raw_times.csv overhead_distribution.txt cuda_device_times.csv
+ 
+ help:
+ 	@echo "Unified microbenchmark suite"
+diff --git a/Makefile.backend b/Makefile.backend
+index 5360719..d6e7c85 100644
+--- a/Makefile.backend
++++ b/Makefile.backend
+@@ -1,4 +1,4 @@
+ include $(DEFS)
+ 
+-$(BIN): $(SRC)
++$(BIN): $(SRC) src/core/backend.h $(BACKEND_HEADERS) Makefile.backend $(DEFS)
+ 	$(CC) $(CFLAGS) $(EXTRA_CFLAGS) -I src/core -o $@ $(SRC) $(LDFLAGS) $(LIBS)
+diff --git a/README.md b/README.md
+index 04f5059..903a53b 100644
+--- a/README.md
++++ b/README.md
+@@ -100,12 +100,13 @@ export MICROBENCHMARK_API=openacc
+ The OpenMP and OpenACC backends use one shared benchmark driver:
+ 
+ ```text
+-log-spaced delay samples
++power-of-two delay points from 1 through 8192
+ deterministic shuffled delay order
+ warmup iterations before measured runs
++10 timing samples at each delay point
+ raw_times.csv output
+-BIC-selected linear intercept
+-lowest observed average timing
++minimum per-delay sample mean (paper result)
++BIC-selected linear intercept (diagnostic only)
+ ```
+ 
+ Backend code only implements API-specific launch/mapping methods and default configuration names. This keeps OpenMP, OpenACC, and future CUDA tests aligned by construction.
+@@ -130,8 +131,10 @@ bin/microbenchmark
+   -> shared driver loops over set/run/delay/outer repetition
+   -> backend runs the API-specific target/parallel construct
+   -> shared driver writes raw_times.csv
+-  -> shared driver fits BIC intercept and finds lowest timing
+-  -> stdout prints "BIC intercept | lowest"
++  -> shared driver averages the 10 samples at each delay
++  -> shared driver selects the minimum per-delay mean
++  -> shared driver also fits a diagnostic BIC intercept
++  -> stdout prints "BIC intercept | min mean"
+ ```
+ 
+ The backend-specific launch controls are:
+@@ -156,7 +159,7 @@ CUDA thread_count     -> SYCL local_size
+ 
+ ## API-Neutral Method Logic
+ 
+-All backends implement the same research logic. The syntax is different, but the measured idea is the same:
++Method IDs describe the intended common workloads. This does not by itself establish execution equivalence across backends; participant counts and schedules must also agree:
+ 
+ | Method | API-neutral idea |
+ |--------|------------------|
+@@ -177,24 +180,170 @@ OpenMP/OpenACC express data movement with directive clauses. CUDA/SYCL express t
+ 
+ ## CUDA Backend Notes
+ 
+-CUDA uses explicit runtime calls instead of directive-based target/data regions, so not every method is a literal translation. The CUDA backend keeps the same measurement driver and method numbering, but maps the API ideas as follows:
+-
+-| Method | CUDA form | Relationship to OpenMP/OpenACC |
+-|--------|-----------|--------------------------------|
+-| 0 | one scalar kernel launch | Directly comparable launch baseline |
+-| 1 | `cudaMalloc + H2D + kernel + D2H + cudaFree` | Mimics `map(tofrom)` / `copy` lifecycle |
+-| 2 | `cudaMalloc + H2D + kernel + cudaFree` | Mimics `map(to)` / `copyin` lifecycle |
+-| 3 | `cudaMalloc + kernel + D2H + cudaFree` | Mimics `map(from)` / `copyout` lifecycle |
+-| 4 | `cudaMalloc + kernel + cudaFree` | Mimics `map(alloc)` / `create` lifecycle |
+-| 5 | one scalar action per CUDA block | Mimics teams/gangs scalar launch |
+-| 6 | grid-stride loop kernel | Direct CUDA equivalent of parallel loop worksharing |
+-| 7 | stream launch plus stream synchronize | Mimics async launch followed by wait |
+-| 8 | grid-stride loop with `atomicAdd` | Direct CUDA atomic analogue |
+-| 9 | shared-memory block reduction plus final atomic add | CUDA-style reduction analogue |
+-| 10 | explicit `block_count` and `thread_count` launch | Direct CUDA launch-shape measurement |
+-| 11 | repeated explicit block/thread launch work, with `N` as repetition count | Mimics repeated inner parallel/worker work |
+-
+-Methods 0, 6, 7, 8, 10, and 11 are the cleanest CUDA counterparts. Methods 1-4 are comparable by intent rather than syntax because CUDA exposes allocation and copy operations explicitly. Method 9 is also comparable by intent, but the implementation must use CUDA reduction mechanics rather than a directive-level reduction clause.
++OpenMP is the reference. Its source is restored byte-for-byte to the version
++before `da2ebb1`, including the original array reduction in method 9. Its compiler
++flags, default schedules, dynamic-thread setting and parallel directives are not
++changed to accommodate CUDA. The reference SHA is checked by the test generator.
++
++| Method | CUDA execution/dataflow |
++|--------|-------------------------|
++| 0 | One scalar kernel; resident data |
++| 1 | Allocation, H2D, scalar kernel, D2H, release per repetition |
++| 2 | Allocation, H2D, scalar kernel, release per repetition |
++| 3 | Allocation, scalar kernel, D2H, release per repetition |
++| 4 | Allocation, scalar kernel, release per repetition |
++| 5 | One delay per block primary; index uses the requested OpenMP team count |
++| 6 | Team/thread worksharing; observed owners can be replayed |
++| 7 | One scalar kernel in a stream, then a wait |
++| 8 | Delay followed by atomic `tmp[i % N] += 1` |
++| 9 | N-element thread-private reduction, team accumulation, final array merge |
++| 10 | One delay per actual thread; stride uses the requested team count |
++| 11 | N team-local parallel phases; index uses the requested thread limit |
++
++Original method 6 requests teams and a thread limit, without specifying either
++schedule. Original methods 8/9 do not use the CLI team/thread controls. Methods
++10/11 also rely on the runtime's actual parallel thread count. Consequently, CUDA
++cannot infer unique participant counts or iteration owners from those clauses.
++Without a profile it uses an explicit cyclic CUDA schedule, labelled
++`cuda_static_cyclic_unverified`; it is not advertised as verified OpenMP ownership.
++
++`OpenMPProfile=<csv>` or `CUDA_OPENMP_PROFILE=<csv>` makes CUDA replay observed
++OpenMP team/thread counts and per-index owners for the exact method/N/workload/
++requested-controls key. Requested counts remain distinct from actual counts in
++index calculations and device CSV metadata. Invalid, missing, conflicting or
++nonuniform profiles are rejected. The diagnostic records one repetition of delay
++calls. Chunk boundaries are inferred from contiguous team-owner runs and ordering
++within each thread is inferred from increasing indices: the profile does **not**
++record OpenMP parallel-region events. Its mode is
++`observed_owners_inferred_chunks`; complete synchronization equivalence still
++requires device validation, not an assertion that the defaults are known.
++
++Generate an observational copy and capture the original OpenMP behaviour on GH200
++without editing its production source or forcing its runtime settings:
++
++```bash
++mkdir -p build/openmp_probe
++python3 tests/generate_openmp_probe.py build/openmp_probe/openmp_reference_instrumented.c
++nvc -mp=gpu -O0 -I src/core -I build/openmp_probe tests/check_openmp_device.c -o build/openmp_probe/probe
++OMP_TARGET_OFFLOAD=MANDATORY build/openmp_probe/probe openmp_profile.csv 132 32 16384 16384 65536 -1
++```
++
++The last six arguments are requested teams, thread limit, N, MAX_ITER,
++MAX_ARRAY_SIZE and method (`-1` captures all twelve). Match the driver's **printed**
++workload values: it may enlarge MAX_ITER/MAX_ARRAY_SIZE. Different workload keys
++need their own observations. Trace writes perturb execution and are correctness
++diagnostics, not timing measurements. Empty workloads have unobserved participants
++and cannot provide a replay profile.
++
++The observational copy records team/thread information directly at the original
++delay call sites. The production delay function, loop nesting, parallel clauses
++and scheduling controls stay unchanged. No extra device observer function queries
++the OpenMP execution context; the earlier version hit an invalid shared-memory
++read in that function on GH200 with NVHPC 26.3.
++
++For resident-data methods, CUDA transfers `a` and zeroed `tmp` before timing and
++copies both back afterwards. Host increments and device buffers remain separate.
++Original OpenMP memory-mode flags are preserved; inspect the intended platform's
++mapping behaviour rather than silently forcing a different memory mode.
++Method 3 leaves unwritten copyout elements unspecified in both APIs.
++
++Method 9 is an array reduction again. Thread-private N-element buckets are cleared
++for each CUDA chunk, merged into team-private buckets across chunks, then merged
++into `tmp`. `tmp` accumulates across repetitions. Merge-before/merge-after barriers
++protect the scratch lifetime; method 11 has a team-local join after each of its N
++phases. OpenMP leaves its physical reduction tree unspecified. CUDA scratch uses
++`actual_blocks * (actual_threads + 1) * N` doubles outside the timer; private
++initialisation and merging execute inside the kernel.
++OpenACC method 9 also retains parallel array-reduction work, implemented explicitly
++because [NVHPC lists subarray reduction clauses as unsupported](https://docs.nvidia.com/hpc-sdk/compilers/hpc-compilers-user-guide/index.html).
++
++Optional device timing is a **second pass after all original host samples and BIC
++calculations finish**. It profiles a private host-array clone and writes
++`cuda_device_times.csv`; `raw_times.csv` keeps its original schema and host timing
++protocol. The uninstrumented host pass creates or records no CUDA events.
++
++Each inner repetition uses these monitoring points, on the same kernel stream:
++
++```text
++allocation / required H2D
++record start event
++launch kernel
++record stop event
++original device/stream wait
++required D2H / release
++```
++
++The stop event is submitted immediately after the launch and before waiting.
++Copies, allocations, profile uploads, frees, host increments and result-file writes
++are outside the event pair. Method 7 records both events in its own stream.
++Method 9 includes private initialisation, atomic/reduction work and merges;
++method 11 includes all N phases and their joins. The mean of separate per-kernel
++event intervals is reported in microseconds, not an event spanning the entire host
++repetition loop. Events measure a GPU stream interval, including device scheduling
++or idle time between timestamps; they are not a pure GPU-instruction timer.
++See [CUDA event timing semantics](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__EVENT.html).
++Do not obtain host launch cost by subtracting independent-pass device samples from
++host samples that include mapping/copies.
++
++```bash
++make cuda
++./bin/microbenchmark API=cuda Method=0,1,2,3,4,5,6,7,8,9,10,11 N=16384 Delay=1,8192 block_count=132 thread_count=32 DeviceTiming=1 OpenMPProfile=openmp_profile.csv
++python3 plots/plot_cuda_device_times.py cuda_device_times.csv --output-dir result/GH200/CUDA/device_curves
++```
++
++Omit `OpenMPProfile` for standalone CUDA measurements explicitly marked unverified.
++Device CSV retains method, requested/actual launch dimensions, N, MAX_ITER,
++MAX_ARRAY_SIZE, samples and measurement mode. Curves use `delaylength` as the
++per-call workload and never mix launch shapes or workload sizes; `means.csv` saves
++all-sample means and standard deviations. N determines array extent in methods
++1–4/8/9 and phase count in method 11, while MAX_ITER determines calls in methods
++6/8/9. These workload dimensions are recorded separately.
++CUDA job scripts enable this second pass with `CUDA_DEVICE_TIMING=1` and archive
++each group's device CSV. GH200 jobs collect raw data into separate baseline and
++kernel-execution directories and defer plotting.
++
++```bash
++python3 tests/check_cuda_semantics.py
++python3 tests/check_openmp_probe.py
++python3 tests/check_cuda_timing.py
++python3 tests/check_cuda_driver.py
++python3 tests/check_cuda_device_output.py
++c++ -std=c++11 tests/check_openmp_profile.cpp -o /tmp/check_openmp_profile
++/tmp/check_openmp_profile
++bash tests/run_gh200_validation.sh
++```
++
++CPU checks protect the unchanged OpenMP reference, count its observed work, test
++CUDA default/CSR replay bodies and reduction scratch lifetimes, and use a fake
++runtime to check all twelve host paths' event/copy/wait ordering. Fake elapsed
++values validate averaging/units only, not device timing. The GH200 script captures
++OpenMP observations, runs independent CUDA checks and available CUDA sanitizers;
++its success is not by itself proof of identical native scheduling or chunk scopes.
++
++After a successful profile smoke run, check actual CUDA replay against the raw
++OpenMP CSV rows and collect inputs for synchronization review:
++
++```bash
++bash tests/run_gh200_replay_audit.sh result/GH200/profile_smoke/<successful-run>
++```
++
++This separate diagnostic handles observed launch shapes such as 52 teams with
++128 threads even when the requested controls were 132 and 32. It compares actual
++GPU addresses, owners, launch dimensions and per-index call counts against raw
++observations, and checks host arrays, reduction buckets and profiling clones.
++It runs single-round and two-round cases plus available memory/barrier checks.
++Its instrumented event times are discarded; curves use the existing production
++`cuda_device_times.csv`. The collected archive includes those CSVs and original
++OpenMP/current CUDA instruction dumps. Successful replay or sanitizer checks
++alone do not prove the original OpenMP chunk boundaries or relative call order;
++the synchronization review still needs to inspect the compiled device code.
++
++Local host-oracle and collection-workflow checks are available without a GPU:
++
++```bash
++python3 tests/check_cuda_profile_oracle.py
++python3 tests/check_gh200_replay_audit.py
++```
+ 
+ ## SYCL Backend Notes
+ 
+@@ -276,6 +425,22 @@ OpenMP scripts are under `jobs/openmp/`; OpenACC scripts are under `jobs/openacc
+ CUDA scripts for NVIDIA platforms are under `jobs/cuda/`.
+ SYCL scripts are under `jobs/sycl/`.
+ 
++For directly comparable NVHPC OpenMP runs on EIDF, use:
++
++```text
++jobs/openmp/run_eidf_a100_nvhpc.job  EIDF A100, NVHPC OpenMP
++jobs/openmp/run_eidf_h100_nvhpc.job  EIDF H100, NVHPC OpenMP
++jobs/openmp/run_eidf_h200_nvhpc.job  EIDF H200, NVHPC OpenMP
++```
++
++For GCC OpenMP offload runs on EIDF, use:
++
++```text
++jobs/openmp/run_eidf_a100.job  EIDF A100, GCC OpenMP
++jobs/openmp/run_eidf_h100.job  EIDF H100, GCC OpenMP
++jobs/openmp/run_eidf_h200.job  EIDF H200, GCC OpenMP
++```
++
+ For OpenACC, the current scripts are:
+ 
+ ```text
+@@ -348,3 +513,25 @@ M11_parreps  repeated inner worker-loop case
+ ```
+ 
+ For OpenACC, `gang_count` is the team-like control and `worker_count` is the thread-like control.
++
++### GH200 raw-data collection
++
++`jobs/openmp/run_GH.sh` and `jobs/cuda/run_GH.sh` use the same eight
++method/N/Delay groups from the original OpenMP job and the same shared platform
++controls. Driver sampling and workload normalization remain unchanged. These two
++jobs collect raw data only; they do not require plotting libraries or render plots.
++Each invocation creates a fresh `result/GH200/<API>/<compiler>/raw_<time>.<id>/`:
++
++- `baseline/<group>/raw_times.csv`, `overhead_distribution.txt`, and `run.log`
++  contain the existing benchmark results.
++- CUDA additionally saves `kernel_execution/<group>/cuda_device_times.csv` when
++  `CUDA_DEVICE_TIMING=1` (the GH200 CUDA job default). These samples come from a
++  separate device-event pass using the same workload and sampling configuration.
++
++Run `OMP_TARGET_OFFLOAD=MANDATORY bash jobs/openmp/run_GH.sh`, then
++`CUDA_DEVICE_TIMING=1 bash jobs/cuda/run_GH.sh`. A `CUDA_OPENMP_PROFILE` file may
++be supplied, but must cover the full workload keys of this sweep. The earlier
++N=7 smoke profile does not cover these experiment groups. Without a profile the
++CUDA CSV explicitly records `cuda_static_cyclic_unverified`; matching benchmark
++configuration alone does not establish actual OpenMP runtime scheduling equivalence.
++Graph selection and rendering are deferred until raw-data collection is complete.
+diff --git a/jobs/common.sh b/jobs/common.sh
+index 12bb9b8..a92b222 100644
+--- a/jobs/common.sh
++++ b/jobs/common.sh
+@@ -46,6 +46,38 @@ compiler_tag_gcc()
+     fi
+ }
+ 
++require_gcc_nvptx()
++{
++    if ! command -v gcc >/dev/null 2>&1; then
++        echo "ERROR: gcc is not installed." >&2
++        return 1
++    fi
++
++    gcc_details=$(gcc -v 2>&1 || true)
++    case "$gcc_details" in
++        *nvptx-none*) ;;
++        *)
++            echo "ERROR: this GCC was not configured with the nvptx-none offload target." >&2
++            echo "Install the matching GCC NVPTX offload package before running." >&2
++            return 1
++            ;;
++    esac
++}
++
++log_gcc_configuration()
++{
++    config_log="$1"
++    {
++        echo
++        echo "===== GCC offload toolchain ====="
++        gcc --version | head -n 1
++        gcc -v 2>&1
++        echo "CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES:-not-set}"
++        echo "ACC_DEVICE_TYPE=${ACC_DEVICE_TYPE:-not-set}"
++        echo "OMP_TARGET_OFFLOAD=${OMP_TARGET_OFFLOAD:-not-set}"
++    } >> "$config_log"
++}
++
+ compiler_tag_cray()
+ {
+     version=$(cc --version 2>/dev/null | sed -n 's/.*Version \([0-9][0-9.]*\).*/\1/p' | head -n 1)
+@@ -100,9 +132,9 @@ set_common_benchmark_parameters()
+ {
+     N_DATA="1,4,16,64,256,1024,4096,8192,16382,32768,65536"
+     N_FIXED="16382"
+-    N_ATORED="16,64,256,1024,4096,8192,16382"
++    N_ATORED="1,2,4,8,16,32,64"
+     N_PARREPS="1,2,4,8,16,32,64,128"
+-    DELAY_SHORT="1,8096"
++    DELAY_SHORT="1,8192"
+ }
+ 
+ # Platform topology. Every API on a platform must consume the same pair.
+diff --git a/jobs/cuda/run_GH.sh b/jobs/cuda/run_GH.sh
+index bd19bfa..dd3a176 100755
+--- a/jobs/cuda/run_GH.sh
++++ b/jobs/cuda/run_GH.sh
+@@ -1,6 +1,5 @@
+ #!/bin/bash
+-# Grace Hopper / GH200 CUDA run script.
+-
++# GH200 raw-data collection; benchmark groups match the OpenMP reference.
+ set -euo pipefail
+ 
+ if [ -n "${SLURM_JOB_ID:-}" ]; then
+@@ -8,93 +7,72 @@ if [ -n "${SLURM_JOB_ID:-}" ]; then
+ else
+     cd "$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)"
+ fi
+-
++repo_dir="$PWD"
+ . "./jobs/common.sh"
+ 
+ MACHINE="GH200"
+ API="CUDA"
+ set_common_benchmark_parameters
+ set_platform_launch_parameters "$MACHINE"
+-BLOCKS="$PLATFORM_GROUPS"
++GROUPS_COUNT="$PLATFORM_GROUPS"
+ THREADS="$PLATFORM_WIDTH"
++DEVICE_TIMING="${CUDA_DEVICE_TIMING:-1}"
++case "$DEVICE_TIMING" in
++    0|1) ;;
++    *) echo "CUDA_DEVICE_TIMING must be 0 or 1" >&2; exit 1 ;;
++esac
++# Resolve an optional profile before changing into each group's output directory.
++if [ -n "${CUDA_OPENMP_PROFILE:-}" ]; then
++    profile_dir=$(CDPATH= cd -- "$(dirname -- "$CUDA_OPENMP_PROFILE")" && pwd)
++    export CUDA_OPENMP_PROFILE="$profile_dir/$(basename -- "$CUDA_OPENMP_PROFILE")"
++    test -s "$CUDA_OPENMP_PROFILE"
++fi
+ COMPILER_TAG=$(compiler_tag_nvcc)
+-OUTDIR="result/$MACHINE/$API/$COMPILER_TAG"
+-mkdir -p "$OUTDIR"
+-
+-JOB_NAME="gh_cuda"
++result_root="$repo_dir/result/$MACHINE/$API/$COMPILER_TAG"
++mkdir -p "$result_root"
+ TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+-OUTFILE="$OUTDIR/${JOB_NAME}_${TIMESTAMP}.out"
++OUTDIR=$(mktemp -d "$result_root/raw_${TIMESTAMP}.XXXXXX")
++JOB_NAME="gh_cuda"
++OUTFILE="$OUTDIR/run.log"
+ archive_run_provenance "$0" "$OUTDIR" "$JOB_NAME" "$TIMESTAMP"
+-
+-echo "Running Grace Hopper CUDA benchmark groups..." | tee "$OUTFILE"
+-
+-PLOT_PY="${PLOT_PY:-$PWD/.venv/bin/python}"
+-require_plot_python "$PLOT_PY"
+-
+-echo "========== Grace Hopper CUDA configuration ==========" | tee -a "$OUTFILE"
+-echo "MACHINE=$MACHINE" | tee -a "$OUTFILE"
+-echo "API=$API" | tee -a "$OUTFILE"
+-echo "COMPILER_TAG=$COMPILER_TAG" | tee -a "$OUTFILE"
+-echo "BLOCKS=$BLOCKS" | tee -a "$OUTFILE"
+-echo "THREADS=$THREADS" | tee -a "$OUTFILE"
+-nvcc --version 2>&1 | tee -a "$OUTFILE"
+-if command -v nvidia-smi >/dev/null 2>&1; then
+-    nvidia-smi | tee -a "$OUTFILE"
++cp jobs/common.sh "$OUTDIR/common.sh"
++if [ -n "${CUDA_OPENMP_PROFILE:-}" ]; then
++    cp "$CUDA_OPENMP_PROFILE" "$OUTDIR/openmp_profile.csv"
++    export CUDA_OPENMP_PROFILE="$OUTDIR/openmp_profile.csv"
+ fi
+-echo "=====================================================" | tee -a "$OUTFILE"
+ 
+-echo "Compiling CUDA backend..." | tee -a "$OUTFILE"
+-make clean
+-make cuda-distribution
++printf 'Raw-data output directory: %s\n' "$OUTDIR" | tee "$OUTFILE"
++log_run_configuration "$OUTFILE" "$MACHINE" "$API" "$COMPILER_TAG" "$GROUPS_COUNT" "$THREADS"
++make -B cuda-distribution EXTRA_CFLAGS="-arch=sm_90" 2>&1 | tee -a "$OUTFILE"
+ 
+ run_group () {
+-    local TAG="$1"
+-    local METHODS="$2"
+-    local NLIST="$3"
+-    local DELAY_RANGE="$4"
+-
+-    local SAFE_DELAY="${DELAY_RANGE//,/to}"
+-    local BASE="${TAG}_${SAFE_DELAY}_${TIMESTAMP}"
+-
+-    echo "" | tee -a "$OUTFILE"
+-    echo "===== [$TAG] Method=$METHODS N=$NLIST Delay=$DELAY_RANGE =====" | tee -a "$OUTFILE"
+-
+-    rm -f overhead_distribution.txt raw_times.csv
+-
+-    ./bin/microbenchmark API=cuda \
+-        Method="$METHODS" \
+-        N="$NLIST" \
+-        Delay="$DELAY_RANGE" \
+-        block_count="$BLOCKS" \
+-        thread_count="$THREADS" \
+-        | tee -a "$OUTFILE"
+-
+-    if [ -f overhead_distribution.txt ]; then
+-        mv overhead_distribution.txt "$OUTDIR/overhead_${BASE}.txt"
+-    fi
+-
+-    if [ -f raw_times.csv ]; then
+-        mv raw_times.csv "$OUTDIR/distribution_${BASE}.csv"
+-    fi
+-
+-    if [ -f "$OUTDIR/distribution_${BASE}.csv" ] && [ -f "$OUTDIR/overhead_${BASE}.txt" ] && command -v "$PLOT_PY" >/dev/null 2>&1; then
+-        "$PLOT_PY" ./plots/plot_raw_times.py \
+-            "$OUTDIR/distribution_${BASE}.csv" \
+-            "$OUTDIR/overhead_${BASE}.txt" \
+-            1,18 log \
+-            "$OUTDIR/resultLowest_${BASE}.png" 2>&1 | tee -a "$OUTFILE"
++    local TAG="$1" METHODS="$2" NLIST="$3" DELAY_RANGE="$4"
++    local group_dir="$OUTDIR/baseline/$TAG"
++    mkdir -p "$group_dir"
++    printf '\n===== [%s] Method=%s N=%s Delay=%s =====\n' \
++        "$TAG" "$METHODS" "$NLIST" "$DELAY_RANGE" | tee -a "$OUTFILE"
++    (
++        cd "$group_dir"
++        "$repo_dir/build/microbenchmark_cuda" API=cuda \
++            Method="$METHODS" N="$NLIST" Delay="$DELAY_RANGE" \
++            block_count="$GROUPS_COUNT" thread_count="$THREADS" \
++            DeviceTiming="$DEVICE_TIMING" \
++            2>&1 | tee run.log
++    ) | tee -a "$OUTFILE"
++    if [ "$DEVICE_TIMING" = "1" ]; then
++        mkdir -p "$OUTDIR/kernel_execution/$TAG"
++        mv "$group_dir/cuda_device_times.csv" \
++            "$OUTDIR/kernel_execution/$TAG/cuda_device_times.csv"
+     fi
+ }
+ 
+ run_group "M0_M10" "0,10" "$N_FIXED" "$DELAY_SHORT"
+-run_group "M1to4" "1,2,3,4" "$N_DATA" "$DELAY_SHORT"
+-run_group "M5" "5" "$N_FIXED" "$DELAY_SHORT"
+-run_group "M6" "6" "$N_FIXED" "$DELAY_SHORT"
+-run_group "M7" "7" "$N_FIXED" "$DELAY_SHORT"
+-run_group "M8" "8" "$N_ATORED" "$DELAY_SHORT"
+-run_group "M9" "9" "$N_ATORED" "$DELAY_SHORT"
++run_group "M1to4" "1,2,3,4" "$N_DATA"   "$DELAY_SHORT"
++run_group "M5"    "5"       "$N_FIXED"  "$DELAY_SHORT"
++run_group "M6"    "6"       "$N_FIXED"  "$DELAY_SHORT"
++run_group "M7"    "7"       "$N_FIXED"  "$DELAY_SHORT"
++run_group "M8" "8"     "$N_ATORED" "$DELAY_SHORT"
++run_group "M9" "9"     "$N_ATORED" "$DELAY_SHORT"
+ run_group "M11_parreps" "11" "$N_PARREPS" "$DELAY_SHORT"
+ 
+-echo "" | tee -a "$OUTFILE"
+-echo "All Grace Hopper CUDA benchmark groups completed." | tee -a "$OUTFILE"
+-echo "Results saved under $OUTDIR" | tee -a "$OUTFILE"
++printf '\nRaw-data collection completed: %s\n' "$OUTDIR" | tee -a "$OUTFILE"
+diff --git a/jobs/cuda/run_eidf_a100.job b/jobs/cuda/run_eidf_a100.job
+index 0f197b7..c8f6575 100755
+--- a/jobs/cuda/run_eidf_a100.job
++++ b/jobs/cuda/run_eidf_a100.job
+@@ -19,6 +19,12 @@ fi
+ 
+ . "./jobs/common.sh"
+ 
++DEVICE_TIMING="${CUDA_DEVICE_TIMING:-0}"
++case "$DEVICE_TIMING" in
++    0|1) ;;
++    *) echo "CUDA_DEVICE_TIMING must be 0 or 1" >&2; exit 1 ;;
++esac
++
+ MACHINE="A100"
+ API="CUDA"
+ set_common_benchmark_parameters
+@@ -46,6 +52,7 @@ echo "COMPILER_TAG=$COMPILER_TAG" | tee -a "$OUTFILE"
+ nvcc --version 2>&1 | tee -a "$OUTFILE"
+ echo "BLOCKS=$BLOCKS" | tee -a "$OUTFILE"
+ echo "THREADS=$THREADS" | tee -a "$OUTFILE"
++echo "CUDA_DEVICE_TIMING=$DEVICE_TIMING" | tee -a "$OUTFILE"
+ if command -v nvidia-smi >/dev/null 2>&1; then
+     nvidia-smi | tee -a "$OUTFILE"
+ fi
+@@ -64,7 +71,7 @@ run_group () {
+ 
+     echo "" | tee -a "$OUTFILE"
+     echo "===== [$TAG] Method=$METHODS N=$NLIST Delay=$DELAY_RANGE =====" | tee -a "$OUTFILE"
+-    rm -f overhead_distribution.txt raw_times.csv
++    rm -f overhead_distribution.txt raw_times.csv cuda_device_times.csv
+ 
+     ./bin/microbenchmark API=cuda \
+         Method="$METHODS" \
+@@ -72,6 +79,7 @@ run_group () {
+         Delay="$DELAY_RANGE" \
+         block_count="$BLOCKS" \
+         thread_count="$THREADS" \
++        DeviceTiming="$DEVICE_TIMING" \
+         | tee -a "$OUTFILE"
+ 
+     if [ -f overhead_distribution.txt ]; then
+@@ -80,6 +88,13 @@ run_group () {
+     if [ -f raw_times.csv ]; then
+         mv raw_times.csv "$OUTDIR/distributionEIDF_${BASE}.csv"
+     fi
++
++    if [ "$DEVICE_TIMING" = "1" ]; then
++        mv cuda_device_times.csv "$OUTDIR/device_${BASE}.csv"
++        "$PLOT_PY" ./plots/plot_cuda_device_times.py \
++            "$OUTDIR/device_${BASE}.csv" \
++            --output-dir "$OUTDIR/device_plots_${BASE}" 2>&1 | tee -a "$OUTFILE"
++    fi
+ }
+ 
+ run_group "M0_M10" "0,10" "$N_FIXED" "$DELAY_SHORT"
+diff --git a/jobs/cuda/run_eidf_h100.job b/jobs/cuda/run_eidf_h100.job
+index 5bf631e..946d778 100755
+--- a/jobs/cuda/run_eidf_h100.job
++++ b/jobs/cuda/run_eidf_h100.job
+@@ -19,6 +19,12 @@ fi
+ 
+ . "./jobs/common.sh"
+ 
++DEVICE_TIMING="${CUDA_DEVICE_TIMING:-0}"
++case "$DEVICE_TIMING" in
++    0|1) ;;
++    *) echo "CUDA_DEVICE_TIMING must be 0 or 1" >&2; exit 1 ;;
++esac
++
+ MACHINE="H100"
+ API="CUDA"
+ set_common_benchmark_parameters
+@@ -42,11 +48,17 @@ echo "API=$API" | tee -a "$OUTFILE"
+ echo "COMPILER_TAG=$COMPILER_TAG" | tee -a "$OUTFILE"
+ nvcc --version 2>&1 | tee -a "$OUTFILE"
+ echo "BLOCKS=$BLOCKS THREADS=$THREADS" | tee -a "$OUTFILE"
++echo "CUDA_DEVICE_TIMING=$DEVICE_TIMING" | tee -a "$OUTFILE"
+ if command -v nvidia-smi >/dev/null 2>&1; then
+     nvidia-smi | tee -a "$OUTFILE"
+ fi
+ echo "==================================================" | tee -a "$OUTFILE"
+ 
++if [ "$DEVICE_TIMING" = "1" ]; then
++    PLOT_PY="${PLOT_PY:-$PWD/.venv/bin/python}"
++    require_plot_python "$PLOT_PY"
++fi
++
+ make clean
+ make cuda-distribution
+ 
+@@ -60,7 +72,7 @@ run_group () {
+ 
+     echo "" | tee -a "$OUTFILE"
+     echo "===== [$TAG] Method=$METHODS N=$NLIST Delay=$DELAY_RANGE =====" | tee -a "$OUTFILE"
+-    rm -f overhead_distribution.txt raw_times.csv
++    rm -f overhead_distribution.txt raw_times.csv cuda_device_times.csv
+ 
+     ./bin/microbenchmark API=cuda \
+         Method="$METHODS" \
+@@ -68,6 +80,7 @@ run_group () {
+         Delay="$DELAY_RANGE" \
+         block_count="$BLOCKS" \
+         thread_count="$THREADS" \
++        DeviceTiming="$DEVICE_TIMING" \
+         | tee -a "$OUTFILE"
+ 
+     if [ -f overhead_distribution.txt ]; then
+@@ -76,6 +89,13 @@ run_group () {
+     if [ -f raw_times.csv ]; then
+         mv raw_times.csv "$OUTDIR/distributionEIDF_${BASE}.csv"
+     fi
++
++    if [ "$DEVICE_TIMING" = "1" ]; then
++        mv cuda_device_times.csv "$OUTDIR/device_${BASE}.csv"
++        "$PLOT_PY" ./plots/plot_cuda_device_times.py \
++            "$OUTDIR/device_${BASE}.csv" \
++            --output-dir "$OUTDIR/device_plots_${BASE}" 2>&1 | tee -a "$OUTFILE"
++    fi
+ }
+ 
+ run_group "M0_M10" "0,10" "$N_FIXED" "$DELAY_SHORT"
+diff --git a/jobs/cuda/run_eidf_h200.job b/jobs/cuda/run_eidf_h200.job
+index ef3af6b..42de87e 100755
+--- a/jobs/cuda/run_eidf_h200.job
++++ b/jobs/cuda/run_eidf_h200.job
+@@ -19,6 +19,12 @@ fi
+ 
+ . "./jobs/common.sh"
+ 
++DEVICE_TIMING="${CUDA_DEVICE_TIMING:-0}"
++case "$DEVICE_TIMING" in
++    0|1) ;;
++    *) echo "CUDA_DEVICE_TIMING must be 0 or 1" >&2; exit 1 ;;
++esac
++
+ MACHINE="H200"
+ API="CUDA"
+ set_common_benchmark_parameters
+@@ -42,11 +48,17 @@ echo "API=$API" | tee -a "$OUTFILE"
+ echo "COMPILER_TAG=$COMPILER_TAG" | tee -a "$OUTFILE"
+ nvcc --version 2>&1 | tee -a "$OUTFILE"
+ echo "BLOCKS=$BLOCKS THREADS=$THREADS" | tee -a "$OUTFILE"
++echo "CUDA_DEVICE_TIMING=$DEVICE_TIMING" | tee -a "$OUTFILE"
+ if command -v nvidia-smi >/dev/null 2>&1; then
+     nvidia-smi | tee -a "$OUTFILE"
+ fi
+ echo "==================================================" | tee -a "$OUTFILE"
+ 
++if [ "$DEVICE_TIMING" = "1" ]; then
++    PLOT_PY="${PLOT_PY:-$PWD/.venv/bin/python}"
++    require_plot_python "$PLOT_PY"
++fi
++
+ make clean
+ make cuda-distribution
+ 
+@@ -60,7 +72,7 @@ run_group () {
+ 
+     echo "" | tee -a "$OUTFILE"
+     echo "===== [$TAG] Method=$METHODS N=$NLIST Delay=$DELAY_RANGE =====" | tee -a "$OUTFILE"
+-    rm -f overhead_distribution.txt raw_times.csv
++    rm -f overhead_distribution.txt raw_times.csv cuda_device_times.csv
+ 
+     ./bin/microbenchmark API=cuda \
+         Method="$METHODS" \
+@@ -68,6 +80,7 @@ run_group () {
+         Delay="$DELAY_RANGE" \
+         block_count="$BLOCKS" \
+         thread_count="$THREADS" \
++        DeviceTiming="$DEVICE_TIMING" \
+         | tee -a "$OUTFILE"
+ 
+     if [ -f overhead_distribution.txt ]; then
+@@ -76,6 +89,13 @@ run_group () {
+     if [ -f raw_times.csv ]; then
+         mv raw_times.csv "$OUTDIR/distributionEIDF_${BASE}.csv"
+     fi
++
++    if [ "$DEVICE_TIMING" = "1" ]; then
++        mv cuda_device_times.csv "$OUTDIR/device_${BASE}.csv"
++        "$PLOT_PY" ./plots/plot_cuda_device_times.py \
++            "$OUTDIR/device_${BASE}.csv" \
++            --output-dir "$OUTDIR/device_plots_${BASE}" 2>&1 | tee -a "$OUTFILE"
++    fi
+ }
+ 
+ run_group "M0_M10" "0,10" "$N_FIXED" "$DELAY_SHORT"
+diff --git a/jobs/openmp/run_GH.sh b/jobs/openmp/run_GH.sh
+index d0c1a18..3770f90 100755
+--- a/jobs/openmp/run_GH.sh
++++ b/jobs/openmp/run_GH.sh
+@@ -1,6 +1,5 @@
+ #!/bin/bash
+-# File: GH_run.sh
+-
++# GH200 raw-data collection; benchmark groups match the OpenMP reference.
+ set -euo pipefail
+ 
+ if [ -n "${SLURM_JOB_ID:-}" ]; then
+@@ -8,110 +7,51 @@ if [ -n "${SLURM_JOB_ID:-}" ]; then
+ else
+     cd "$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)"
+ fi
+-
++repo_dir="$PWD"
+ . "./jobs/common.sh"
+ 
+ MACHINE="GH200"
+ API="OpenMP"
+ set_common_benchmark_parameters
+ set_platform_launch_parameters "$MACHINE"
++GROUPS_COUNT="$PLATFORM_GROUPS"
+ THREADS="$PLATFORM_WIDTH"
+-TEAMS="$PLATFORM_GROUPS"
+ COMPILER_TAG=$(compiler_tag_nvc)
+-OUTDIR="result/$MACHINE/$API/$COMPILER_TAG"
+-mkdir -p "$OUTDIR"
+-
+-JOB_NAME="gh_omp"
++result_root="$repo_dir/result/$MACHINE/$API/$COMPILER_TAG"
++mkdir -p "$result_root"
+ TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+-OUTFILE="$OUTDIR/${JOB_NAME}_${TIMESTAMP}.out"
++OUTDIR=$(mktemp -d "$result_root/raw_${TIMESTAMP}.XXXXXX")
++JOB_NAME="gh_openmp"
++OUTFILE="$OUTDIR/run.log"
+ archive_run_provenance "$0" "$OUTDIR" "$JOB_NAME" "$TIMESTAMP"
++cp jobs/common.sh "$OUTDIR/common.sh"
+ 
+-PLOT_PY="${PLOT_PY:-$PWD/.venv/bin/python}"
+-require_plot_python "$PLOT_PY"
+-
+-make -s clean
+-make -s openmp-distribution
+-
+-echo "Running Grace Hopper OpenMP benchmark groups..." | tee "$OUTFILE"
++printf 'Raw-data output directory: %s\n' "$OUTDIR" | tee "$OUTFILE"
++log_run_configuration "$OUTFILE" "$MACHINE" "$API" "$COMPILER_TAG" "$GROUPS_COUNT" "$THREADS"
++make -B openmp-distribution OPENMP_DEFS=Makefile.defs.nvc 2>&1 | tee -a "$OUTFILE"
+ 
+ run_group () {
+-    local TAG="$1"
+-    local METHODS="$2"
+-    local NLIST="$3"
+-    local DELAY_RANGE="$4"
+-
+-    local SAFE_DELAY="${DELAY_RANGE//,/to}"
+-    local BASE="${TAG}_${SAFE_DELAY}_${TIMESTAMP}"
+-
+-    echo "" | tee -a "$OUTFILE"
+-    echo "===== [$TAG] Method=$METHODS N=$NLIST Delay=$DELAY_RANGE =====" | tee -a "$OUTFILE"
+-
+-    ./bin/microbenchmark API=openmp \
+-        Method=$METHODS \
+-        N=$NLIST \
+-        Delay=$DELAY_RANGE \
+-        thread_count=$THREADS \
+-        team_count=$TEAMS \
+-        | tee -a "$OUTFILE"
+-
+-    if [ -f overhead_distribution.txt ]; then
+-        mv overhead_distribution.txt "$OUTDIR/overhead_${BASE}.txt"
+-    fi
+-
+-    if [ -f raw_times.csv ]; then
+-        mv raw_times.csv "$OUTDIR/distribution_${BASE}.csv"
+-    fi
+-
+-    if [ -f "$OUTDIR/distribution_${BASE}.csv" ] && [ -f "$OUTDIR/overhead_${BASE}.txt" ]; then
+-        echo "Plotting $BASE ..." | tee -a "$OUTFILE"
+-
+-        "$PLOT_PY" ./plots/plot_raw_times.py \
+-            "$OUTDIR/distribution_${BASE}.csv" \
+-            "$OUTDIR/overhead_${BASE}.txt" \
+-            1,18 log \
+-            "$OUTDIR/resultLowest_${BASE}.png" 2>&1 | tee -a "$OUTFILE"
+-
+-        if [ -f "$OUTDIR/resultLowest_${BASE}.png" ]; then
+-            echo "Plot generated: $OUTDIR/resultLowest_${BASE}.png" | tee -a "$OUTFILE"
+-        else
+-            echo "Plot failed for $BASE" | tee -a "$OUTFILE"
+-        fi
+-    else
+-        echo "Plot skipped for $BASE because csv/txt missing." | tee -a "$OUTFILE"
+-    fi
++    local TAG="$1" METHODS="$2" NLIST="$3" DELAY_RANGE="$4"
++    local group_dir="$OUTDIR/baseline/$TAG"
++    mkdir -p "$group_dir"
++    printf '\n===== [%s] Method=%s N=%s Delay=%s =====\n' \
++        "$TAG" "$METHODS" "$NLIST" "$DELAY_RANGE" | tee -a "$OUTFILE"
++    (
++        cd "$group_dir"
++        "$repo_dir/build/microbenchmark_openmp" API=openmp \
++            Method="$METHODS" N="$NLIST" Delay="$DELAY_RANGE" \
++            thread_count="$THREADS" team_count="$GROUPS_COUNT" \
++            2>&1 | tee run.log
++    ) | tee -a "$OUTFILE"
+ }
+ 
+-# =========================================
+-# Group 0: method 0 / 10, fixed N
+-# =========================================
+ run_group "M0_M10" "0,10" "$N_FIXED" "$DELAY_SHORT"
+-
+-# =========================================
+-# Group 1: methods 1-4, data size sweep
+-# =========================================
+ run_group "M1to4" "1,2,3,4" "$N_DATA"   "$DELAY_SHORT"
+-
+-# =========================================
+-# Group 2: methods 5 / 6 / 7, fixed N
+-# =========================================
+ run_group "M5"    "5"       "$N_FIXED"  "$DELAY_SHORT"
+-
+ run_group "M6"    "6"       "$N_FIXED"  "$DELAY_SHORT"
+-
+ run_group "M7"    "7"       "$N_FIXED"  "$DELAY_SHORT"
+-
+-# =========================================
+-# Group 3: methods 8 / 9, atomic + reduction
+-# =========================================
+ run_group "M8" "8"     "$N_ATORED" "$DELAY_SHORT"
+ run_group "M9" "9"     "$N_ATORED" "$DELAY_SHORT"
+-
+-# =========================================
+-# Group 4: method 11, N is parreps
+-# =========================================
+-
+ run_group "M11_parreps" "11" "$N_PARREPS" "$DELAY_SHORT"
+ 
+-echo "" | tee -a "$OUTFILE"
+-echo "All benchmark groups completed." | tee -a "$OUTFILE"
+-echo "Results saved under $OUTDIR" | tee -a "$OUTFILE"
++printf '\nRaw-data collection completed: %s\n' "$OUTDIR" | tee -a "$OUTFILE"
+diff --git a/src/backends/cuda/backend.cu b/src/backends/cuda/backend.cu
+index be92c0c..ca5d9dd 100644
+--- a/src/backends/cuda/backend.cu
++++ b/src/backends/cuda/backend.cu
+@@ -1,8 +1,14 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+-#include <sys/time.h>
++#include <time.h>
++#include <stdint.h>
++#include <string.h>
+ #include <cuda_runtime.h>
+ #include "backend.h"
++#include "openmp_profile.h"
++
++static microbenchmark_openmp_profile::Profile openmp_profile;
++static int has_openmp_profile = 0;
+ 
+ static const char *method_names[] = {
+     "pure delay kernel",
+@@ -11,18 +17,18 @@ static const char *method_names[] = {
+     "cudaMalloc + kernel + D2H + cudaFree",
+     "cudaMalloc + kernel + cudaFree",
+     "kernel launch blocks scalar",
+-    "kernel launch grid-stride loop",
++    "teams distribute thread loop",
+     "stream async launch + synchronize",
+     "kernel atomicAdd",
+-    "kernel block reduction",
++    "teams thread loop array reduction",
+     "kernel launch blocks + threads",
+     "kernel repeated blocks + threads"};
+ 
+ static double get_time_usec(void)
+ {
+-    struct timeval tv;
+-    gettimeofday(&tv, NULL);
+-    return tv.tv_sec * 1.0e6 + tv.tv_usec;
++    struct timespec ts;
++    clock_gettime(CLOCK_MONOTONIC, &ts);
++    return ts.tv_sec * 1.0e6 + ts.tv_nsec / 1.0e3;
+ }
+ 
+ static void check_cuda(cudaError_t err, const char *where)
+@@ -38,11 +44,46 @@ static void check_cuda(cudaError_t err, const char *where)
+ 
+ __device__ static void delay_kernel_device(int delaylength, double *array)
+ {
++#ifdef MICROBENCHMARK_DELAY_VISIT
++    MICROBENCHMARK_DELAY_VISIT(array);
++#endif
+     // __device__ means this function runs on the GPU, not on the CPU.
+     // Every benchmark method uses the same tiny delay body.
+     array[0] = 1.0;
+     for (int i = 0; i < delaylength; i++)
+         array[0] += i;
++    if (array[0] < 0.0)
++        printf("%f\n", array[0]);
++}
++
++// A supplied profile reproduces observed OpenMP ownership. Its chunk scopes
++// are inferred from contiguous owner runs, not observed OpenMP region events.
++struct cuda_omp_schedule_t
++{
++    const int *chunk_counts;
++    const int *offsets;
++    const int *indices;
++    int max_chunks;
++};
++
++__device__ static int schedule_chunks(cuda_omp_schedule_t schedule, int max_iter)
++{
++    if (schedule.chunk_counts) return schedule.chunk_counts[blockIdx.x];
++    long long first = (long long)blockIdx.x * blockDim.x;
++    long long stride = (long long)blockDim.x * gridDim.x;
++    return first >= max_iter ? 0 : (int)(1 + (max_iter - 1 - first) / stride);
++}
++
++__device__ static int schedule_begin(cuda_omp_schedule_t schedule, int chunk)
++{
++    size_t slot = ((size_t)blockIdx.x * schedule.max_chunks + chunk) * blockDim.x + threadIdx.x;
++    return schedule.offsets[slot];
++}
++
++__device__ static int schedule_end(cuda_omp_schedule_t schedule, int chunk)
++{
++    size_t slot = ((size_t)blockIdx.x * schedule.max_chunks + chunk) * blockDim.x + threadIdx.x;
++    return schedule.offsets[slot + 1];
+ }
+ 
+ __global__ static void delay_one_kernel(int delay, double *a)
+@@ -53,89 +94,130 @@ __global__ static void delay_one_kernel(int delay, double *a)
+         delay_kernel_device(delay, a);
+ }
+ 
+-__global__ static void block_scalar_kernel(int delay, double *a, int max_array_size)
++__global__ static void block_scalar_kernel(int delay, double *a, int max_array_size, int requested_teams = 0)
+ {
+     // One thread per block does work. This mirrors OpenMP teams / OpenACC gangs
+     // where we care about team/block launch overhead more than per-thread work.
+     if (threadIdx.x == 0)
+     {
+-        int idx = blockIdx.x * max_array_size / gridDim.x;
++        int divisor = requested_teams > 0 ? requested_teams : (int)gridDim.x;
++        int idx = (int)((long long)blockIdx.x * max_array_size / divisor);
+         delay_kernel_device(delay, &a[idx]);
+     }
+ }
+ 
+-__global__ static void loop_kernel(int delay, double *a, int max_iter)
++// Without an observed profile this is an explicit CUDA cyclic schedule only.
++// OpenMP's original defaults are implementation-defined; never alter them here.
++__global__ static void loop_kernel(int delay, double *a, int max_iter,
++                                  cuda_omp_schedule_t schedule = {})
+ {
+-    // CUDA thread identity:
+-    // blockIdx.x  = which block am I in?
+-    // threadIdx.x = which thread inside that block?
+-    // blockDim.x  = threads per block
+-    // gridDim.x   = number of blocks
+-    int stride = blockDim.x * gridDim.x;
+-    int tid = blockIdx.x * blockDim.x + threadIdx.x;
+-
+-    // Grid-stride loop: all GPU threads together cover max_iter elements.
+-    // If there are fewer threads than elements, each thread handles more later.
+-    for (int i = tid; i < max_iter; i += stride)
+-        delay_kernel_device(delay, &a[i]);
+-}
+-
+-__global__ static void atomic_kernel(int delay, double *a, double *tmp, int max_iter, int N)
+-{
+-    // atomicAdd makes the update safe when many GPU threads hit the same tmp slot.
+-    // Without atomicAdd, those updates would race and overwrite each other.
+-    int stride = blockDim.x * gridDim.x;
+-    int tid = blockIdx.x * blockDim.x + threadIdx.x;
+-    for (int i = tid; i < max_iter; i += stride)
++    int chunks = schedule_chunks(schedule, max_iter);
++    for (int chunk = 0; chunk < chunks; ++chunk)
+     {
+-        delay_kernel_device(delay, &a[i]);
+-        atomicAdd(&tmp[i % N], 1.0);
++        if (schedule.offsets)
++        {
++            for (int pos = schedule_begin(schedule, chunk); pos < schedule_end(schedule, chunk); ++pos)
++                delay_kernel_device(delay, &a[schedule.indices[pos]]);
++        }
++        else
++        {
++            long long i = ((long long)chunk * gridDim.x + blockIdx.x) * blockDim.x + threadIdx.x;
++            if (i < max_iter) delay_kernel_device(delay, &a[i]);
++        }
++        __syncthreads();
+     }
+ }
+ 
+-__global__ static void reduction_kernel(int delay, double *a, double *tmp, int max_iter)
++__global__ static void atomic_kernel(int delay, double *a, double *tmp, int max_iter, int N,
++                                    cuda_omp_schedule_t schedule = {})
+ {
+-    // Dynamic shared memory: one scratch array per block.
+-    // The launch provides its size: thread_count * sizeof(double).
+-    extern __shared__ double scratch[];
+-    double local_sum = 0.0;
+-    int stride = blockDim.x * gridDim.x;
+-    int tid = blockIdx.x * blockDim.x + threadIdx.x;
+-
+-    for (int i = tid; i < max_iter; i += stride)
++    int chunks = schedule_chunks(schedule, max_iter);
++    for (int chunk = 0; chunk < chunks; ++chunk)
+     {
+-        delay_kernel_device(delay, &a[i]);
+-        local_sum += 1.0;
++        if (schedule.offsets)
++        {
++            for (int pos = schedule_begin(schedule, chunk); pos < schedule_end(schedule, chunk); ++pos)
++            {
++                int i = schedule.indices[pos];
++                delay_kernel_device(delay, &a[i]);
++                atomicAdd(&tmp[i % N], 1.0);
++            }
++        }
++        else
++        {
++            long long i = ((long long)chunk * gridDim.x + blockIdx.x) * blockDim.x + threadIdx.x;
++            if (i < max_iter)
++            {
++                delay_kernel_device(delay, &a[i]);
++                atomicAdd(&tmp[i % N], 1.0);
++            }
++        }
++        __syncthreads();
+     }
++}
+ 
+-    scratch[threadIdx.x] = local_sum;
+-    __syncthreads();
+-
+-    // Tree reduction inside each block. After this loop, scratch[0] holds
+-    // the sum for this block. This works best when thread_count is a power of 2.
+-    for (int offset = blockDim.x / 2; offset > 0; offset >>= 1)
++__global__ static void reduction_kernel(int delay, double *a, double *tmp,
++                                       double *private_buckets, double *team_buckets,
++                                       int max_iter, int N, cuda_omp_schedule_t schedule = {})
++{
++    size_t team_base = (size_t)blockIdx.x * blockDim.x * N;
++    double *local = private_buckets + team_base + (size_t)threadIdx.x * N;
++    double *team = team_buckets + (size_t)blockIdx.x * N;
++    for (int j = threadIdx.x; j < N; j += blockDim.x) team[j] = 0.0;
++    int chunks = schedule_chunks(schedule, max_iter);
++    for (int chunk = 0; chunk < chunks; ++chunk)
+     {
+-        if (threadIdx.x < offset)
+-            scratch[threadIdx.x] += scratch[threadIdx.x + offset];
++        for (int j = 0; j < N; ++j) local[j] = 0.0;
++        if (schedule.offsets)
++        {
++            for (int pos = schedule_begin(schedule, chunk); pos < schedule_end(schedule, chunk); ++pos)
++            {
++                int i = schedule.indices[pos];
++                delay_kernel_device(delay, &a[i]);
++                local[i % N] += 1.0;
++            }
++        }
++        else
++        {
++            long long i = ((long long)chunk * gridDim.x + blockIdx.x) * blockDim.x + threadIdx.x;
++            if (i < max_iter)
++            {
++                delay_kernel_device(delay, &a[i]);
++                local[i % N] += 1.0;
++            }
++        }
++        __syncthreads();
++        for (int j = threadIdx.x; j < N; j += blockDim.x)
++        {
++            double sum = 0.0;
++            for (unsigned int t = 0; t < blockDim.x; ++t)
++                sum += private_buckets[team_base + (size_t)t * N + j];
++            team[j] += sum;
++        }
+         __syncthreads();
+     }
+-
+-    if (threadIdx.x == 0)
+-        // One thread per block adds the block result to the global result.
+-        atomicAdd(&tmp[0], scratch[0]);
++    for (int j = threadIdx.x; j < N; j += blockDim.x) atomicAdd(&tmp[j], team[j]);
+ }
+ 
+-__global__ static void launch_shape_kernel(int delay, double *a, int max_array_size)
++__global__ static void teams_parallel_kernel(int delay, double *a, int max_array_size, int requested_teams = 0)
+ {
+-    int idx = (blockIdx.x * blockDim.x + threadIdx.x) % max_array_size;
++    int stride = max_array_size / (requested_teams > 0 ? requested_teams : (int)gridDim.x);
++    int idx = blockIdx.x * stride + threadIdx.x;
+     delay_kernel_device(delay, &a[idx]);
+ }
+ 
+-__global__ static void repeated_launch_shape_kernel(int delay, double *a, int max_array_size, int parreps)
++__global__ static void repeated_teams_parallel_kernel(int delay, double *a,
++                                                      int max_array_size, int parreps, int requested_threads = 0)
+ {
+-    int idx = (blockIdx.x * blockDim.x + threadIdx.x) % max_array_size;
++    // CUDA threads persist for the kernel lifetime. Block barriers preserve
++    // each OpenMP inner parallel region's fork/join ordering, not its runtime cost.
+     for (int r = 0; r < parreps; r++)
++    {
++        int configured_threads = requested_threads > 0 ? requested_threads : (int)blockDim.x;
++        int idx = (blockIdx.x * configured_threads + threadIdx.x) % max_array_size;
+         delay_kernel_device(delay, &a[idx]);
++        __syncthreads();
++    }
+ }
+ 
+ const char *backend_name(void) { return "cuda"; }
+@@ -146,14 +228,10 @@ const char *backend_control_b_name(void) { return "thread_count"; }
+ 
+ void backend_default_config(backend_config_t *config)
+ {
+-    int device = 0;
+-    cudaDeviceProp prop;
+-    if (cudaGetDevice(&device) == cudaSuccess &&
+-        cudaGetDeviceProperties(&prop, device) == cudaSuccess)
+-        config->control_a = prop.multiProcessorCount;
+-    else
+-        config->control_a = 64;
+-    config->control_b = 128;
++    int count = 0;
++    check_cuda(cudaGetDeviceCount(&count), "default device count");
++    config->control_a = 4 * count; // OpenMP default: four teams per device.
++    config->control_b = 32;       // OpenMP default thread limit.
+ }
+ 
+ int backend_device_available(void)
+@@ -179,8 +257,18 @@ int backend_device_available(void)
+ 
+ void backend_init(int argc, char **argv)
+ {
+-    (void)argc;
+-    (void)argv;
++    const char *profile_path = getenv("CUDA_OPENMP_PROFILE");
++    for (int i = 1; i < argc; ++i)
++        if (strncmp(argv[i], "OpenMPProfile=", 14) == 0) profile_path = argv[i] + 14;
++    if (profile_path && *profile_path)
++    {
++        try { openmp_profile = microbenchmark_openmp_profile::read(profile_path); }
++        catch (const std::exception& error) { fprintf(stderr, "%s\n", error.what()); exit(EXIT_FAILURE); }
++        has_openmp_profile = 1;
++        printf("CUDA replays observed OpenMP owners/participants from %s; chunk scopes/order are inferred.\n", profile_path);
++    }
++    else
++        printf("CUDA launch/schedule has no OpenMP runtime profile; actual participant/owner equivalence is unverified.\n");
+     check_cuda(cudaFree(0), "CUDA runtime initialization");
+     printf("Initializing CUDA benchmark runtime environment...\n");
+ }
+@@ -205,13 +293,113 @@ static void copy_device_to_host(double *a, const double *d_a, int count)
+                "cudaMemcpy device to host");
+ }
+ 
+-double backend_run_method(int method, double *a, int N, int delay,
++// Events are created only for a separate profiling pass. Their interval covers
++// stream execution between the two records, not CPU API launch or copy calls.
++struct device_events_t
++{
++    int enabled;
++    cudaEvent_t start, stop;
++    double total_us;
++};
++
++static void event_begin(device_events_t *events, cudaStream_t stream = 0)
++{
++    if (events->enabled) check_cuda(cudaEventRecord(events->start, stream), "kernel start event");
++}
++
++static void event_stop(device_events_t *events, cudaStream_t stream = 0)
++{
++    if (events->enabled) check_cuda(cudaEventRecord(events->stop, stream), "kernel stop event");
++}
++
++static void event_collect(device_events_t *events)
++{
++    if (events->enabled)
++    {
++        float elapsed_ms = 0.0f;
++        check_cuda(cudaEventElapsedTime(&elapsed_ms, events->start, events->stop), "kernel event elapsed time");
++        events->total_us += (double)elapsed_ms * 1000.0;
++    }
++}
++
++static int last_launch_blocks = 0, last_launch_threads = 0;
++
++const char *backend_cuda_alignment_mode(void)
++{
++    return has_openmp_profile ? "observed_owners_inferred_chunks" : "cuda_static_cyclic_unverified";
++}
++
++void backend_cuda_last_launch_config(int *blocks, int *threads)
++{
++    *blocks = last_launch_blocks;
++    *threads = last_launch_threads;
++}
++
++static int *upload_profile_vector(const std::vector<int>& values)
++{
++    if (values.empty()) return NULL;
++    int *device = NULL;
++    check_cuda(cudaMalloc((void **)&device, values.size() * sizeof(int)), "allocate OpenMP profile schedule");
++    check_cuda(cudaMemcpy(device, values.data(), values.size() * sizeof(int), cudaMemcpyHostToDevice), "upload OpenMP profile schedule");
++    return device;
++}
++
++template <bool measure_device>
++static double run_cuda_method(int method, double *a, int N, int delay,
+                           int max_iter, int max_array_size,
+                           const backend_config_t *config,
+                           int inner_reps)
+ {
+-    int block_count = config->control_a > 0 ? config->control_a : 1;
+-    int thread_count = config->control_b > 0 ? config->control_b : 1;
++    int block_count = config->control_a;
++    int thread_count = config->control_b;
++    const int requested_teams = block_count, requested_threads = thread_count;
++    microbenchmark_openmp_profile::Plan plan;
++    if (has_openmp_profile)
++    {
++        try { plan = openmp_profile.select(method, N, max_iter, max_array_size, requested_teams, requested_threads); }
++        catch (const std::exception& error) { fprintf(stderr, "%s\n", error.what()); exit(EXIT_FAILURE); }
++        block_count = plan.effective_team_count;
++        thread_count = plan.effective_thread_count;
++    }
++    int device;
++    cudaDeviceProp prop;
++    check_cuda(cudaGetDevice(&device), "configuration device");
++    check_cuda(cudaGetDeviceProperties(&prop, device), "configuration properties");
++    int uses_teams = method == 5 || method == 6 || method >= 8;
++    int uses_threads = method == 6 || method >= 8;
++    int uses_worksharing_loop = method == 6 || method == 8 || method == 9;
++    if (method < 0 || method >= backend_num_methods() ||
++        N <= 0 || inner_reps <= 0 || max_array_size <= 0 ||
++        (method >= 1 && method <= 4 && N > max_array_size) ||
++        (uses_teams && (block_count <= 0 || block_count > prop.maxGridSize[0])) ||
++        (uses_threads && (thread_count <= 0 || thread_count > prop.maxThreadsPerBlock ||
++                          thread_count > prop.maxThreadsDim[0])) ||
++        (uses_worksharing_loop && (max_iter < 0 || max_iter > max_array_size)) ||
++        (method == 5 && (requested_teams <= 0 || block_count > requested_teams || requested_teams > max_array_size)) ||
++        (method == 10 && (requested_teams <= 0 ||
++         (long long)(block_count - 1) * (max_array_size / requested_teams) + thread_count > max_array_size)) ||
++        (method == 11 && (requested_threads <= 0 ||
++         (long long)(block_count - 1) * requested_threads + thread_count > max_array_size)))
++    {
++        fprintf(stderr, "Invalid CUDA workload or launch dimensions\n");
++        exit(EXIT_FAILURE);
++    }
++    cuda_omp_schedule_t schedule = {};
++    if (has_openmp_profile && uses_worksharing_loop)
++    {
++        schedule.chunk_counts = upload_profile_vector(plan.chunk_counts);
++        schedule.offsets = upload_profile_vector(plan.offsets);
++        schedule.indices = upload_profile_vector(plan.indices);
++        schedule.max_chunks = plan.max_chunks;
++    }
++    last_launch_blocks = (method <= 4 || method == 7) ? 1 : block_count;
++    last_launch_threads = (method <= 5 || method == 7) ? 1 : thread_count;
++    device_events_t events = {measure_device, 0, 0, 0.0};
++    if (measure_device)
++    {
++        check_cuda(cudaEventCreate(&events.start), "create kernel start event");
++        check_cuda(cudaEventCreate(&events.stop), "create kernel stop event");
++    }
+     double start = 0.0, end = 0.0;
+ 
+     if (method >= 1 && method <= 4)
+@@ -230,33 +418,45 @@ double backend_run_method(int method, double *a, int N, int delay,
+             case 1:
+                 // tofrom/copy idea: H2D, kernel, D2H.
+                 copy_host_to_device(d_a, a, N);
++                if (measure_device) event_begin(&events, 0);
+                 delay_one_kernel<<<1, 1>>>(delay, d_a);
++                if (measure_device) event_stop(&events, 0);
+                 check_cuda(cudaGetLastError(), "method 1 launch");
+                 check_cuda(cudaDeviceSynchronize(), "method 1 synchronize");
++                if (measure_device) event_collect(&events);
+                 copy_device_to_host(a, d_a, N);
+                 break;
+ 
+             case 2:
+                 // to/copyin idea: H2D, kernel, no D2H.
+                 copy_host_to_device(d_a, a, N);
++                if (measure_device) event_begin(&events, 0);
+                 delay_one_kernel<<<1, 1>>>(delay, d_a);
++                if (measure_device) event_stop(&events, 0);
+                 check_cuda(cudaGetLastError(), "method 2 launch");
+                 check_cuda(cudaDeviceSynchronize(), "method 2 synchronize");
++                if (measure_device) event_collect(&events);
+                 break;
+ 
+             case 3:
+                 // from/copyout idea: no H2D, kernel, D2H.
++                if (measure_device) event_begin(&events, 0);
+                 delay_one_kernel<<<1, 1>>>(delay, d_a);
++                if (measure_device) event_stop(&events, 0);
+                 check_cuda(cudaGetLastError(), "method 3 launch");
+                 check_cuda(cudaDeviceSynchronize(), "method 3 synchronize");
++                if (measure_device) event_collect(&events);
+                 copy_device_to_host(a, d_a, N);
+                 break;
+ 
+             case 4:
+                 // alloc/create idea: allocate device memory, kernel, no copy.
++                if (measure_device) event_begin(&events, 0);
+                 delay_one_kernel<<<1, 1>>>(delay, d_a);
++                if (measure_device) event_stop(&events, 0);
+                 check_cuda(cudaGetLastError(), "method 4 launch");
+                 check_cuda(cudaDeviceSynchronize(), "method 4 synchronize");
++                if (measure_device) event_collect(&events);
+                 break;
+             }
+ 
+@@ -272,67 +472,116 @@ double backend_run_method(int method, double *a, int N, int delay,
+         // Methods 0 and 5-11 allocate device memory once outside timing.
+         // Then the timed part focuses on launch/parallel behavior.
+         double *d_a = NULL;
++        double *tmp = (double *)calloc((size_t)N, sizeof(double));
++        if (!tmp)
++        {
++            fprintf(stderr, "Allocation failed for tmp[N=%d]\n", N);
++            exit(EXIT_FAILURE);
++        }
+         double *d_tmp = NULL;
++        double *d_private = NULL;
++        double *d_team = NULL;
+         cudaStream_t stream = NULL;
+         check_cuda(cudaMalloc((void **)&d_a, (size_t)max_array_size * sizeof(double)), "cudaMalloc d_a");
+         check_cuda(cudaMalloc((void **)&d_tmp, (size_t)N * sizeof(double)), "cudaMalloc d_tmp");
+         copy_host_to_device(d_a, a, max_array_size);
+-        check_cuda(cudaMemset(d_tmp, 0, (size_t)N * sizeof(double)), "cudaMemset d_tmp");
+-        check_cuda(cudaStreamCreate(&stream), "cudaStreamCreate");
++        copy_host_to_device(d_tmp, tmp, N);
++        if (method == 9)
++        {
++            size_t participants = (size_t)block_count * thread_count;
++            if (participants > SIZE_MAX / sizeof(double) / (size_t)N)
++            {
++                fprintf(stderr, "CUDA array reduction workspace size overflow\n");
++                exit(EXIT_FAILURE);
++            }
++            check_cuda(cudaMalloc((void **)&d_private, participants * N * sizeof(double)),
++                       "cudaMalloc array reduction private buckets");
++            check_cuda(cudaMalloc((void **)&d_team, (size_t)block_count * N * sizeof(double)),
++                       "cudaMalloc array reduction team buckets");
++        }
++        if (method == 7)
++            check_cuda(cudaStreamCreate(&stream), "cudaStreamCreate");
++        check_cuda(cudaDeviceSynchronize(), "resident data setup synchronize");
+ 
++#ifdef MICROBENCHMARK_RESIDENT_DATA
++        MICROBENCHMARK_RESIDENT_DATA(d_a, d_tmp);
++#endif
+         start = get_time_usec();
+         for (int rep = 0; rep < inner_reps; rep++)
+         {
+             switch (method)
+             {
+             case 0:
++                if (measure_device) event_begin(&events, 0);
+                 delay_one_kernel<<<1, 1>>>(delay, d_a);
++                if (measure_device) event_stop(&events, 0);
+                 check_cuda(cudaGetLastError(), "method 0 launch");
+                 check_cuda(cudaDeviceSynchronize(), "method 0 synchronize");
++                if (measure_device) event_collect(&events);
+                 break;
+ 
+             case 5:
+-                block_scalar_kernel<<<block_count, 1>>>(delay, d_a, max_array_size);
++                if (measure_device) event_begin(&events, 0);
++                block_scalar_kernel<<<block_count, 1>>>(delay, d_a, max_array_size, requested_teams);
++                if (measure_device) event_stop(&events, 0);
+                 check_cuda(cudaGetLastError(), "method 5 launch");
+                 check_cuda(cudaDeviceSynchronize(), "method 5 synchronize");
++                if (measure_device) event_collect(&events);
+                 break;
+ 
+             case 6:
+-                loop_kernel<<<block_count, thread_count>>>(delay, d_a, max_iter);
++                if (measure_device) event_begin(&events, 0);
++                loop_kernel<<<block_count, thread_count>>>(delay, d_a, max_iter, schedule);
++                if (measure_device) event_stop(&events, 0);
+                 check_cuda(cudaGetLastError(), "method 6 launch");
+                 check_cuda(cudaDeviceSynchronize(), "method 6 synchronize");
++                if (measure_device) event_collect(&events);
+                 break;
+ 
+             case 7:
+                 // Async case: launch into a CUDA stream, then explicitly wait.
+-                loop_kernel<<<block_count, thread_count, 0, stream>>>(delay, d_a, max_iter);
++                if (measure_device) event_begin(&events, stream);
++                delay_one_kernel<<<1, 1, 0, stream>>>(delay, d_a);
++                if (measure_device) event_stop(&events, stream);
+                 check_cuda(cudaGetLastError(), "method 7 launch");
+                 check_cuda(cudaStreamSynchronize(stream), "method 7 stream synchronize");
++                if (measure_device) event_collect(&events);
+                 break;
+ 
+             case 8:
+-                atomic_kernel<<<block_count, thread_count>>>(delay, d_a, d_tmp, max_iter, N);
++                if (measure_device) event_begin(&events, 0);
++                atomic_kernel<<<block_count, thread_count>>>(delay, d_a, d_tmp, max_iter, N, schedule);
++                if (measure_device) event_stop(&events, 0);
+                 check_cuda(cudaGetLastError(), "method 8 launch");
+                 check_cuda(cudaDeviceSynchronize(), "method 8 synchronize");
++                if (measure_device) event_collect(&events);
+                 break;
+ 
+             case 9:
+-                check_cuda(cudaMemset(d_tmp, 0, sizeof(double)), "method 9 reset reduction output");
+-                reduction_kernel<<<block_count, thread_count, (size_t)thread_count * sizeof(double)>>>(delay, d_a, d_tmp, max_iter);
++                if (measure_device) event_begin(&events, 0);
++                reduction_kernel<<<block_count, thread_count>>>(delay, d_a, d_tmp, d_private, d_team, max_iter, N, schedule);
++                if (measure_device) event_stop(&events, 0);
+                 check_cuda(cudaGetLastError(), "method 9 launch");
+                 check_cuda(cudaDeviceSynchronize(), "method 9 synchronize");
++                if (measure_device) event_collect(&events);
+                 break;
+ 
+             case 10:
+-                launch_shape_kernel<<<block_count, thread_count>>>(delay, d_a, max_array_size);
++                if (measure_device) event_begin(&events, 0);
++                teams_parallel_kernel<<<block_count, thread_count>>>(delay, d_a, max_array_size, requested_teams);
++                if (measure_device) event_stop(&events, 0);
+                 check_cuda(cudaGetLastError(), "method 10 launch");
+                 check_cuda(cudaDeviceSynchronize(), "method 10 synchronize");
++                if (measure_device) event_collect(&events);
+                 break;
+ 
+             case 11:
+-                repeated_launch_shape_kernel<<<block_count, thread_count>>>(delay, d_a, max_array_size, N);
++                if (measure_device) event_begin(&events, 0);
++                repeated_teams_parallel_kernel<<<block_count, thread_count>>>(delay, d_a, max_array_size, N, requested_threads);
++                if (measure_device) event_stop(&events, 0);
+                 check_cuda(cudaGetLastError(), "method 11 launch");
+                 check_cuda(cudaDeviceSynchronize(), "method 11 synchronize");
++                if (measure_device) event_collect(&events);
+                 break;
+             }
+ 
+@@ -346,10 +595,50 @@ double backend_run_method(int method, double *a, int N, int delay,
+         end = get_time_usec();
+ 
+         copy_device_to_host(a, d_a, max_array_size);
+-        check_cuda(cudaStreamDestroy(stream), "cudaStreamDestroy");
++        copy_device_to_host(tmp, d_tmp, N);
++#ifdef MICROBENCHMARK_RESULT
++        MICROBENCHMARK_RESULT(a, tmp);
++#endif
++        if (method == 7)
++            check_cuda(cudaStreamDestroy(stream), "cudaStreamDestroy");
++        if (d_team)
++            check_cuda(cudaFree(d_team), "cudaFree reduction team buckets");
++        if (d_private)
++            check_cuda(cudaFree(d_private), "cudaFree reduction private buckets");
+         check_cuda(cudaFree(d_tmp), "cudaFree d_tmp");
+         check_cuda(cudaFree(d_a), "cudaFree d_a");
++        free(tmp);
+     }
+ 
++    if (schedule.indices) check_cuda(cudaFree((void *)schedule.indices), "free profile indices");
++    if (schedule.offsets) check_cuda(cudaFree((void *)schedule.offsets), "free profile offsets");
++    if (schedule.chunk_counts) check_cuda(cudaFree((void *)schedule.chunk_counts), "free profile chunk counts");
++    if (measure_device)
++    {
++        check_cuda(cudaEventDestroy(events.stop), "destroy kernel stop event");
++        check_cuda(cudaEventDestroy(events.start), "destroy kernel start event");
++        return events.total_us / inner_reps;
++    }
+     return (end - start) / inner_reps;
+ }
++
++double backend_run_method(int method, double *a, int N, int delay,
++                          int max_iter, int max_array_size,
++                          const backend_config_t *config, int inner_reps)
++{
++    return run_cuda_method<false>(method, a, N, delay, max_iter, max_array_size, config, inner_reps);
++}
++
++double backend_run_device_method(int method, const double *a, int N, int delay,
++                                 int max_iter, int max_array_size,
++                                 const backend_config_t *config, int inner_reps)
++{
++    // Preserve the original sample's host state. The profile executes exactly
++    // the same method on a clone and never feeds its increments into the driver.
++    double *profile_a = (double *)malloc((size_t)max_array_size * sizeof(double));
++    if (!profile_a) { fprintf(stderr, "CUDA device profile host allocation failed\n"); exit(EXIT_FAILURE); }
++    memcpy(profile_a, a, (size_t)max_array_size * sizeof(double));
++    double result = run_cuda_method<true>(method, profile_a, N, delay, max_iter, max_array_size, config, inner_reps);
++    free(profile_a);
++    return result;
++}
+diff --git a/src/backends/openacc/backend.c b/src/backends/openacc/backend.c
+index b817231..df05f7d 100644
+--- a/src/backends/openacc/backend.c
++++ b/src/backends/openacc/backend.c
+@@ -1,6 +1,7 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <sys/time.h>
++#include <stdint.h>
+ #include <openacc.h>
+ #include "backend.h"
+ 
+@@ -133,7 +134,26 @@ double backend_run_method(int method, double *a, int N, int delay,
+         for (int i = 0; i < N; ++i)
+             tmp[i] = 0.0;
+ 
+-#pragma acc data copy(a[0:max_array_size], tmp[0:N])
++        double *reduction_private = NULL;
++        size_t reduction_size = 1;
++        if (method == 9)
++        {
++            if (gang_count <= 0 || worker_count <= 0 || N <= 0 ||
++                (size_t)gang_count > SIZE_MAX / ((size_t)worker_count + 1) / (size_t)N / sizeof(double))
++            {
++                fprintf(stderr, "Invalid OpenACC array reduction workspace size\n");
++                exit(EXIT_FAILURE);
++            }
++            reduction_size = (size_t)gang_count * ((size_t)worker_count + 1) * N;
++        }
++        reduction_private = (double *)malloc(reduction_size * sizeof(double));
++        if (!reduction_private)
++        {
++            fprintf(stderr, "Allocation failed for OpenACC array reduction workspace\n");
++            exit(EXIT_FAILURE);
++        }
++
++#pragma acc data copy(a[0:max_array_size], tmp[0:N]) create(reduction_private[0:reduction_size])
+         {
+             start = get_time_usec();
+ 
+@@ -184,19 +204,57 @@ double backend_run_method(int method, double *a, int N, int delay,
+                     break;
+ 
+                 case 9:
+-                {
+-                    // Reduction path using an OpenACC scalar reduction.
+-                    double reduction_sum = 0.0;
+-#pragma acc parallel loop num_gangs(gang_count) vector_length(worker_count) reduction(+ : reduction_sum) present(a[0:max_array_size])
+-                    for (int i = 0; i < max_iter; ++i)
++                    // Explicit array reduction: NVHPC does not support subarrays
++                    // in reduction clauses. Preserve N private buckets per lane.
++#pragma acc parallel num_gangs(gang_count) vector_length(worker_count) present(a[0:max_array_size], tmp[0:N], reduction_private[0:reduction_size])
+                     {
+-                        delay_kernel(delay, &a[i]);
+-                        reduction_sum += 1.0;
++#pragma acc loop gang
++                        for (int team = 0; team < gang_count; ++team)
++                        {
++                            size_t base = (size_t)team * worker_count * N;
++                            size_t team_base = (size_t)gang_count * worker_count * N + (size_t)team * N;
++#pragma acc loop vector
++                            for (int j = 0; j < N; ++j)
++                                reduction_private[team_base + j] = 0.0;
++#pragma acc loop seq
++                            for (long long chunk = (long long)team * worker_count;
++                                 chunk < max_iter; chunk += (long long)gang_count * worker_count)
++                            {
++#pragma acc loop vector
++                                for (int lane = 0; lane < worker_count; ++lane)
++                                {
++                                    size_t local = base + (size_t)lane * N;
++#pragma acc loop seq
++                                    for (int j = 0; j < N; ++j)
++                                        reduction_private[local + j] = 0.0;
++                                    long long i = chunk + lane;
++                                    if (i < max_iter)
++                                    {
++                                        delay_kernel(delay, &a[i]);
++                                        reduction_private[local + i % N] += 1.0;
++                                    }
++                                }
++                                // Each vector loop completes before the gang
++                                // merges or starts its next distributed chunk.
++#pragma acc loop vector
++                                for (int j = 0; j < N; ++j)
++                                {
++                                    double sum = 0.0;
++#pragma acc loop seq
++                                    for (int lane = 0; lane < worker_count; ++lane)
++                                        sum += reduction_private[base + (size_t)lane * N + j];
++                                    reduction_private[team_base + j] += sum;
++                                }
++                            }
++#pragma acc loop vector
++                            for (int j = 0; j < N; ++j)
++                            {
++#pragma acc atomic update
++                                tmp[j] += reduction_private[team_base + j];
++                            }
++                        }
+                     }
+-                    if (reduction_sum < 0.0)
+-                        printf("%f\n", reduction_sum);
+                     break;
+-                }
+ 
+                 case 10:
+                     // Explicit gang/worker launch with a worker-level loop.
+@@ -239,6 +297,7 @@ double backend_run_method(int method, double *a, int N, int delay,
+             end = get_time_usec();
+         }
+ 
++        free(reduction_private);
+         free(tmp);
+     }
+ 
+diff --git a/src/core/backend.h b/src/core/backend.h
+index 0416091..32655de 100644
+--- a/src/core/backend.h
++++ b/src/core/backend.h
+@@ -36,6 +36,19 @@ double backend_run_method(int method, double *a, int N, int delay,
+                           const backend_config_t *config,
+                           int inner_reps);
+ 
++#ifdef MICROBENCHMARK_CUDA
++const char *backend_cuda_alignment_mode(void);
++void backend_cuda_last_launch_config(int *blocks, int *threads);
++
++// Separate CUDA profiling pass. The backend clones a and returns the mean
++// same-stream event interval around each kernel, excluding allocation/copies.
++// Profiling must leave the baseline host array and timing window unchanged.
++double backend_run_device_method(int method, const double *a, int N, int delay,
++                                 int max_iter, int max_array_size,
++                                 const backend_config_t *config,
++                                 int inner_reps);
++#endif
++
+ #ifdef __cplusplus
+ }
+ #endif
+diff --git a/src/core/driver.c b/src/core/driver.c
+index 6fbda99..9ba5c9a 100644
+--- a/src/core/driver.c
++++ b/src/core/driver.c
+@@ -8,10 +8,15 @@
+ #define OUTPUT_FILE "overhead_distribution.txt"
+ #define RAW_OUTPUT_FILE "raw_times.csv"
+ 
++#ifdef MICROBENCHMARK_CUDA
++#define DEVICE_OUTPUT_FILE "cuda_device_times.csv"
++static int g_device_timing = 0;
++#endif
++
+ #define N_DEF 16382
+-#define NUM_SAMPLES 20
++#define MAX_DELAY_POINTS 32
+ #define MIN_DELAYLENGTH 1
+-#define MAX_DELAYLENGTH 8096
++#define MAX_DELAYLENGTH 8192
+ #define INNERREPS 20
+ #define MAX_ITER_DEF 6656
+ #define MAX_ARRAY_SIZE_DEF 65536
+@@ -19,6 +24,7 @@
+ #define WARMUP_ITERATIONS 10
+ #define BENCHMARK_SETS 2
+ #define BENCHMARK_RUNS 5
++#define NUM_SAMPLES (BENCHMARK_SETS * BENCHMARK_RUNS)
+ #define NUM_SIZES 16
+ #define MAX_METHODS 32
+ 
+@@ -27,8 +33,9 @@ static int g_max_array_size = MAX_ARRAY_SIZE_DEF;
+ static int g_min_delaylength = MIN_DELAYLENGTH;
+ static int g_max_delaylength = MAX_DELAYLENGTH;
+ 
+-static double delays[NUM_SAMPLES];
+-static double execution_times[BENCHMARK_SETS][BENCHMARK_RUNS][NUM_SAMPLES][OUTERREPS];
++static int g_num_delay_points = 0;
++static double delays[MAX_DELAY_POINTS];
++static double execution_times[BENCHMARK_SETS][BENCHMARK_RUNS][MAX_DELAY_POINTS][OUTERREPS];
+ 
+ // Command-line options use key=value form, for example Method=1,2 or N=16384.
+ static int key_matches(const char *arg, const char *key)
+@@ -87,23 +94,30 @@ static void parse_delay_bounds(char *value)
+ 
+ static void generate_delays(void)
+ {
+-    // Delay values are log-spaced so the benchmark covers short launch costs
+-    // and longer kernel work in the same run.
+-    double log_min = log2((double)g_min_delaylength);
+-    double log_max = log2((double)g_max_delaylength);
++    // The paper protocol uses non-zero powers of two. Requiring power-of-two
++    // bounds prevents a nominal range such as 1..8096 from silently producing
++    // a different, implementation-defined sampling grid.
++    if (g_min_delaylength <= 0 || g_max_delaylength < g_min_delaylength ||
++        (g_min_delaylength & (g_min_delaylength - 1)) != 0 ||
++        (g_max_delaylength & (g_max_delaylength - 1)) != 0)
++    {
++        fprintf(stderr,
++                "Delay bounds must be positive powers of two (got %d,%d).\n",
++                g_min_delaylength, g_max_delaylength);
++        exit(EXIT_FAILURE);
++    }
+ 
+-    for (int i = 0; i < NUM_SAMPLES; ++i)
++    g_num_delay_points = 0;
++    for (int delay = g_min_delaylength; delay <= g_max_delaylength; delay *= 2)
+     {
+-        if (i == 0)
+-            delays[i] = g_min_delaylength;
+-        else if (i == NUM_SAMPLES - 1)
+-            delays[i] = g_max_delaylength;
+-        else
++        if (g_num_delay_points >= MAX_DELAY_POINTS)
+         {
+-            double ratio = (double)i / (NUM_SAMPLES - 1);
+-            double log_val = log_min + (log_max - log_min) * ratio;
+-            delays[i] = pow(2.0, log_val);
++            fprintf(stderr, "Too many delay points (maximum %d).\n", MAX_DELAY_POINTS);
++            exit(EXIT_FAILURE);
+         }
++        delays[g_num_delay_points++] = (double)delay;
++        if (delay > g_max_delaylength / 2)
++            break;
+     }
+ }
+ 
+@@ -132,11 +146,11 @@ static void run_target(int method, int set, int run, double *a, int N,
+ {
+     // One run visits every sampled delay. The backend measures one delay point;
+     // the shared driver stores raw data and keeps the output format identical.
+-    int perm[NUM_SAMPLES];
++    int perm[MAX_DELAY_POINTS];
+     unsigned int seed = 12345u + 97u * (unsigned int)set + 1009u * (unsigned int)(run + 1);
+-    shuffle_indices(perm, NUM_SAMPLES, seed);
++    shuffle_indices(perm, g_num_delay_points, seed);
+ 
+-    for (int sidx = 0; sidx < NUM_SAMPLES; ++sidx)
++    for (int sidx = 0; sidx < g_num_delay_points; ++sidx)
+     {
+         int logical = perm[sidx];
+         int delay = (int)delays[logical];
+@@ -169,6 +183,51 @@ static void run_target(int method, int set, int run, double *a, int N,
+     }
+ }
+ 
++#ifdef MICROBENCHMARK_CUDA
++static void run_device_target(int method, int set, int run, const double *a, int N,
++                              const backend_config_t *config)
++{
++    // This pass runs after every baseline sample has completed, so event
++    // profiling cannot alter the GPU state seen by later baseline samples.
++    int perm[MAX_DELAY_POINTS];
++    unsigned int seed = 12345u + 97u * (unsigned int)set + 1009u * (unsigned int)(run + 1);
++    shuffle_indices(perm, g_num_delay_points, seed);
++    for (int sidx = 0; sidx < g_num_delay_points; ++sidx)
++    {
++        int logical = perm[sidx];
++        int delay = (int)delays[logical];
++        for (int orep = 0; orep < OUTERREPS; ++orep)
++        {
++            // The CUDA backend clones a; neither raw baseline data nor the
++            // baseline fitting arrays are changed by this profiling call.
++            double device_us = backend_run_device_method(
++                method, a, N, delay, g_max_iter, g_max_array_size, config, INNERREPS);
++            int actual_blocks = 0, actual_threads = 0;
++            backend_cuda_last_launch_config(&actual_blocks, &actual_threads);
++            if (!isfinite(device_us) || device_us < 0.0)
++            {
++                fprintf(stderr, "Invalid CUDA device time for method %d.\n", method);
++                exit(EXIT_FAILURE);
++            }
++            FILE *device_raw = fopen(DEVICE_OUTPUT_FILE, "a");
++            if (!device_raw)
++            {
++                perror("fopen cuda_device_times.csv failed");
++                exit(EXIT_FAILURE);
++            }
++            fprintf(device_raw,
++                    "%d,\"%s\",%d,%d,%d,%d,%d,%.0f,%d,%d,%d,%d,%.9f,same_stream_events_separate_pass,%d,%d,%s\n",
++                    method, backend_method_name(method), N,
++                    config->control_a, config->control_b,
++                    set, run, delays[logical], orep,
++                    g_max_iter, g_max_array_size, INNERREPS, device_us,
++                    actual_blocks, actual_threads, backend_cuda_alignment_mode());
++            fclose(device_raw);
++        }
++    }
++}
++#endif
++
+ static void warmup_cache(int method, int N, const backend_config_t *config)
+ {
+     // Warmup is not recorded. It gives the runtime and target device a chance
+@@ -208,17 +267,15 @@ static void compute_offloading_time(double *intercept_avg, double *intercept_err
+ 
+     int total_runs = BENCHMARK_SETS * BENCHMARK_RUNS;
+     double intercepts[total_runs];
+-    double mins[total_runs];
+     double sum_intercept = 0.0, sumsq_intercept = 0.0;
+-    double sum_min = 0.0, sumsq_min = 0.0;
+     int idx = 0;
+ 
+     for (int set = 0; set < BENCHMARK_SETS; ++set)
+     {
+         for (int run = 0; run < BENCHMARK_RUNS; ++run)
+         {
+-            double avg_y[NUM_SAMPLES];
+-            for (int i = 0; i < NUM_SAMPLES; ++i)
++            double avg_y[MAX_DELAY_POINTS];
++            for (int i = 0; i < g_num_delay_points; ++i)
+             {
+                 double sum = 0.0;
+                 for (int orep = 0; orep < OUTERREPS; ++orep)
+@@ -228,7 +285,7 @@ static void compute_offloading_time(double *intercept_avg, double *intercept_err
+ 
+             double run_min = avg_y[0];
+             double run_min_delay = delays[0];
+-            for (int i = 1; i < NUM_SAMPLES; ++i)
++            for (int i = 1; i < g_num_delay_points; ++i)
+             {
+                 if (avg_y[i] < run_min)
+                 {
+@@ -242,14 +299,14 @@ static void compute_offloading_time(double *intercept_avg, double *intercept_err
+             double best_a = 0.0, best_b = 0.0, best_R2 = 0.0;
+ 
+             const double MIN_KEEP_RATIO = 0.5;
+-            int min_keep = (NUM_SAMPLES <= 10) ? 5 : (int)ceil(NUM_SAMPLES * MIN_KEEP_RATIO);
++            int min_keep = (g_num_delay_points <= 10) ? 5 : (int)ceil(g_num_delay_points * MIN_KEEP_RATIO);
+ 
+-            for (int k = 0; k <= NUM_SAMPLES - min_keep; ++k)
++            for (int k = 0; k <= g_num_delay_points - min_keep; ++k)
+             {
+-                int n = NUM_SAMPLES - k;
++                int n = g_num_delay_points - k;
+                 double sum_x = 0.0, sum_y = 0.0, sum_xx = 0.0, sum_xy = 0.0;
+ 
+-                for (int i = k; i < NUM_SAMPLES; ++i)
++                for (int i = k; i < g_num_delay_points; ++i)
+                 {
+                     sum_x += delays[i];
+                     sum_y += avg_y[i];
+@@ -266,7 +323,7 @@ static void compute_offloading_time(double *intercept_avg, double *intercept_err
+                 double rss = 0.0, tss = 0.0;
+                 double mean_y = sum_y / n;
+ 
+-                for (int i = k; i < NUM_SAMPLES; ++i)
++                for (int i = k; i < g_num_delay_points; ++i)
+                 {
+                     double yhat = a + b * delays[i];
+                     double e = avg_y[i] - yhat;
+@@ -293,9 +350,7 @@ static void compute_offloading_time(double *intercept_avg, double *intercept_err
+             }
+ 
+             intercepts[idx] = best_a;
+-            mins[idx] = run_min;
+             sum_intercept += best_a;
+-            sum_min += run_min;
+ 
+ #ifdef PRINT_DISTRIBUTION
+             fprintf(file,
+@@ -308,20 +363,57 @@ static void compute_offloading_time(double *intercept_avg, double *intercept_err
+     }
+ 
+     *intercept_avg = sum_intercept / idx;
+-    *min_avg = sum_min / idx;
++
++    // Paper estimator: average the ten timing samples independently at each
++    // delay, then choose the smallest observed per-delay mean. The reported
++    // uncertainty is the sample standard deviation at that selected delay.
++    int best_delay = 0;
++    double best_mean = INFINITY;
++    double best_sd = 0.0;
++    for (int d = 0; d < g_num_delay_points; ++d)
++    {
++        double sum = 0.0;
++        int count = 0;
++        for (int set = 0; set < BENCHMARK_SETS; ++set)
++            for (int run = 0; run < BENCHMARK_RUNS; ++run)
++                for (int orep = 0; orep < OUTERREPS; ++orep)
++                {
++                    sum += execution_times[set][run][d][orep];
++                    count++;
++                }
++
++        double mean = sum / count;
++        double sumsq = 0.0;
++        for (int set = 0; set < BENCHMARK_SETS; ++set)
++            for (int run = 0; run < BENCHMARK_RUNS; ++run)
++                for (int orep = 0; orep < OUTERREPS; ++orep)
++                {
++                    double delta = execution_times[set][run][d][orep] - mean;
++                    sumsq += delta * delta;
++                }
++        double sd = (count > 1) ? sqrt(sumsq / (count - 1)) : 0.0;
++
++        if (mean < best_mean)
++        {
++            best_delay = d;
++            best_mean = mean;
++            best_sd = sd;
++        }
++    }
++    *min_avg = best_mean;
++    *min_err = best_sd;
+ 
+     for (int i = 0; i < idx; ++i)
+     {
+         sumsq_intercept += (intercepts[i] - *intercept_avg) * (intercepts[i] - *intercept_avg);
+-        sumsq_min += (mins[i] - *min_avg) * (mins[i] - *min_avg);
+     }
+ 
+     *intercept_err = (idx > 1) ? sqrt(sumsq_intercept / (idx - 1)) : 0.0;
+-    *min_err = (idx > 1) ? sqrt(sumsq_min / (idx - 1)) : 0.0;
+ 
+ #ifdef PRINT_DISTRIBUTION
+     fprintf(file, "Average Intercept = %.6f ± %.6f us\n", *intercept_avg, *intercept_err);
+-    fprintf(file, "Average Lowest    = %.6f ± %.6f us\n", *min_avg, *min_err);
++    fprintf(file, "Minimum Delay Mean = %.6f ± %.6f us @ delay=%.0f (%d samples)\n",
++            *min_avg, *min_err, delays[best_delay], NUM_SAMPLES);
+ #endif
+ 
+     fclose(file);
+@@ -348,6 +440,18 @@ int main(int argc, char **argv)
+         {
+             continue;
+         }
++#ifdef MICROBENCHMARK_CUDA
++        else if (key_matches(argv[i], "DeviceTiming"))
++        {
++            const char *value = value_for(argv[i]);
++            if (strcmp(value, "0") != 0 && strcmp(value, "1") != 0)
++            {
++                fprintf(stderr, "DeviceTiming must be 0 or 1.\n");
++                return 1;
++            }
++            g_device_timing = value[0] == '1';
++        }
++#endif
+         else if (key_matches(argv[i], "Method"))
+         {
+             parse_int_list(value_for(argv[i]), methods, &num_methods, MAX_METHODS);
+@@ -456,11 +560,17 @@ int main(int argc, char **argv)
+ 
+     printf("MAX_ITER      : %d  (kernel workload)\n", g_max_iter);
+     printf("MAX_ARRAY_SIZE: %d  (mapping/memory space)\n", g_max_array_size);
+-    printf("NUM_SAMPLES   : %d\n", NUM_SAMPLES);
++    printf("DELAY_POINTS  : %d (powers of two)\n", g_num_delay_points);
++    printf("NUM_SAMPLES   : %d (per delay)\n", NUM_SAMPLES);
+     printf("OUTERREPS     : %d\n", OUTERREPS);
+     printf("WARMUP_ITERS  : %d\n", WARMUP_ITERATIONS);
+     printf("BENCHMARK_SETS: %d\n", BENCHMARK_SETS);
+     printf("BENCHMARK_RUNS: %d\n", BENCHMARK_RUNS);
++#ifdef MICROBENCHMARK_CUDA
++    printf("DEVICE_TIMING : %s\n", g_device_timing
++           ? "same-stream CUDA events in a separate pass; host timing windows unchanged"
++           : "disabled (DeviceTiming=1 enables a separate profiling pass)");
++#endif
+     printf("==========================================\n");
+ 
+     if (!backend_device_available())
+@@ -478,6 +588,22 @@ int main(int argc, char **argv)
+             backend_control_a_name(), backend_control_b_name());
+     fclose(raw);
+ 
++#ifdef MICROBENCHMARK_CUDA
++    if (g_device_timing)
++    {
++        FILE *device_raw = fopen(DEVICE_OUTPUT_FILE, "w");
++        if (!device_raw)
++        {
++            perror("Failed to open CUDA device data file.");
++            backend_finalise();
++            return 1;
++        }
++        fprintf(device_raw,
++                "method_id,method_name,N,block_count,thread_count,set,run,delaylength,outerreps,max_iter,max_array_size,inner_reps,device_kernel_us,measurement_mode,actual_block_count,actual_thread_count,alignment_mode\n");
++        fclose(device_raw);
++    }
++#endif
++
+     printf("\n========== Benchmark Execution ==========\n");
+     printf("%-40s", "Method/N");
+     for (int i = 0; i < num_Ns; ++i)
+@@ -486,7 +612,7 @@ int main(int argc, char **argv)
+ 
+     printf("%-40s", "");
+     for (int i = 0; i < num_Ns; ++i)
+-        printf("%30s", "BIC intercept | lowest");
++        printf("%30s", "BIC intercept | min mean");
+     printf("\n");
+     fflush(stdout);
+ 
+@@ -538,6 +664,46 @@ int main(int argc, char **argv)
+     }
+ 
+     printf("==========================================\n");
++#ifdef MICROBENCHMARK_CUDA
++    if (g_device_timing)
++    {
++        printf("\n========== CUDA Device Profiling (Separate Pass) ==========\n");
++        printf("Baseline samples are complete. Events bracket each kernel; allocation and copies are excluded.\n");
++        fflush(stdout);
++        for (int midx = 0; midx < (num_methods == 0 ? backend_num_methods() : num_methods); ++midx)
++        {
++            int method = num_methods == 0 ? midx : methods[midx];
++            if (method < 0 || method >= backend_num_methods())
++                continue;
++            for (int ca = 0; ca < num_control_as; ++ca)
++            {
++                for (int cb = 0; cb < num_control_bs; ++cb)
++                {
++                    backend_config_t config = {control_as[ca], control_bs[cb]};
++                    for (int nidx = 0; nidx < num_Ns; ++nidx)
++                    {
++                        int N = Ns[nidx];
++                        double *a = (double *)calloc((size_t)g_max_array_size, sizeof(double));
++                        if (!a)
++                        {
++                            fprintf(stderr, "Device profiling allocation failed for N=%d\n", N);
++                            exit(EXIT_FAILURE);
++                        }
++                        warmup_cache(method, N, &config);
++                        for (int set = 0; set < BENCHMARK_SETS; ++set)
++                            for (int run = 0; run < BENCHMARK_RUNS; ++run)
++                                run_device_target(method, set, run, a, N, &config);
++                        printf("Profiled method=%d N=%d requested blocks=%d threads=%d\n",
++                               method, N, config.control_a, config.control_b);
++                        fflush(stdout);
++                        free(a);
++                    }
++                }
++            }
++        }
++        printf("Device profiling samples saved to %s\n", DEVICE_OUTPUT_FILE);
++    }
++#endif
+     backend_finalise();
+     return 0;
+ }

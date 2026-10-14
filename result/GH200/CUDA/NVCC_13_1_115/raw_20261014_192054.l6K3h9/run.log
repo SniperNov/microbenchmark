@@ -1,0 +1,369 @@
+Raw-data output directory: /work/weiyu/microbenchmark/result/GH200/CUDA/NVCC_13_1_115/raw_20261014_192054.l6K3h9
+GH200 CUDA: compiler=NVCC_13_1_115 groups=132 width=32
+GPU: NVIDIA GH200 480GB, 580.95.05
+make -f Makefile.backend \
+	DEFS=Makefile.defs.cuda.nvcc \
+	EXTRA_CFLAGS="-arch=sm_90 -DMICROBENCHMARK_CUDA" \
+	BACKEND_HEADERS="src/backends/cuda/openmp_profile.h" \
+	BIN=build/microbenchmark_cuda \
+	SRC="src/core/driver.c src/backends/cuda/backend.cu"
+make[1]: Entering directory '/work/weiyu/microbenchmark'
+nvcc -O0 -arch=sm_90 -DMICROBENCHMARK_CUDA -I src/core -o build/microbenchmark_cuda src/core/driver.c src/backends/cuda/backend.cu  -lm
+make[1]: Leaving directory '/work/weiyu/microbenchmark'
+
+===== [M0_M10] Method=0,10 N=16382 Delay=1,8192 =====
+========== Runtime Configuration ==========
+API           : cuda
+Methods       : 0, 10
+Delay range   : [1, 8192]
+Array size(s) : 16382
+block_count    : 132
+thread_count   : 32
+MAX_ITER      : 16382  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+DELAY_POINTS  : 14 (powers of two)
+NUM_SAMPLES   : 10 (per delay)
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+DEVICE_TIMING : same-stream CUDA events in a separate pass; host timing windows unchanged
+==========================================
+Number of available CUDA devices: 1
+CUDA device 0: NVIDIA GH200 480GB
+CUDA SM count: 132
+CUDA launch/schedule has no OpenMP runtime profile; actual participant/owner equivalence is unverified.
+Initializing CUDA benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                         16382
+                                              BIC intercept | min mean
+pure delay kernel                            7.702±0.051      |      7.645±0.107     
+kernel launch blocks + threads               7.870±0.035      |      7.823±0.104     
+==========================================
+
+========== CUDA Device Profiling (Separate Pass) ==========
+Baseline samples are complete. Events bracket each kernel; allocation and copies are excluded.
+Profiled method=0 N=16382 requested blocks=132 threads=32
+Profiled method=10 N=16382 requested blocks=132 threads=32
+Device profiling samples saved to cuda_device_times.csv
+Finalizing CUDA benchmark.
+
+===== [M1to4] Method=1,2,3,4 N=1,4,16,64,256,1024,4096,8192,16382,32768,65536 Delay=1,8192 =====
+========== Runtime Configuration ==========
+API           : cuda
+Methods       : 1, 2, 3, 4
+Delay range   : [1, 8192]
+Array size(s) : 1, 4, 16, 64, 256, 1024, 4096, 8192, 16382, 32768, 65536
+block_count    : 132
+thread_count   : 32
+MAX_ITER      : 65536  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+DELAY_POINTS  : 14 (powers of two)
+NUM_SAMPLES   : 10 (per delay)
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+DEVICE_TIMING : same-stream CUDA events in a separate pass; host timing windows unchanged
+==========================================
+Number of available CUDA devices: 1
+CUDA device 0: NVIDIA GH200 480GB
+CUDA SM count: 132
+CUDA launch/schedule has no OpenMP runtime profile; actual participant/owner equivalence is unverified.
+Initializing CUDA benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                             1                             4                            16                            64                           256                          1024                          4096                          8192                         16382                         32768                         65536
+                                              BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean
+cudaMalloc + H2D + kernel + D2H + cudaFree   106.700±1.130      |    104.851±1.409        106.467±1.138      |    105.271±1.959        106.935±0.729      |    105.604±1.873        107.101±0.641      |    106.629±1.182        106.919±0.448      |    106.597±1.447        107.535±0.892      |    106.510±1.452        108.576±0.670      |    107.454±1.397        113.499±0.686      |    113.027±0.863        114.079±0.710      |    114.073±1.614        114.381±0.455      |    114.240±1.471        116.835±1.121      |    116.301±1.033     
+cudaMalloc + H2D + kernel + cudaFree        94.729±0.635      |     93.901±2.318         94.174±0.377      |     93.329±1.184         94.408±0.709      |     93.530±1.346         95.137±0.599      |     94.464±1.808         97.213±0.538      |     96.351±1.104         97.039±0.490      |     96.295±1.196         98.045±0.467      |     97.063±1.150        101.380±0.839      |    100.614±1.107        104.601±0.734      |    103.878±1.859        106.186±0.763      |    105.256±1.099        106.104±0.663      |    104.901±1.278     
+cudaMalloc + kernel + D2H + cudaFree       103.723±0.623      |    102.888±1.344        103.550±0.662      |    103.116±1.701        103.462±0.719      |    103.284±1.090        103.551±0.615      |    102.973±0.858        103.451±0.804      |    102.629±1.353        103.896±0.656      |    102.774±1.343        103.054±0.832      |    102.767±0.768        103.753±0.612      |    102.908±1.115        103.643±0.680      |    102.997±0.852        104.183±0.342      |    103.374±1.219        105.150±0.820      |    104.271±1.290     
+cudaMalloc + kernel + cudaFree              91.100±0.697      |     90.201±1.167         91.170±0.410      |     90.496±1.799         90.940±0.470      |     90.393±0.734         91.078±0.426      |     90.385±1.375         91.203±0.559      |     90.864±1.496         91.552±0.581      |     90.576±1.242         91.045±0.487      |     90.469±0.412         91.104±0.548      |     90.157±1.261         91.090±0.466      |     90.706±0.938         91.742±0.755      |     90.537±1.074         91.730±0.434      |     90.881±0.792     
+==========================================
+
+========== CUDA Device Profiling (Separate Pass) ==========
+Baseline samples are complete. Events bracket each kernel; allocation and copies are excluded.
+Profiled method=1 N=1 requested blocks=132 threads=32
+Profiled method=1 N=4 requested blocks=132 threads=32
+Profiled method=1 N=16 requested blocks=132 threads=32
+Profiled method=1 N=64 requested blocks=132 threads=32
+Profiled method=1 N=256 requested blocks=132 threads=32
+Profiled method=1 N=1024 requested blocks=132 threads=32
+Profiled method=1 N=4096 requested blocks=132 threads=32
+Profiled method=1 N=8192 requested blocks=132 threads=32
+Profiled method=1 N=16382 requested blocks=132 threads=32
+Profiled method=1 N=32768 requested blocks=132 threads=32
+Profiled method=1 N=65536 requested blocks=132 threads=32
+Profiled method=2 N=1 requested blocks=132 threads=32
+Profiled method=2 N=4 requested blocks=132 threads=32
+Profiled method=2 N=16 requested blocks=132 threads=32
+Profiled method=2 N=64 requested blocks=132 threads=32
+Profiled method=2 N=256 requested blocks=132 threads=32
+Profiled method=2 N=1024 requested blocks=132 threads=32
+Profiled method=2 N=4096 requested blocks=132 threads=32
+Profiled method=2 N=8192 requested blocks=132 threads=32
+Profiled method=2 N=16382 requested blocks=132 threads=32
+Profiled method=2 N=32768 requested blocks=132 threads=32
+Profiled method=2 N=65536 requested blocks=132 threads=32
+Profiled method=3 N=1 requested blocks=132 threads=32
+Profiled method=3 N=4 requested blocks=132 threads=32
+Profiled method=3 N=16 requested blocks=132 threads=32
+Profiled method=3 N=64 requested blocks=132 threads=32
+Profiled method=3 N=256 requested blocks=132 threads=32
+Profiled method=3 N=1024 requested blocks=132 threads=32
+Profiled method=3 N=4096 requested blocks=132 threads=32
+Profiled method=3 N=8192 requested blocks=132 threads=32
+Profiled method=3 N=16382 requested blocks=132 threads=32
+Profiled method=3 N=32768 requested blocks=132 threads=32
+Profiled method=3 N=65536 requested blocks=132 threads=32
+Profiled method=4 N=1 requested blocks=132 threads=32
+Profiled method=4 N=4 requested blocks=132 threads=32
+Profiled method=4 N=16 requested blocks=132 threads=32
+Profiled method=4 N=64 requested blocks=132 threads=32
+Profiled method=4 N=256 requested blocks=132 threads=32
+Profiled method=4 N=1024 requested blocks=132 threads=32
+Profiled method=4 N=4096 requested blocks=132 threads=32
+Profiled method=4 N=8192 requested blocks=132 threads=32
+Profiled method=4 N=16382 requested blocks=132 threads=32
+Profiled method=4 N=32768 requested blocks=132 threads=32
+Profiled method=4 N=65536 requested blocks=132 threads=32
+Device profiling samples saved to cuda_device_times.csv
+Finalizing CUDA benchmark.
+
+===== [M5] Method=5 N=16382 Delay=1,8192 =====
+========== Runtime Configuration ==========
+API           : cuda
+Methods       : 5
+Delay range   : [1, 8192]
+Array size(s) : 16382
+block_count    : 132
+thread_count   : 32
+MAX_ITER      : 16382  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+DELAY_POINTS  : 14 (powers of two)
+NUM_SAMPLES   : 10 (per delay)
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+DEVICE_TIMING : same-stream CUDA events in a separate pass; host timing windows unchanged
+==========================================
+Number of available CUDA devices: 1
+CUDA device 0: NVIDIA GH200 480GB
+CUDA SM count: 132
+CUDA launch/schedule has no OpenMP runtime profile; actual participant/owner equivalence is unverified.
+Initializing CUDA benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                         16382
+                                              BIC intercept | min mean
+kernel launch blocks scalar                  7.846±0.063      |      7.763±0.061     
+==========================================
+
+========== CUDA Device Profiling (Separate Pass) ==========
+Baseline samples are complete. Events bracket each kernel; allocation and copies are excluded.
+Profiled method=5 N=16382 requested blocks=132 threads=32
+Device profiling samples saved to cuda_device_times.csv
+Finalizing CUDA benchmark.
+
+===== [M6] Method=6 N=16382 Delay=1,8192 =====
+========== Runtime Configuration ==========
+API           : cuda
+Methods       : 6
+Delay range   : [1, 8192]
+Array size(s) : 16382
+block_count    : 132
+thread_count   : 32
+MAX_ITER      : 16382  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+DELAY_POINTS  : 14 (powers of two)
+NUM_SAMPLES   : 10 (per delay)
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+DEVICE_TIMING : same-stream CUDA events in a separate pass; host timing windows unchanged
+==========================================
+Number of available CUDA devices: 1
+CUDA device 0: NVIDIA GH200 480GB
+CUDA SM count: 132
+CUDA launch/schedule has no OpenMP runtime profile; actual participant/owner equivalence is unverified.
+Initializing CUDA benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                         16382
+                                              BIC intercept | min mean
+teams distribute thread loop                 8.608±0.045      |      8.335±0.084     
+==========================================
+
+========== CUDA Device Profiling (Separate Pass) ==========
+Baseline samples are complete. Events bracket each kernel; allocation and copies are excluded.
+Profiled method=6 N=16382 requested blocks=132 threads=32
+Device profiling samples saved to cuda_device_times.csv
+Finalizing CUDA benchmark.
+
+===== [M7] Method=7 N=16382 Delay=1,8192 =====
+========== Runtime Configuration ==========
+API           : cuda
+Methods       : 7
+Delay range   : [1, 8192]
+Array size(s) : 16382
+block_count    : 132
+thread_count   : 32
+MAX_ITER      : 16382  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+DELAY_POINTS  : 14 (powers of two)
+NUM_SAMPLES   : 10 (per delay)
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+DEVICE_TIMING : same-stream CUDA events in a separate pass; host timing windows unchanged
+==========================================
+Number of available CUDA devices: 1
+CUDA device 0: NVIDIA GH200 480GB
+CUDA SM count: 132
+CUDA launch/schedule has no OpenMP runtime profile; actual participant/owner equivalence is unverified.
+Initializing CUDA benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                         16382
+                                              BIC intercept | min mean
+stream async launch + synchronize            7.864±0.048      |      7.778±0.064     
+==========================================
+
+========== CUDA Device Profiling (Separate Pass) ==========
+Baseline samples are complete. Events bracket each kernel; allocation and copies are excluded.
+Profiled method=7 N=16382 requested blocks=132 threads=32
+Device profiling samples saved to cuda_device_times.csv
+Finalizing CUDA benchmark.
+
+===== [M8] Method=8 N=1,2,4,8,16,32,64 Delay=1,8192 =====
+========== Runtime Configuration ==========
+API           : cuda
+Methods       : 8
+Delay range   : [1, 8192]
+Array size(s) : 1, 2, 4, 8, 16, 32, 64
+block_count    : 132
+thread_count   : 32
+MAX_ITER      : 6656  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+DELAY_POINTS  : 14 (powers of two)
+NUM_SAMPLES   : 10 (per delay)
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+DEVICE_TIMING : same-stream CUDA events in a separate pass; host timing windows unchanged
+==========================================
+Number of available CUDA devices: 1
+CUDA device 0: NVIDIA GH200 480GB
+CUDA SM count: 132
+CUDA launch/schedule has no OpenMP runtime profile; actual participant/owner equivalence is unverified.
+Initializing CUDA benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                             1                             2                             4                             8                            16                            32                            64
+                                              BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean
+kernel atomicAdd                            16.366±0.094      |     19.599±0.105         11.343±0.048      |     13.342±0.094          9.970±0.320      |     11.445±0.114          8.986±0.208      |      9.433±0.045          9.032±0.081      |      9.344±0.113          8.837±0.179      |      9.248±0.096          8.370±0.040      |      8.240±0.098     
+==========================================
+
+========== CUDA Device Profiling (Separate Pass) ==========
+Baseline samples are complete. Events bracket each kernel; allocation and copies are excluded.
+Profiled method=8 N=1 requested blocks=132 threads=32
+Profiled method=8 N=2 requested blocks=132 threads=32
+Profiled method=8 N=4 requested blocks=132 threads=32
+Profiled method=8 N=8 requested blocks=132 threads=32
+Profiled method=8 N=16 requested blocks=132 threads=32
+Profiled method=8 N=32 requested blocks=132 threads=32
+Profiled method=8 N=64 requested blocks=132 threads=32
+Device profiling samples saved to cuda_device_times.csv
+Finalizing CUDA benchmark.
+
+===== [M9] Method=9 N=1,2,4,8,16,32,64 Delay=1,8192 =====
+========== Runtime Configuration ==========
+API           : cuda
+Methods       : 9
+Delay range   : [1, 8192]
+Array size(s) : 1, 2, 4, 8, 16, 32, 64
+block_count    : 132
+thread_count   : 32
+MAX_ITER      : 6656  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+DELAY_POINTS  : 14 (powers of two)
+NUM_SAMPLES   : 10 (per delay)
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+DEVICE_TIMING : same-stream CUDA events in a separate pass; host timing windows unchanged
+==========================================
+Number of available CUDA devices: 1
+CUDA device 0: NVIDIA GH200 480GB
+CUDA SM count: 132
+CUDA launch/schedule has no OpenMP runtime profile; actual participant/owner equivalence is unverified.
+Initializing CUDA benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                             1                             2                             4                             8                            16                            32                            64
+                                              BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean
+teams thread loop array reduction            9.918±0.027      |      9.815±0.129          9.964±0.056      |      9.860±0.140         10.055±0.047      |      9.919±0.082         10.079±0.056      |      9.971±0.140         14.044±0.057      |     15.076±0.067         14.737±0.047      |     16.995±0.130         22.854±0.108      |     24.562±0.079     
+==========================================
+
+========== CUDA Device Profiling (Separate Pass) ==========
+Baseline samples are complete. Events bracket each kernel; allocation and copies are excluded.
+Profiled method=9 N=1 requested blocks=132 threads=32
+Profiled method=9 N=2 requested blocks=132 threads=32
+Profiled method=9 N=4 requested blocks=132 threads=32
+Profiled method=9 N=8 requested blocks=132 threads=32
+Profiled method=9 N=16 requested blocks=132 threads=32
+Profiled method=9 N=32 requested blocks=132 threads=32
+Profiled method=9 N=64 requested blocks=132 threads=32
+Device profiling samples saved to cuda_device_times.csv
+Finalizing CUDA benchmark.
+
+===== [M11_parreps] Method=11 N=1,2,4,8,16,32,64,128 Delay=1,8192 =====
+========== Runtime Configuration ==========
+API           : cuda
+Methods       : 11
+Delay range   : [1, 8192]
+Array size(s) : 1, 2, 4, 8, 16, 32, 64, 128
+block_count    : 132
+thread_count   : 32
+MAX_ITER      : 6656  (kernel workload)
+MAX_ARRAY_SIZE: 65536  (mapping/memory space)
+DELAY_POINTS  : 14 (powers of two)
+NUM_SAMPLES   : 10 (per delay)
+OUTERREPS     : 1
+WARMUP_ITERS  : 10
+BENCHMARK_SETS: 2
+BENCHMARK_RUNS: 5
+DEVICE_TIMING : same-stream CUDA events in a separate pass; host timing windows unchanged
+==========================================
+Number of available CUDA devices: 1
+CUDA device 0: NVIDIA GH200 480GB
+CUDA SM count: 132
+CUDA launch/schedule has no OpenMP runtime profile; actual participant/owner equivalence is unverified.
+Initializing CUDA benchmark runtime environment...
+
+========== Benchmark Execution ==========
+Method/N                                                             1                             2                             4                             8                            16                            32                            64                           128
+                                              BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean      BIC intercept | min mean
+kernel repeated blocks + threads             7.796±0.041      |      7.718±0.095          7.972±0.041      |      7.826±0.126          8.245±0.042      |      7.993±0.126          8.776±0.060      |      8.404±0.107          9.944±0.074      |      9.100±0.089         12.138±0.150      |     10.689±0.168         16.076±0.066      |     13.650±0.106         23.923±0.065      |     20.183±0.192     
+==========================================
+
+========== CUDA Device Profiling (Separate Pass) ==========
+Baseline samples are complete. Events bracket each kernel; allocation and copies are excluded.
+Profiled method=11 N=1 requested blocks=132 threads=32
+Profiled method=11 N=2 requested blocks=132 threads=32
+Profiled method=11 N=4 requested blocks=132 threads=32
+Profiled method=11 N=8 requested blocks=132 threads=32
+Profiled method=11 N=16 requested blocks=132 threads=32
+Profiled method=11 N=32 requested blocks=132 threads=32
+Profiled method=11 N=64 requested blocks=132 threads=32
+Profiled method=11 N=128 requested blocks=132 threads=32
+Device profiling samples saved to cuda_device_times.csv
+Finalizing CUDA benchmark.
+
+Raw-data collection completed: /work/weiyu/microbenchmark/result/GH200/CUDA/NVCC_13_1_115/raw_20261014_192054.l6K3h9
