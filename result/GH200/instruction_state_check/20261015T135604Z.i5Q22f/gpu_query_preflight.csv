@@ -1,0 +1,2 @@
+timestamp, index, pstate, clocks.current.sm [MHz], clocks.current.memory [MHz], temperature.gpu, power.draw [W], power.limit [W], utilization.gpu [%]
+2026/10/15 13:56:05.290, 0, P0, 345 MHz, 2619 MHz, 27, 77.82 W, 900.00 W, 0 %

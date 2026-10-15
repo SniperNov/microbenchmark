@@ -1,0 +1,62 @@
+[
+  {
+    "binary": "openmp_reference",
+    "symbol": "nvkernel_backend_run_method_F1L148_12",
+    "loops": [
+      {
+        "start": "0x310",
+        "back_branch": "0x630",
+        "static_instruction_lines": 51,
+        "static_DADD": 16,
+        "static_I2F": 16,
+        "static_global_memory_ops": 0
+      },
+      {
+        "start": "0x850",
+        "back_branch": "0x930",
+        "static_instruction_lines": 15,
+        "static_DADD": 4,
+        "static_I2F": 4,
+        "static_global_memory_ops": 0
+      },
+      {
+        "start": "0x980",
+        "back_branch": "0x9d0",
+        "static_instruction_lines": 6,
+        "static_DADD": 1,
+        "static_I2F": 1,
+        "static_global_memory_ops": 0
+      }
+    ]
+  },
+  {
+    "binary": "cuda_ptxas_O3",
+    "symbol": "_Z16delay_one_kerneliPd",
+    "loops": [
+      {
+        "start": "0x250",
+        "back_branch": "0x570",
+        "static_instruction_lines": 51,
+        "static_DADD": 16,
+        "static_I2F": 16,
+        "static_global_memory_ops": 0
+      },
+      {
+        "start": "0x760",
+        "back_branch": "0x840",
+        "static_instruction_lines": 15,
+        "static_DADD": 4,
+        "static_I2F": 4,
+        "static_global_memory_ops": 0
+      },
+      {
+        "start": "0x870",
+        "back_branch": "0x8c0",
+        "static_instruction_lines": 6,
+        "static_DADD": 1,
+        "static_I2F": 1,
+        "static_global_memory_ops": 0
+      }
+    ]
+  }
+]
