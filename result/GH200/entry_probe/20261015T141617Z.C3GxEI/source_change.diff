@@ -1,0 +1,18 @@
+--- cuda_control/backend.cu
++++ cuda_entry_gate/backend.cu
+@@ -86,11 +86,14 @@
+     return schedule.offsets[slot + 1];
+ }
+ 
++// Diagnostic only: one volatile device read per kernel, before the unchanged delay.
++__device__ volatile int diagnostic_entry_gate = 1;
++
+ __global__ static void delay_one_kernel(int delay, double *a)
+ {
+     // __global__ means "CUDA kernel": CPU launches it, GPU runs it.
+     // Only one GPU thread does useful work here, so this is a launch baseline.
+-    if (blockIdx.x == 0 && threadIdx.x == 0)
++    if (blockIdx.x == 0 && threadIdx.x == 0 && diagnostic_entry_gate != 0)
+         delay_kernel_device(delay, a);
+ }
+ 

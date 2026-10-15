@@ -1,0 +1,4 @@
+CODEGEN_NOT_ISOLATED
+control reproduces previous loop features: True
+entry gate changes loop features: False
+loop has no memory operations: True

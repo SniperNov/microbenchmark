@@ -1,0 +1,45 @@
+CUDA launch/schedule has no OpenMP runtime profile; actual participant/owner equivalence is unverified.
+Initializing CUDA benchmark runtime environment...
+-18.000000
+-18.000000
+-17.000000
+-16.000000
+-18.000000
+-18.000000
+-17.000000
+-16.000000
+-18.000000
+-18.000000
+-17.000000
+-16.000000
+-18.000000
+-18.000000
+-17.000000
+-16.000000
+-18.000000
+-18.000000
+-17.000000
+-16.000000
+-18.000000
+-18.000000
+-17.000000
+-16.000000
+-18.000000
+-18.000000
+-17.000000
+-16.000000
+-18.000000
+-18.000000
+-17.000000
+-16.000000
+-18.000000
+-18.000000
+-17.000000
+-16.000000
+-18.000000
+-18.000000
+-17.000000
+-16.000000
+-18.000000
+Finalizing CUDA benchmark.
+PASS: method0 values, untouched array elements, repeated calls, profiling host-state preservation

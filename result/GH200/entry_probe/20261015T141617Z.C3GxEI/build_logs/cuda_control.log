@@ -1,0 +1,37 @@
+nvcc -O0 -arch=sm_90 -DMICROBENCHMARK_CUDA -DPRINT_DISTRIBUTION -Xptxas=-O3\,-v -I /work/weiyu/microbenchmark/result/GH200/entry_probe/20261015T141617Z.C3GxEI/sources/cuda_control/src/core /work/weiyu/microbenchmark/result/GH200/entry_probe/20261015T141617Z.C3GxEI/sources/cuda_control/src/core/driver.c /work/weiyu/microbenchmark/result/GH200/entry_probe/20261015T141617Z.C3GxEI/sources/cuda_control/src/backends/cuda/backend.cu -lm -o /work/weiyu/microbenchmark/result/GH200/entry_probe/20261015T141617Z.C3GxEI/bin/cuda_control 
+ptxas info    : 4 bytes gmem
+ptxas info    : Compiling entry function '_Z30repeated_teams_parallel_kerneliPdiii' for 'sm_90'
+ptxas info    : Function properties for _Z30repeated_teams_parallel_kerneliPdiii
+    8 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 28 registers, used 1 barriers, 8 bytes cumulative stack size
+ptxas info    : Compile time = 5.813 ms
+ptxas info    : Compiling entry function '_Z21teams_parallel_kerneliPdii' for 'sm_90'
+ptxas info    : Function properties for _Z21teams_parallel_kerneliPdii
+    8 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 24 registers, used 0 barriers, 8 bytes cumulative stack size
+ptxas info    : Compile time = 4.601 ms
+ptxas info    : Compiling entry function '_Z16reduction_kerneliPdS_S_S_ii19cuda_omp_schedule_t' for 'sm_90'
+ptxas info    : Function properties for _Z16reduction_kerneliPdS_S_S_ii19cuda_omp_schedule_t
+    8 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 38 registers, used 1 barriers, 8 bytes cumulative stack size
+ptxas info    : Compile time = 36.807 ms
+ptxas info    : Compiling entry function '_Z13atomic_kerneliPdS_ii19cuda_omp_schedule_t' for 'sm_90'
+ptxas info    : Function properties for _Z13atomic_kerneliPdS_ii19cuda_omp_schedule_t
+    8 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 32 registers, used 1 barriers, 8 bytes cumulative stack size
+ptxas info    : Compile time = 18.781 ms
+ptxas info    : Compiling entry function '_Z11loop_kerneliPdi19cuda_omp_schedule_t' for 'sm_90'
+ptxas info    : Function properties for _Z11loop_kerneliPdi19cuda_omp_schedule_t
+    8 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 31 registers, used 1 barriers, 8 bytes cumulative stack size
+ptxas info    : Compile time = 13.433 ms
+ptxas info    : Compiling entry function '_Z19block_scalar_kerneliPdii' for 'sm_90'
+ptxas info    : Function properties for _Z19block_scalar_kerneliPdii
+    8 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 24 registers, used 0 barriers, 8 bytes cumulative stack size
+ptxas info    : Compile time = 6.778 ms
+ptxas info    : Compiling entry function '_Z16delay_one_kerneliPd' for 'sm_90'
+ptxas info    : Function properties for _Z16delay_one_kerneliPd
+    8 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 24 registers, used 0 barriers, 8 bytes cumulative stack size
+ptxas info    : Compile time = 3.491 ms
