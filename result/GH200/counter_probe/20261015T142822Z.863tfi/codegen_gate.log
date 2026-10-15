@@ -1,0 +1,5 @@
+READY_FOR_TIMING
+control reproduces previous loop features: True
+candidate changes loop features: True
+counter uses ordinary integer adds: True
+loop has no memory operations: True

@@ -1,0 +1,8 @@
+PASS: 2100 samples, exact coverage and positive finite times
+Method0; fit Delay=1024,2048,4096,8192; ns/Delay; SD across three trials
+openmp_reference   baseline         6.611496 +/- 0.007757
+cuda_control       baseline         5.986706 +/- 0.010770
+cuda_control       kernel_execution 5.947774 +/- 0.009298
+cuda_counter_start baseline         6.764688 +/- 0.018754
+cuda_counter_start kernel_execution 6.735654 +/- 0.014205
+Candidate adds a device read outside the delay loop. This is a code-generation sensitivity test, not proof of the cause of the OpenMP gap.

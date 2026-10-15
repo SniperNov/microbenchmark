@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
-# Isolated method0 entry-selection diagnostic. Never edits production sources.
+# Shared method0 code-generation runner. Never edits production sources.
 set -euo pipefail
+probe_kind="${GH200_PROBE_KIND:-entry}"
+case "$probe_kind" in
+    entry) candidate=cuda_entry_gate; checker_macro=ENTRY_GATE_CHECK ;;
+    counter) candidate=cuda_counter_start; checker_macro=COUNTER_START_CHECK ;;
+    *) printf 'Invalid GH200_PROBE_KIND: %s\n' "$probe_kind" >&2; exit 1 ;;
+esac
 repo_dir="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
 cd "$repo_dir"
 saved="${1:-$repo_dir/result/GH200/device_opt_ab/20261014T202550Z.XUuTBe}"
@@ -14,26 +20,30 @@ test "$(sha256sum "$saved/sources/src/backends/openmp/backend.c" | cut -d ' ' -f
     cd "$saved"
     sha256sum --check --ignore-missing binary_sha256.txt
 )
-mkdir -p "$repo_dir/result/GH200/entry_probe"
-out=$(mktemp -d "$repo_dir/result/GH200/entry_probe/$(date -u +%Y%m%dT%H%M%SZ).XXXXXX")
+mkdir -p "$repo_dir/result/GH200/${probe_kind}_probe"
+out=$(mktemp -d "$repo_dir/result/GH200/${probe_kind}_probe/$(date -u +%Y%m%dT%H%M%SZ).XXXXXX")
 mkdir -p "$out/bin" "$out/build_logs" "$out/device_code" "$out/tools"
 printf 'Output directory: %s\n' "$out"
 cp tests/gh200_entry_probe.py tests/run_gh200_entry_probe.sh "$out/tools/"
+if [ "$probe_kind" = counter ]; then
+    cp tests/run_gh200_counter_probe.sh tests/gh200_counter_probe_README.txt "$out/tools/"
+fi
 sha256sum src/backends/openmp/backend.c src/backends/cuda/backend.cu src/core/driver.c > "$out/production_sources_before.sha256"
 trap 'sha256sum --check "$out/production_sources_before.sha256" > "$out/production_sources_check.log" || { cat "$out/production_sources_check.log"; exit 1; }' EXIT
 {
     hostname
     nvcc --version
     printf 'Reference snapshot: %s\n' "$saved"
+    printf 'Diagnostic kind: %s; candidate: %s\n' "$probe_kind" "$candidate"
     printf 'Only Method=0 N=16382 Delay=1,8192 MAX_ITER=16382 MAX_ARRAY_SIZE=65536\n'
     printf 'Requested B=132 T=32; actual CUDA method0 remains B=1 T=1.\n'
-    printf 'No plotting; entry-gate diagnostic is separate from formal benchmark results.\n'
+    printf 'No plotting; diagnostic results are separate from formal benchmark results.\n'
     printf 'OMP_DYNAMIC=%s OMP_NUM_THREADS=%s NVCOMPILER_OMP_CUDA_GRID=%s\n' "${OMP_DYNAMIC:-not-set}" "${OMP_NUM_THREADS:-not-set}" "${NVCOMPILER_OMP_CUDA_GRID:-not-set}"
     if command -v nvidia-smi >/dev/null; then nvidia-smi; fi
 } > "$out/environment.log" 2>&1
-python3 "$out/tools/gh200_entry_probe.py" prepare "$out" --saved "$saved"
+python3 "$out/tools/gh200_entry_probe.py" prepare "$out" --saved "$saved" --kind "$probe_kind"
 
-for arm in cuda_control cuda_entry_gate; do
+for arm in cuda_control "$candidate"; do
     source_dir="$out/sources/$arm"
     compile=(nvcc -O0 -arch=sm_90 -DMICROBENCHMARK_CUDA -DPRINT_DISTRIBUTION -Xptxas=-O3,-v
              -I "$source_dir/src/core" "$source_dir/src/core/driver.c" "$source_dir/src/backends/cuda/backend.cu"
@@ -45,16 +55,16 @@ for arm in cuda_control cuda_entry_gate; do
         cuobjdump "--dump-$format" "$out/bin/$arm" > "$out/device_code/$arm.$format.txt" 2> "$out/device_code/$arm.$format.stderr"
     done
     check_flags=(-DMICROBENCHMARK_CUDA)
-    if [ "$arm" = cuda_entry_gate ]; then check_flags+=(-DENTRY_GATE_CHECK); fi
+    if [ "$arm" = "$candidate" ]; then check_flags+=("-D$checker_macro"); fi
     nvcc -O0 -arch=sm_90 -Xptxas=-O3 -I "$source_dir/src/core" \
         "${check_flags[@]}" "$source_dir/check_method0.cu" -o "$out/bin/check_$arm" \
         > "$out/build_logs/check_$arm.log" 2>&1 || { cat "$out/build_logs/check_$arm.log"; exit 1; }
     env -u CUDA_OPENMP_PROFILE "$out/bin/check_$arm" > "$out/check_$arm.log" 2>&1 || { cat "$out/check_$arm.log"; exit 1; }
 done
 sha256sum "$out/bin/"* "$saved/bin/openmp_reference" > "$out/binary_sha256.txt"
-# Do not spend another timing run on an entry change that fails to alter the
+# Do not spend another timing run on a source change that fails to alter the
 # target loop, or that introduces memory operations inside it.
-if python3 "$out/tools/gh200_entry_probe.py" gate "$out" --saved "$saved" > "$out/codegen_gate.log" 2>&1; then
+if python3 "$out/tools/gh200_entry_probe.py" gate "$out" --saved "$saved" --kind "$probe_kind" > "$out/codegen_gate.log" 2>&1; then
     cat "$out/codegen_gate.log"
 else
     gate_status=$?
@@ -97,8 +107,8 @@ run_arm() {
     end=$(python3 -c 'from datetime import datetime,timezone; print(datetime.now(timezone.utc).isoformat(timespec="microseconds"))')
     printf '%s,%s,%s,%s\n' "$begin" "$end" "$trial" "$arm" >> "$out/run_windows.csv"
 }
-for arm in openmp_reference cuda_control cuda_entry_gate; do run_arm 01 "$arm"; done
-for arm in cuda_entry_gate cuda_control openmp_reference; do run_arm 02 "$arm"; done
-for arm in cuda_control openmp_reference cuda_entry_gate; do run_arm 03 "$arm"; done
-python3 "$out/tools/gh200_entry_probe.py" summarize "$out" | tee "$out/summary.log"
+for arm in openmp_reference cuda_control "$candidate"; do run_arm 01 "$arm"; done
+for arm in "$candidate" cuda_control openmp_reference; do run_arm 02 "$arm"; done
+for arm in cuda_control openmp_reference "$candidate"; do run_arm 03 "$arm"; done
+python3 "$out/tools/gh200_entry_probe.py" summarize "$out" --kind "$probe_kind" | tee "$out/summary.log"
 printf '\nCompleted: %s\n' "$out"

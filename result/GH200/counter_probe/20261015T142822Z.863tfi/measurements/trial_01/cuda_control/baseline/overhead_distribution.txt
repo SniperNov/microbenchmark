@@ -1,0 +1,14 @@
+
+[Method=0 pure delay kernel N=16382]
+Set=0 Run=0  Lmin=1  Intercept=7.521925 us  Slope=0.006022  R2=0.99992  BIC=-54.537  Lowest=7.297699 us @ delay=4
+Set=0 Run=1  Lmin=1  Intercept=7.551536 us  Slope=0.006034  R2=0.99988  BIC=-48.777  Lowest=7.419250 us @ delay=2
+Set=0 Run=2  Lmin=1  Intercept=7.455897 us  Slope=0.006075  R2=0.99986  BIC=-45.665  Lowest=7.339249 us @ delay=4
+Set=0 Run=3  Lmin=1  Intercept=7.523164 us  Slope=0.005995  R2=0.99992  BIC=-54.087  Lowest=7.360049 us @ delay=1
+Set=0 Run=4  Lmin=1  Intercept=7.458823 us  Slope=0.006013  R2=0.99992  BIC=-54.570  Lowest=7.331250 us @ delay=4
+Set=1 Run=0  Lmin=1  Intercept=7.481800 us  Slope=0.006040  R2=0.99991  BIC=-51.993  Lowest=7.356848 us @ delay=4
+Set=1 Run=1  Lmin=1  Intercept=7.509239 us  Slope=0.006012  R2=0.99991  BIC=-52.235  Lowest=7.260849 us @ delay=1
+Set=1 Run=2  Lmin=1  Intercept=7.596469 us  Slope=0.005978  R2=0.99972  BIC=-36.591  Lowest=7.416049 us @ delay=8
+Set=1 Run=3  Lmin=1  Intercept=7.568147 us  Slope=0.005954  R2=0.99959  BIC=-31.488  Lowest=7.355249 us @ delay=1
+Set=1 Run=4  Lmin=1  Intercept=7.470826 us  Slope=0.005997  R2=0.99985  BIC=-45.640  Lowest=7.363248 us @ delay=1
+Average Intercept = 7.513783 ± 0.047880 us
+Minimum Delay Mean = 7.421175 ± 0.119508 us @ delay=1 (10 samples)

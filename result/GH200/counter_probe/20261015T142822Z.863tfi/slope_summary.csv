@@ -1,0 +1,6 @@
+arm,phase,mean_slope_ns_per_delay,sd_slope_ns_per_delay
+openmp_reference,baseline,6.611496075120584,0.007757452620533048
+cuda_control,baseline,5.98670574114923,0.01077024823328777
+cuda_control,kernel_execution,5.947773573603657,0.009297567149454181
+cuda_counter_start,baseline,6.764687686717335,0.018754474429508738
+cuda_counter_start,kernel_execution,6.735654010154835,0.014204644584525075
