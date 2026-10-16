@@ -1,0 +1,4 @@
+Status: CURRENT_WORKING_SOURCE_REBUILD, not paired with historical timings.
+The current working source files are copied here without editing them.
+Historical and current OpenACC implementations remain in separate directories.
+No benchmark is executed and no timing result is produced.

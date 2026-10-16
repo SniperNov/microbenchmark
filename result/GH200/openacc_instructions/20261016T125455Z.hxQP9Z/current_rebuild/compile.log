@@ -1,0 +1,3 @@
+nvc -acc -O0 -DPRINT_DISTRIBUTION -I src/core -o /work/weiyu/microbenchmark/result/GH200/openacc_instructions/20261016T125455Z.hxQP9Z/bin/openacc_current_rebuild src/core/driver.c src/backends/openacc/backend.c -lm 
+src/core/driver.c:
+src/backends/openacc/backend.c:

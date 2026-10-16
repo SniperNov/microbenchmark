@@ -1,0 +1,4 @@
+include $(DEFS)
+
+$(BIN): $(SRC)
+	$(CC) $(CFLAGS) $(EXTRA_CFLAGS) -I src/core -o $@ $(SRC) $(LDFLAGS) $(LIBS)

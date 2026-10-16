@@ -1,0 +1,4 @@
+1938d3ae497416b5adbb4446dead4e7b7b6d24278f9e4caec72e4093b0f7240c  src/core/driver.c
+03669299d2e150a3cbd7d81e207d2d78ee789e18b6abba6e71d1aa4316b65119  src/backends/openmp/backend.c
+eb1bef01cdc3e893bd3ec6a876b0077c47738d9dd91a57fbbcfa526251d164ae  src/backends/openacc/backend.c
+6529584a2371f211964d297c249b8aa154fb571bf239c0b46ceb525657614a8f  src/backends/cuda/backend.cu

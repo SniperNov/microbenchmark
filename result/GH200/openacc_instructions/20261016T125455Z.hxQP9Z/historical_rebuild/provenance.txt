@@ -1,0 +1,9 @@
+Status: HISTORICAL_SOURCE_REBUILD, not the original timed binary.
+Source commit: fb158194914ab00f68cb86195c2aa89cfb9dbac1
+Compiler options: nvc -acc -O0 -DPRINT_DISTRIBUTION -I src/core ... -lm
+These are the historical openacc-distribution build options.
+Current compiler/runtime versions are recorded in environment.log.
+This does not establish binary identity with the historical measurement.
+Historical method9 remains scalar in this isolated source snapshot.
+Production OpenACC method9 and all working sources are untouched.
+No new timing data are collected and no benchmark binary is executed.

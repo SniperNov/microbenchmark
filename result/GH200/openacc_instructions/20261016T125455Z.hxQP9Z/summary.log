@@ -1,0 +1,6 @@
+PASS: OpenACC sm_90 SASS collected; benchmark GPU functions found.
+Rebuilt benchmark GPU functions: 13
+Existing binary candidates: 0
+Current source: COMPILED_AND_DISASSEMBLED
+Historical rebuild is explicitly labelled; it is not asserted to be the original timed binary.
+No benchmark was run; no timing data were changed.

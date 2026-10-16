@@ -1,0 +1,14 @@
+gh02
+
+nvc 26.3-0 linuxarm64 target on aarch64 Linux -tp grace 
+NVIDIA Compilers and Tools
+Copyright (c) 2026, NVIDIA CORPORATION & AFFILIATES.  All rights reserved.
+cuobjdump: NVIDIA (R) fat binary listing tool
+Copyright (c) 2005-2025 NVIDIA Corporation
+Built on Tue_Dec_16_07:27:17_PM_PST_2025
+Cuda compilation tools, release 13.1, V13.1.115
+Build cuda_13.1.r13.1/compiler.37061995_0
+Historical source commit: fb158194914ab00f68cb86195c2aa89cfb9dbac1
+No benchmark executable is run. Existing binary/time association is unverified.
+name, driver_version
+NVIDIA GH200 480GB, 580.95.05

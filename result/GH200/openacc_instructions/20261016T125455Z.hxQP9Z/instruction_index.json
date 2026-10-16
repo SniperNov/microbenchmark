@@ -1,0 +1,989 @@
+{
+  "no_benchmark_executed": true,
+  "records": [
+    {
+      "path": "historical_rebuild/openacc.sass.txt",
+      "provenance": "HISTORICAL_SOURCE_REBUILD_NOT_ORIGINAL_TIMED_BINARY",
+      "sha256": "5f26892b6a8d7ae2a3ead7ecfa0c2442d330c3911e95d791ac9252d47ea18023",
+      "functions": [
+        {
+          "symbol": "_30src_backends_openacc_backend_c_backend_run_method_216_gpu",
+          "static_instruction_lines": 376,
+          "delay_loops": [
+            {
+              "start": "0x570",
+              "back_branch": "0x890",
+              "instruction_lines": 51,
+              "DADD": 16,
+              "I2F": 16,
+              "UIADD3": 0,
+              "IADD3": 8,
+              "VIADD": 9
+            },
+            {
+              "start": "0xab0",
+              "back_branch": "0xb90",
+              "instruction_lines": 15,
+              "DADD": 4,
+              "I2F": 4,
+              "UIADD3": 0,
+              "IADD3": 2,
+              "VIADD": 3
+            },
+            {
+              "start": "0x240",
+              "back_branch": "0xd50",
+              "instruction_lines": 178,
+              "DADD": 31,
+              "I2F": 32,
+              "UIADD3": 0,
+              "IADD3": 17,
+              "VIADD": 20
+            },
+            {
+              "start": "0x1d0",
+              "back_branch": "0xd80",
+              "instruction_lines": 188,
+              "DADD": 31,
+              "I2F": 32,
+              "UIADD3": 0,
+              "IADD3": 18,
+              "VIADD": 20
+            }
+          ]
+        },
+        {
+          "symbol": "_30src_backends_openacc_backend_c_backend_run_method_204_gpu",
+          "static_instruction_lines": 208,
+          "delay_loops": [
+            {
+              "start": "0x380",
+              "back_branch": "0x6a0",
+              "instruction_lines": 51,
+              "DADD": 16,
+              "I2F": 16,
+              "UIADD3": 0,
+              "IADD3": 8,
+              "VIADD": 9
+            },
+            {
+              "start": "0x8c0",
+              "back_branch": "0x9a0",
+              "instruction_lines": 15,
+              "DADD": 4,
+              "I2F": 4,
+              "UIADD3": 0,
+              "IADD3": 2,
+              "VIADD": 3
+            },
+            {
+              "start": "0x1a0",
+              "back_branch": "0xb60",
+              "instruction_lines": 157,
+              "DADD": 31,
+              "I2F": 31,
+              "UIADD3": 0,
+              "IADD3": 15,
+              "VIADD": 18
+            }
+          ]
+        },
+        {
+          "symbol": "_30src_backends_openacc_backend_c_backend_run_method_189_gpu__red",
+          "static_instruction_lines": 144,
+          "delay_loops": [
+            {
+              "start": "0x150",
+              "back_branch": "0x1c0",
+              "instruction_lines": 8,
+              "DADD": 1,
+              "I2F": 0,
+              "UIADD3": 0,
+              "IADD3": 1,
+              "VIADD": 0
+            },
+            {
+              "start": "0x380",
+              "back_branch": "0x440",
+              "instruction_lines": 13,
+              "DADD": 1,
+              "I2F": 0,
+              "UIADD3": 0,
+              "IADD3": 0,
+              "VIADD": 1
+            }
+          ]
+        },
+        {
+          "symbol": "_30src_backends_openacc_backend_c_backend_run_method_189_gpu",
+          "static_instruction_lines": 232,
+          "delay_loops": [
+            {
+              "start": "0x3a0",
+              "back_branch": "0x6c0",
+              "instruction_lines": 51,
+              "DADD": 16,
+              "I2F": 16,
+              "UIADD3": 0,
+              "IADD3": 8,
+              "VIADD": 9
+            },
+            {
+              "start": "0x8e0",
+              "back_branch": "0x9c0",
+              "instruction_lines": 15,
+              "DADD": 4,
+              "I2F": 4,
+              "UIADD3": 0,
+              "IADD3": 2,
+              "VIADD": 3
+            },
+            {
+              "start": "0x1c0",
+              "back_branch": "0xbb0",
+              "instruction_lines": 160,
+              "DADD": 32,
+              "I2F": 31,
+              "UIADD3": 0,
+              "IADD3": 15,
+              "VIADD": 18
+            },
+            {
+              "start": "0xc10",
+              "back_branch": "0xcb0",
+              "instruction_lines": 11,
+              "DADD": 1,
+              "I2F": 0,
+              "UIADD3": 0,
+              "IADD3": 1,
+              "VIADD": 0
+            }
+          ]
+        },
+        {
+          "symbol": "_30src_backends_openacc_backend_c_backend_run_method_175_gpu",
+          "static_instruction_lines": 264,
+          "delay_loops": [
+            {
+              "start": "0x390",
+              "back_branch": "0x6b0",
+              "instruction_lines": 51,
+              "DADD": 16,
+              "I2F": 16,
+              "UIADD3": 0,
+              "IADD3": 8,
+              "VIADD": 9
+            },
+            {
+              "start": "0x8d0",
+              "back_branch": "0x9b0",
+              "instruction_lines": 15,
+              "DADD": 4,
+              "I2F": 4,
+              "UIADD3": 0,
+              "IADD3": 2,
+              "VIADD": 3
+            },
+            {
+              "start": "0x1a0",
+              "back_branch": "0xd40",
+              "instruction_lines": 187,
+              "DADD": 31,
+              "I2F": 32,
+              "UIADD3": 0,
+              "IADD3": 18,
+              "VIADD": 19
+            }
+          ]
+        },
+        {
+          "symbol": "_30src_backends_openacc_backend_c_backend_run_method_167_gpu",
+          "static_instruction_lines": 208,
+          "delay_loops": [
+            {
+              "start": "0x380",
+              "back_branch": "0x6a0",
+              "instruction_lines": 51,
+              "DADD": 16,
+              "I2F": 16,
+              "UIADD3": 0,
+              "IADD3": 8,
+              "VIADD": 9
+            },
+            {
+              "start": "0x8c0",
+              "back_branch": "0x9a0",
+              "instruction_lines": 15,
+              "DADD": 4,
+              "I2F": 4,
+              "UIADD3": 0,
+              "IADD3": 2,
+              "VIADD": 3
+            },
+            {
+              "start": "0x1a0",
+              "back_branch": "0xb60",
+              "instruction_lines": 157,
+              "DADD": 31,
+              "I2F": 31,
+              "UIADD3": 0,
+              "IADD3": 15,
+              "VIADD": 18
+            }
+          ]
+        },
+        {
+          "symbol": "_30src_backends_openacc_backend_c_backend_run_method_160_gpu",
+          "static_instruction_lines": 208,
+          "delay_loops": [
+            {
+              "start": "0x380",
+              "back_branch": "0x6a0",
+              "instruction_lines": 51,
+              "DADD": 16,
+              "I2F": 16,
+              "UIADD3": 0,
+              "IADD3": 8,
+              "VIADD": 9
+            },
+            {
+              "start": "0x8c0",
+              "back_branch": "0x9a0",
+              "instruction_lines": 15,
+              "DADD": 4,
+              "I2F": 4,
+              "UIADD3": 0,
+              "IADD3": 2,
+              "VIADD": 3
+            },
+            {
+              "start": "0x1a0",
+              "back_branch": "0xb60",
+              "instruction_lines": 157,
+              "DADD": 31,
+              "I2F": 31,
+              "UIADD3": 0,
+              "IADD3": 15,
+              "VIADD": 18
+            }
+          ]
+        },
+        {
+          "symbol": "_30src_backends_openacc_backend_c_backend_run_method_155_gpu",
+          "static_instruction_lines": 160,
+          "delay_loops": [
+            {
+              "start": "0x210",
+              "back_branch": "0x530",
+              "instruction_lines": 51,
+              "DADD": 16,
+              "I2F": 16,
+              "UIADD3": 16,
+              "IADD3": 1,
+              "VIADD": 0
+            },
+            {
+              "start": "0x720",
+              "back_branch": "0x800",
+              "instruction_lines": 15,
+              "DADD": 4,
+              "I2F": 4,
+              "UIADD3": 4,
+              "IADD3": 1,
+              "VIADD": 0
+            },
+            {
+              "start": "0x830",
+              "back_branch": "0x880",
+              "instruction_lines": 6,
+              "DADD": 1,
+              "I2F": 1,
+              "UIADD3": 1,
+              "IADD3": 1,
+              "VIADD": 0
+            }
+          ]
+        },
+        {
+          "symbol": "_30src_backends_openacc_backend_c_backend_run_method_147_gpu",
+          "static_instruction_lines": 160,
+          "delay_loops": [
+            {
+              "start": "0x210",
+              "back_branch": "0x530",
+              "instruction_lines": 51,
+              "DADD": 16,
+              "I2F": 16,
+              "UIADD3": 16,
+              "IADD3": 1,
+              "VIADD": 0
+            },
+            {
+              "start": "0x720",
+              "back_branch": "0x800",
+              "instruction_lines": 15,
+              "DADD": 4,
+              "I2F": 4,
+              "UIADD3": 4,
+              "IADD3": 1,
+              "VIADD": 0
+            },
+            {
+              "start": "0x830",
+              "back_branch": "0x880",
+              "instruction_lines": 6,
+              "DADD": 1,
+              "I2F": 1,
+              "UIADD3": 1,
+              "IADD3": 1,
+              "VIADD": 0
+            }
+          ]
+        },
+        {
+          "symbol": "_30src_backends_openacc_backend_c_backend_run_method_113_gpu",
+          "static_instruction_lines": 168,
+          "delay_loops": [
+            {
+              "start": "0x240",
+              "back_branch": "0x560",
+              "instruction_lines": 51,
+              "DADD": 16,
+              "I2F": 16,
+              "UIADD3": 16,
+              "IADD3": 1,
+              "VIADD": 0
+            },
+            {
+              "start": "0x750",
+              "back_branch": "0x830",
+              "instruction_lines": 15,
+              "DADD": 4,
+              "I2F": 4,
+              "UIADD3": 4,
+              "IADD3": 1,
+              "VIADD": 0
+            },
+            {
+              "start": "0x860",
+              "back_branch": "0x8b0",
+              "instruction_lines": 6,
+              "DADD": 1,
+              "I2F": 1,
+              "UIADD3": 1,
+              "IADD3": 1,
+              "VIADD": 0
+            }
+          ]
+        },
+        {
+          "symbol": "_30src_backends_openacc_backend_c_backend_run_method_108_gpu",
+          "static_instruction_lines": 168,
+          "delay_loops": [
+            {
+              "start": "0x240",
+              "back_branch": "0x560",
+              "instruction_lines": 51,
+              "DADD": 16,
+              "I2F": 16,
+              "UIADD3": 16,
+              "IADD3": 1,
+              "VIADD": 0
+            },
+            {
+              "start": "0x750",
+              "back_branch": "0x830",
+              "instruction_lines": 15,
+              "DADD": 4,
+              "I2F": 4,
+              "UIADD3": 4,
+              "IADD3": 1,
+              "VIADD": 0
+            },
+            {
+              "start": "0x860",
+              "back_branch": "0x8b0",
+              "instruction_lines": 6,
+              "DADD": 1,
+              "I2F": 1,
+              "UIADD3": 1,
+              "IADD3": 1,
+              "VIADD": 0
+            }
+          ]
+        },
+        {
+          "symbol": "_30src_backends_openacc_backend_c_backend_run_method_103_gpu",
+          "static_instruction_lines": 168,
+          "delay_loops": [
+            {
+              "start": "0x240",
+              "back_branch": "0x560",
+              "instruction_lines": 51,
+              "DADD": 16,
+              "I2F": 16,
+              "UIADD3": 16,
+              "IADD3": 1,
+              "VIADD": 0
+            },
+            {
+              "start": "0x750",
+              "back_branch": "0x830",
+              "instruction_lines": 15,
+              "DADD": 4,
+              "I2F": 4,
+              "UIADD3": 4,
+              "IADD3": 1,
+              "VIADD": 0
+            },
+            {
+              "start": "0x860",
+              "back_branch": "0x8b0",
+              "instruction_lines": 6,
+              "DADD": 1,
+              "I2F": 1,
+              "UIADD3": 1,
+              "IADD3": 1,
+              "VIADD": 0
+            }
+          ]
+        },
+        {
+          "symbol": "_30src_backends_openacc_backend_c_backend_run_method_98_gpu",
+          "static_instruction_lines": 168,
+          "delay_loops": [
+            {
+              "start": "0x240",
+              "back_branch": "0x560",
+              "instruction_lines": 51,
+              "DADD": 16,
+              "I2F": 16,
+              "UIADD3": 16,
+              "IADD3": 1,
+              "VIADD": 0
+            },
+            {
+              "start": "0x750",
+              "back_branch": "0x830",
+              "instruction_lines": 15,
+              "DADD": 4,
+              "I2F": 4,
+              "UIADD3": 4,
+              "IADD3": 1,
+              "VIADD": 0
+            },
+            {
+              "start": "0x860",
+              "back_branch": "0x8b0",
+              "instruction_lines": 6,
+              "DADD": 1,
+              "I2F": 1,
+              "UIADD3": 1,
+              "IADD3": 1,
+              "VIADD": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "current_rebuild/openacc.sass.txt",
+      "provenance": "CURRENT_WORKING_SOURCE_REBUILD_NOT_HISTORICAL_TIMED_BINARY",
+      "sha256": "db911212351702250c4d064f716c9e2fcab116df649061526926c569e787f4eb",
+      "functions": [
+        {
+          "symbol": "_30src_backends_openacc_backend_c_backend_run_method_274_gpu",
+          "static_instruction_lines": 376,
+          "delay_loops": [
+            {
+              "start": "0x570",
+              "back_branch": "0x890",
+              "instruction_lines": 51,
+              "DADD": 16,
+              "I2F": 16,
+              "UIADD3": 0,
+              "IADD3": 8,
+              "VIADD": 9
+            },
+            {
+              "start": "0xab0",
+              "back_branch": "0xb90",
+              "instruction_lines": 15,
+              "DADD": 4,
+              "I2F": 4,
+              "UIADD3": 0,
+              "IADD3": 2,
+              "VIADD": 3
+            },
+            {
+              "start": "0x240",
+              "back_branch": "0xd50",
+              "instruction_lines": 178,
+              "DADD": 31,
+              "I2F": 32,
+              "UIADD3": 0,
+              "IADD3": 17,
+              "VIADD": 20
+            },
+            {
+              "start": "0x1d0",
+              "back_branch": "0xd80",
+              "instruction_lines": 188,
+              "DADD": 31,
+              "I2F": 32,
+              "UIADD3": 0,
+              "IADD3": 18,
+              "VIADD": 20
+            }
+          ]
+        },
+        {
+          "symbol": "_30src_backends_openacc_backend_c_backend_run_method_262_gpu",
+          "static_instruction_lines": 208,
+          "delay_loops": [
+            {
+              "start": "0x380",
+              "back_branch": "0x6a0",
+              "instruction_lines": 51,
+              "DADD": 16,
+              "I2F": 16,
+              "UIADD3": 0,
+              "IADD3": 8,
+              "VIADD": 9
+            },
+            {
+              "start": "0x8c0",
+              "back_branch": "0x9a0",
+              "instruction_lines": 15,
+              "DADD": 4,
+              "I2F": 4,
+              "UIADD3": 0,
+              "IADD3": 2,
+              "VIADD": 3
+            },
+            {
+              "start": "0x1a0",
+              "back_branch": "0xb60",
+              "instruction_lines": 157,
+              "DADD": 31,
+              "I2F": 31,
+              "UIADD3": 0,
+              "IADD3": 15,
+              "VIADD": 18
+            }
+          ]
+        },
+        {
+          "symbol": "_30src_backends_openacc_backend_c_backend_run_method_210_gpu",
+          "static_instruction_lines": 816,
+          "delay_loops": [
+            {
+              "start": "0x15a0",
+              "back_branch": "0x18c0",
+              "instruction_lines": 51,
+              "DADD": 16,
+              "I2F": 16,
+              "UIADD3": 0,
+              "IADD3": 8,
+              "VIADD": 9
+            },
+            {
+              "start": "0x1ab0",
+              "back_branch": "0x1b90",
+              "instruction_lines": 15,
+              "DADD": 4,
+              "I2F": 4,
+              "UIADD3": 0,
+              "IADD3": 2,
+              "VIADD": 3
+            },
+            {
+              "start": "0x2200",
+              "back_branch": "0x26f0",
+              "instruction_lines": 80,
+              "DADD": 16,
+              "I2F": 0,
+              "UIADD3": 0,
+              "IADD3": 9,
+              "VIADD": 0
+            },
+            {
+              "start": "0x2a00",
+              "back_branch": "0x2b80",
+              "instruction_lines": 25,
+              "DADD": 4,
+              "I2F": 0,
+              "UIADD3": 0,
+              "IADD3": 3,
+              "VIADD": 0
+            },
+            {
+              "start": "0x2080",
+              "back_branch": "0x2e90",
+              "instruction_lines": 226,
+              "DADD": 32,
+              "I2F": 0,
+              "UIADD3": 0,
+              "IADD3": 24,
+              "VIADD": 3
+            },
+            {
+              "start": "0x2ed0",
+              "back_branch": "0x2fc0",
+              "instruction_lines": 16,
+              "DADD": 1,
+              "I2F": 0,
+              "UIADD3": 0,
+              "IADD3": 1,
+              "VIADD": 1
+            },
+            {
+              "start": "0xc50",
+              "back_branch": "0x3020",
+              "instruction_lines": 574,
+              "DADD": 65,
+              "I2F": 32,
+              "UIADD3": 0,
+              "IADD3": 53,
+              "VIADD": 36
+            },
+            {
+              "start": "0x130",
+              "back_branch": "0x3230",
+              "instruction_lines": 785,
+              "DADD": 65,
+              "I2F": 33,
+              "UIADD3": 8,
+              "IADD3": 73,
+              "VIADD": 42
+            }
+          ]
+        },
+        {
+          "symbol": "_30src_backends_openacc_backend_c_backend_run_method_195_gpu",
+          "static_instruction_lines": 264,
+          "delay_loops": [
+            {
+              "start": "0x390",
+              "back_branch": "0x6b0",
+              "instruction_lines": 51,
+              "DADD": 16,
+              "I2F": 16,
+              "UIADD3": 0,
+              "IADD3": 8,
+              "VIADD": 9
+            },
+            {
+              "start": "0x8d0",
+              "back_branch": "0x9b0",
+              "instruction_lines": 15,
+              "DADD": 4,
+              "I2F": 4,
+              "UIADD3": 0,
+              "IADD3": 2,
+              "VIADD": 3
+            },
+            {
+              "start": "0x1a0",
+              "back_branch": "0xd40",
+              "instruction_lines": 187,
+              "DADD": 31,
+              "I2F": 32,
+              "UIADD3": 0,
+              "IADD3": 18,
+              "VIADD": 19
+            }
+          ]
+        },
+        {
+          "symbol": "_30src_backends_openacc_backend_c_backend_run_method_187_gpu",
+          "static_instruction_lines": 208,
+          "delay_loops": [
+            {
+              "start": "0x380",
+              "back_branch": "0x6a0",
+              "instruction_lines": 51,
+              "DADD": 16,
+              "I2F": 16,
+              "UIADD3": 0,
+              "IADD3": 8,
+              "VIADD": 9
+            },
+            {
+              "start": "0x8c0",
+              "back_branch": "0x9a0",
+              "instruction_lines": 15,
+              "DADD": 4,
+              "I2F": 4,
+              "UIADD3": 0,
+              "IADD3": 2,
+              "VIADD": 3
+            },
+            {
+              "start": "0x1a0",
+              "back_branch": "0xb60",
+              "instruction_lines": 157,
+              "DADD": 31,
+              "I2F": 31,
+              "UIADD3": 0,
+              "IADD3": 15,
+              "VIADD": 18
+            }
+          ]
+        },
+        {
+          "symbol": "_30src_backends_openacc_backend_c_backend_run_method_180_gpu",
+          "static_instruction_lines": 208,
+          "delay_loops": [
+            {
+              "start": "0x380",
+              "back_branch": "0x6a0",
+              "instruction_lines": 51,
+              "DADD": 16,
+              "I2F": 16,
+              "UIADD3": 0,
+              "IADD3": 8,
+              "VIADD": 9
+            },
+            {
+              "start": "0x8c0",
+              "back_branch": "0x9a0",
+              "instruction_lines": 15,
+              "DADD": 4,
+              "I2F": 4,
+              "UIADD3": 0,
+              "IADD3": 2,
+              "VIADD": 3
+            },
+            {
+              "start": "0x1a0",
+              "back_branch": "0xb60",
+              "instruction_lines": 157,
+              "DADD": 31,
+              "I2F": 31,
+              "UIADD3": 0,
+              "IADD3": 15,
+              "VIADD": 18
+            }
+          ]
+        },
+        {
+          "symbol": "_30src_backends_openacc_backend_c_backend_run_method_175_gpu",
+          "static_instruction_lines": 160,
+          "delay_loops": [
+            {
+              "start": "0x210",
+              "back_branch": "0x530",
+              "instruction_lines": 51,
+              "DADD": 16,
+              "I2F": 16,
+              "UIADD3": 16,
+              "IADD3": 1,
+              "VIADD": 0
+            },
+            {
+              "start": "0x720",
+              "back_branch": "0x800",
+              "instruction_lines": 15,
+              "DADD": 4,
+              "I2F": 4,
+              "UIADD3": 4,
+              "IADD3": 1,
+              "VIADD": 0
+            },
+            {
+              "start": "0x830",
+              "back_branch": "0x880",
+              "instruction_lines": 6,
+              "DADD": 1,
+              "I2F": 1,
+              "UIADD3": 1,
+              "IADD3": 1,
+              "VIADD": 0
+            }
+          ]
+        },
+        {
+          "symbol": "_30src_backends_openacc_backend_c_backend_run_method_167_gpu",
+          "static_instruction_lines": 160,
+          "delay_loops": [
+            {
+              "start": "0x210",
+              "back_branch": "0x530",
+              "instruction_lines": 51,
+              "DADD": 16,
+              "I2F": 16,
+              "UIADD3": 16,
+              "IADD3": 1,
+              "VIADD": 0
+            },
+            {
+              "start": "0x720",
+              "back_branch": "0x800",
+              "instruction_lines": 15,
+              "DADD": 4,
+              "I2F": 4,
+              "UIADD3": 4,
+              "IADD3": 1,
+              "VIADD": 0
+            },
+            {
+              "start": "0x830",
+              "back_branch": "0x880",
+              "instruction_lines": 6,
+              "DADD": 1,
+              "I2F": 1,
+              "UIADD3": 1,
+              "IADD3": 1,
+              "VIADD": 0
+            }
+          ]
+        },
+        {
+          "symbol": "_30src_backends_openacc_backend_c_backend_run_method_114_gpu",
+          "static_instruction_lines": 168,
+          "delay_loops": [
+            {
+              "start": "0x240",
+              "back_branch": "0x560",
+              "instruction_lines": 51,
+              "DADD": 16,
+              "I2F": 16,
+              "UIADD3": 16,
+              "IADD3": 1,
+              "VIADD": 0
+            },
+            {
+              "start": "0x750",
+              "back_branch": "0x830",
+              "instruction_lines": 15,
+              "DADD": 4,
+              "I2F": 4,
+              "UIADD3": 4,
+              "IADD3": 1,
+              "VIADD": 0
+            },
+            {
+              "start": "0x860",
+              "back_branch": "0x8b0",
+              "instruction_lines": 6,
+              "DADD": 1,
+              "I2F": 1,
+              "UIADD3": 1,
+              "IADD3": 1,
+              "VIADD": 0
+            }
+          ]
+        },
+        {
+          "symbol": "_30src_backends_openacc_backend_c_backend_run_method_109_gpu",
+          "static_instruction_lines": 168,
+          "delay_loops": [
+            {
+              "start": "0x240",
+              "back_branch": "0x560",
+              "instruction_lines": 51,
+              "DADD": 16,
+              "I2F": 16,
+              "UIADD3": 16,
+              "IADD3": 1,
+              "VIADD": 0
+            },
+            {
+              "start": "0x750",
+              "back_branch": "0x830",
+              "instruction_lines": 15,
+              "DADD": 4,
+              "I2F": 4,
+              "UIADD3": 4,
+              "IADD3": 1,
+              "VIADD": 0
+            },
+            {
+              "start": "0x860",
+              "back_branch": "0x8b0",
+              "instruction_lines": 6,
+              "DADD": 1,
+              "I2F": 1,
+              "UIADD3": 1,
+              "IADD3": 1,
+              "VIADD": 0
+            }
+          ]
+        },
+        {
+          "symbol": "_30src_backends_openacc_backend_c_backend_run_method_104_gpu",
+          "static_instruction_lines": 168,
+          "delay_loops": [
+            {
+              "start": "0x240",
+              "back_branch": "0x560",
+              "instruction_lines": 51,
+              "DADD": 16,
+              "I2F": 16,
+              "UIADD3": 16,
+              "IADD3": 1,
+              "VIADD": 0
+            },
+            {
+              "start": "0x750",
+              "back_branch": "0x830",
+              "instruction_lines": 15,
+              "DADD": 4,
+              "I2F": 4,
+              "UIADD3": 4,
+              "IADD3": 1,
+              "VIADD": 0
+            },
+            {
+              "start": "0x860",
+              "back_branch": "0x8b0",
+              "instruction_lines": 6,
+              "DADD": 1,
+              "I2F": 1,
+              "UIADD3": 1,
+              "IADD3": 1,
+              "VIADD": 0
+            }
+          ]
+        },
+        {
+          "symbol": "_30src_backends_openacc_backend_c_backend_run_method_99_gpu",
+          "static_instruction_lines": 168,
+          "delay_loops": [
+            {
+              "start": "0x240",
+              "back_branch": "0x560",
+              "instruction_lines": 51,
+              "DADD": 16,
+              "I2F": 16,
+              "UIADD3": 16,
+              "IADD3": 1,
+              "VIADD": 0
+            },
+            {
+              "start": "0x750",
+              "back_branch": "0x830",
+              "instruction_lines": 15,
+              "DADD": 4,
+              "I2F": 4,
+              "UIADD3": 4,
+              "IADD3": 1,
+              "VIADD": 0
+            },
+            {
+              "start": "0x860",
+              "back_branch": "0x8b0",
+              "instruction_lines": 6,
+              "DADD": 1,
+              "I2F": 1,
+              "UIADD3": 1,
+              "IADD3": 1,
+              "VIADD": 0
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
