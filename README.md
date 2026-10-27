@@ -450,3 +450,55 @@ host orchestration and CSV isolation; they are not GPU timing validation:
 python3 tests/check_hip_driver.py
 python3 tests/check_hip_timing.py
 ```
+
+## Complete GH200 CUDA raw-data collection
+
+Run on GH200 with `nvcc` and Python 3 available:
+
+```bash
+env -u CUDA_OPENMP_PROFILE CUDA_DEVICE_TIMING=1 bash jobs/cuda/run_GH.sh
+```
+
+The launcher first runs the native CUDA correctness test for all 12 methods,
+then builds an uninstrumented benchmark and collects the same eight method/N/Delay
+groups defined in `jobs/common.sh`. It requests 132 blocks and 32 threads. Delays
+are the 14 powers of two from 1 to 8192, with 10 samples per delay and 20 inner
+repetitions per sample, matching the existing shared driver configuration. `MAX_ITER`
+and `MAX_ARRAY_SIZE` retain the driver's existing normalization across each group's
+N list; their effective values are recorded in the logs and device CSV.
+
+Each invocation creates `result/GH200/CUDA/<compiler>/raw_<time>.<id>/`:
+
+- `baseline/<group>/raw_times.csv`: host elapsed times from the original timing path.
+- `kernel_execution/<group>/cuda_device_times.csv`: separate-pass same-stream event intervals.
+- `validation/`: native correctness test executable and output.
+- `bin/`, `sources/`, source-control state and compiler logs: run provenance.
+- `COMPLETE.json`: written only after coverage and metadata checks pass.
+
+The standard sweep contains 71 method/N combinations, hence **9,940 host rows and
+9,940 device rows**. The final check rejects missing/duplicate samples, invalid
+values, wrong controls/workload metadata, and mixed output partitions. Recheck with:
+
+```bash
+python3 tests/check_gh200_cuda_results.py /path/to/raw_run
+```
+
+No plots or regression analysis are generated. Event intervals exclude allocations
+and explicit copies; they may include device idle gaps between host submissions.
+The original launch/wait sequence is retained. The event pass does not batch kernels
+into a graph. Native correctness tests are separate from production measurements.
+Performance counters and administrator access are not required.
+
+Without an OpenMP profile, CUDA uses its explicit schedule and records
+`cuda_static_cyclic_unverified`; this does not prove matching OpenMP runtime
+participants, work ownership or synchronization. An optional `CUDA_OPENMP_PROFILE`
+must cover the full sweep's exact workload keys; a small smoke-test profile is
+insufficient. OpenMP and OpenACC production sources are unchanged by this addition.
+
+Local checks (no CUDA GPU validation claim):
+
+```bash
+python3 tests/check_cuda_driver.py
+python3 tests/check_cuda_timing.py
+python3 tests/test_gh200_cuda_results.py
+```

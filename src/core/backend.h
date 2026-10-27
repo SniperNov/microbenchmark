@@ -37,6 +37,15 @@ double backend_run_method(int method, double *a, int N, int delay,
                           const backend_config_t *config,
                           int inner_reps);
 
+#ifdef MICROBENCHMARK_CUDA
+const char *backend_cuda_alignment_mode(void);
+void backend_cuda_last_launch_config(int *blocks, int *threads);
+#define BACKEND_DEVICE_LABEL "CUDA"
+#define BACKEND_DEVICE_OUTPUT_FILE "cuda_device_times.csv"
+#define backend_gpu_alignment_mode backend_cuda_alignment_mode
+#define backend_gpu_last_launch_config backend_cuda_last_launch_config
+#endif
+
 #ifdef MICROBENCHMARK_HIP
 const char *backend_hip_alignment_mode(void);
 void backend_hip_last_launch_config(int *blocks, int *threads);
@@ -46,7 +55,11 @@ void backend_hip_last_launch_config(int *blocks, int *threads);
 #define backend_gpu_last_launch_config backend_hip_last_launch_config
 #endif
 
-#ifdef MICROBENCHMARK_HIP
+#if defined(MICROBENCHMARK_CUDA) && defined(MICROBENCHMARK_HIP)
+#error "Build CUDA and HIP as separate backend executables."
+#endif
+
+#if defined(MICROBENCHMARK_CUDA) || defined(MICROBENCHMARK_HIP)
 #define MICROBENCHMARK_DEVICE_TIMING 1
 
 // Separate GPU profiling pass. The backend clones a and returns the mean

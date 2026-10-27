@@ -76,11 +76,12 @@ $(OPENACC_BIN): $(OPENACC_SRC) $(OPENACC_DEFS)
 		BIN=$@ \
 		SRC="$(OPENACC_SRC)"
 
-$(CUDA_BIN): $(CUDA_SRC) $(CUDA_DEFS)
+$(CUDA_BIN): $(CUDA_SRC) $(CUDA_DEFS) src/core/backend.h src/backends/cuda/openmp_profile.h Makefile Makefile.backend
 	@mkdir -p $(BUILD_DIR)
 	$(MAKE) -f Makefile.backend \
 		DEFS=$(CUDA_DEFS) \
-		EXTRA_CFLAGS="$(EXTRA_CFLAGS)" \
+		EXTRA_CFLAGS="$(EXTRA_CFLAGS) -DMICROBENCHMARK_CUDA" \
+		BACKEND_HEADERS="src/backends/cuda/openmp_profile.h" \
 		BIN=$@ \
 		SRC="$(CUDA_SRC)"
 
@@ -106,7 +107,7 @@ wrapper:
 
 clean:
 	rm -rf $(BUILD_DIR)
-	rm -f raw_times.csv overhead_distribution.txt hip_device_times.csv
+	rm -f raw_times.csv overhead_distribution.txt cuda_device_times.csv hip_device_times.csv
 
 help:
 	@echo "Unified microbenchmark suite"
