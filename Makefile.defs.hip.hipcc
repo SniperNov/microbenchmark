@@ -1,0 +1,12 @@
+CC = hipcc
+CFLAGS = -O0 -std=c++17 -x hip
+LDFLAGS =
+CPPFLAGS = -E
+LIBS = -lm
+
+# Leave empty to use hipcc's detected GPU architecture.
+# Example: make hip HIP_ARCH=gfx942 (MI300X), HIP_ARCH=gfx90a (MI210).
+HIP_ARCH ?=
+ifneq ($(strip $(HIP_ARCH)),)
+CFLAGS += --offload-arch=$(HIP_ARCH)
+endif

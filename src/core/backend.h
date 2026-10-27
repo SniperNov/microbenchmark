@@ -11,6 +11,7 @@ typedef struct
     // OpenMP:  control_a=thread_count, control_b=team_count
     // OpenACC: control_a=gang_count,   control_b=worker_count
     // CUDA:    control_a=block_count,  control_b=thread_count
+    // HIP:     control_a=block_count,  control_b=thread_count
     // SYCL:    control_a=group_count,  control_b=local_size
     int control_a;
     int control_b;
@@ -35,6 +36,27 @@ double backend_run_method(int method, double *a, int N, int delay,
                           int max_iter, int max_array_size,
                           const backend_config_t *config,
                           int inner_reps);
+
+#ifdef MICROBENCHMARK_HIP
+const char *backend_hip_alignment_mode(void);
+void backend_hip_last_launch_config(int *blocks, int *threads);
+#define BACKEND_DEVICE_LABEL "HIP"
+#define BACKEND_DEVICE_OUTPUT_FILE "hip_device_times.csv"
+#define backend_gpu_alignment_mode backend_hip_alignment_mode
+#define backend_gpu_last_launch_config backend_hip_last_launch_config
+#endif
+
+#ifdef MICROBENCHMARK_HIP
+#define MICROBENCHMARK_DEVICE_TIMING 1
+
+// Separate GPU profiling pass. The backend clones a and returns the mean
+// same-stream event interval around each kernel, excluding allocation/copies.
+// Profiling must leave the baseline host array and timing window unchanged.
+double backend_run_device_method(int method, const double *a, int N, int delay,
+                                 int max_iter, int max_array_size,
+                                 const backend_config_t *config,
+                                 int inner_reps);
+#endif
 
 #ifdef __cplusplus
 }

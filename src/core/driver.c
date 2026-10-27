@@ -8,6 +8,11 @@
 #define OUTPUT_FILE "overhead_distribution.txt"
 #define RAW_OUTPUT_FILE "raw_times.csv"
 
+#ifdef MICROBENCHMARK_DEVICE_TIMING
+#define DEVICE_OUTPUT_FILE BACKEND_DEVICE_OUTPUT_FILE
+static int g_device_timing = 0;
+#endif
+
 #define N_DEF 16382
 #define MAX_DELAY_POINTS 32
 #define MIN_DELAYLENGTH 1
@@ -177,6 +182,51 @@ static void run_target(int method, int set, int run, double *a, int N,
         }
     }
 }
+
+#ifdef MICROBENCHMARK_DEVICE_TIMING
+static void run_device_target(int method, int set, int run, const double *a, int N,
+                              const backend_config_t *config)
+{
+    // This pass runs after every baseline sample has completed, so event
+    // profiling cannot alter the GPU state seen by later baseline samples.
+    int perm[MAX_DELAY_POINTS];
+    unsigned int seed = 12345u + 97u * (unsigned int)set + 1009u * (unsigned int)(run + 1);
+    shuffle_indices(perm, g_num_delay_points, seed);
+    for (int sidx = 0; sidx < g_num_delay_points; ++sidx)
+    {
+        int logical = perm[sidx];
+        int delay = (int)delays[logical];
+        for (int orep = 0; orep < OUTERREPS; ++orep)
+        {
+            // The GPU backend clones a; neither raw baseline data nor the
+            // baseline fitting arrays are changed by this profiling call.
+            double device_us = backend_run_device_method(
+                method, a, N, delay, g_max_iter, g_max_array_size, config, INNERREPS);
+            int actual_blocks = 0, actual_threads = 0;
+            backend_gpu_last_launch_config(&actual_blocks, &actual_threads);
+            if (!isfinite(device_us) || device_us < 0.0)
+            {
+                fprintf(stderr, "Invalid " BACKEND_DEVICE_LABEL " device time for method %d.\n", method);
+                exit(EXIT_FAILURE);
+            }
+            FILE *device_raw = fopen(DEVICE_OUTPUT_FILE, "a");
+            if (!device_raw)
+            {
+                perror("fopen " DEVICE_OUTPUT_FILE " failed");
+                exit(EXIT_FAILURE);
+            }
+            fprintf(device_raw,
+                    "%d,\"%s\",%d,%d,%d,%d,%d,%.0f,%d,%d,%d,%d,%.9f,same_stream_events_separate_pass,%d,%d,%s\n",
+                    method, backend_method_name(method), N,
+                    config->control_a, config->control_b,
+                    set, run, delays[logical], orep,
+                    g_max_iter, g_max_array_size, INNERREPS, device_us,
+                    actual_blocks, actual_threads, backend_gpu_alignment_mode());
+            fclose(device_raw);
+        }
+    }
+}
+#endif
 
 static void warmup_cache(int method, int N, const backend_config_t *config)
 {
@@ -390,6 +440,18 @@ int main(int argc, char **argv)
         {
             continue;
         }
+#ifdef MICROBENCHMARK_DEVICE_TIMING
+        else if (key_matches(argv[i], "DeviceTiming"))
+        {
+            const char *value = value_for(argv[i]);
+            if (strcmp(value, "0") != 0 && strcmp(value, "1") != 0)
+            {
+                fprintf(stderr, "DeviceTiming must be 0 or 1.\n");
+                return 1;
+            }
+            g_device_timing = value[0] == '1';
+        }
+#endif
         else if (key_matches(argv[i], "Method"))
         {
             parse_int_list(value_for(argv[i]), methods, &num_methods, MAX_METHODS);
@@ -504,6 +566,11 @@ int main(int argc, char **argv)
     printf("WARMUP_ITERS  : %d\n", WARMUP_ITERATIONS);
     printf("BENCHMARK_SETS: %d\n", BENCHMARK_SETS);
     printf("BENCHMARK_RUNS: %d\n", BENCHMARK_RUNS);
+#ifdef MICROBENCHMARK_DEVICE_TIMING
+    printf("DEVICE_TIMING : %s\n", g_device_timing
+           ? "same-stream " BACKEND_DEVICE_LABEL " events in a separate pass; host timing windows unchanged"
+           : "disabled (DeviceTiming=1 enables a separate profiling pass)");
+#endif
     printf("==========================================\n");
 
     if (!backend_device_available())
@@ -520,6 +587,22 @@ int main(int argc, char **argv)
     fprintf(raw, "method_id,method_name,N,%s,%s,set,run,delaylength,outerreps,exec_time_us\n",
             backend_control_a_name(), backend_control_b_name());
     fclose(raw);
+
+#ifdef MICROBENCHMARK_DEVICE_TIMING
+    if (g_device_timing)
+    {
+        FILE *device_raw = fopen(DEVICE_OUTPUT_FILE, "w");
+        if (!device_raw)
+        {
+            perror("Failed to open " BACKEND_DEVICE_LABEL " device data file.");
+            backend_finalise();
+            return 1;
+        }
+        fprintf(device_raw,
+                "method_id,method_name,N,block_count,thread_count,set,run,delaylength,outerreps,max_iter,max_array_size,inner_reps,device_kernel_us,measurement_mode,actual_block_count,actual_thread_count,alignment_mode\n");
+        fclose(device_raw);
+    }
+#endif
 
     printf("\n========== Benchmark Execution ==========\n");
     printf("%-40s", "Method/N");
@@ -581,6 +664,46 @@ int main(int argc, char **argv)
     }
 
     printf("==========================================\n");
+#ifdef MICROBENCHMARK_DEVICE_TIMING
+    if (g_device_timing)
+    {
+        printf("\n========== " BACKEND_DEVICE_LABEL " Device Profiling (Separate Pass) ==========\n");
+        printf("Baseline samples are complete. Events bracket each kernel; allocation and copies are excluded.\n");
+        fflush(stdout);
+        for (int midx = 0; midx < (num_methods == 0 ? backend_num_methods() : num_methods); ++midx)
+        {
+            int method = num_methods == 0 ? midx : methods[midx];
+            if (method < 0 || method >= backend_num_methods())
+                continue;
+            for (int ca = 0; ca < num_control_as; ++ca)
+            {
+                for (int cb = 0; cb < num_control_bs; ++cb)
+                {
+                    backend_config_t config = {control_as[ca], control_bs[cb]};
+                    for (int nidx = 0; nidx < num_Ns; ++nidx)
+                    {
+                        int N = Ns[nidx];
+                        double *a = (double *)calloc((size_t)g_max_array_size, sizeof(double));
+                        if (!a)
+                        {
+                            fprintf(stderr, "Device profiling allocation failed for N=%d\n", N);
+                            exit(EXIT_FAILURE);
+                        }
+                        warmup_cache(method, N, &config);
+                        for (int set = 0; set < BENCHMARK_SETS; ++set)
+                            for (int run = 0; run < BENCHMARK_RUNS; ++run)
+                                run_device_target(method, set, run, a, N, &config);
+                        printf("Profiled method=%d N=%d requested blocks=%d threads=%d\n",
+                               method, N, config.control_a, config.control_b);
+                        fflush(stdout);
+                        free(a);
+                    }
+                }
+            }
+        }
+        printf("Device profiling samples saved to %s\n", DEVICE_OUTPUT_FILE);
+    }
+#endif
     backend_finalise();
     return 0;
 }

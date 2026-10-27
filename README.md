@@ -8,6 +8,7 @@ Current backends:
 openmp
 openacc
 cuda
+hip
 sycl
 ```
 
@@ -39,6 +40,7 @@ Build only one backend:
 make openmp
 make openacc
 make cuda
+make hip
 make sycl
 ```
 
@@ -367,3 +369,84 @@ M11_parreps  repeated inner worker-loop case
 ```
 
 For OpenACC, `gang_count` is the team-like control and `worker_count` is the thread-like control.
+
+## HIP backend (AMD ROCm)
+
+Build with ROCm's `hipcc`. The build compiles the shared driver as HIP C++ and
+uses the existing method IDs, workload parameters, warmups, shuffled delays and
+sample counts. Choose an architecture explicitly when cross-compiling:
+
+```bash
+make hip-distribution HIP_ARCH=gfx942     # MI300X
+# make hip-distribution HIP_ARCH=gfx90a  # MI210
+./bin/microbenchmark API=hip Method=0,6 N=16382 Delay=1,8192 \
+    block_count=304 thread_count=64 MAX_ITER=16382 MAX_ARRAY_SIZE=65536
+```
+
+`HIP_ARCH` may be omitted to use hipcc's detected architecture. The default flags
+are `-O0 -std=c++17`; unlike NVCC, HIP compiler options can affect host and device
+optimization together. Identical source/optimization labels do not establish
+identical GPU instructions, costs per delay, or execution slopes across vendors.
+
+The HIP kernels port the existing CUDA execution contract for methods 0-11:
+scalar launch and mapping methods, team-primary work, cyclic thread worksharing,
+stream launch/wait, FP64 atomic updates, thread-private N-element array reduction
+with team/global merging, team/thread work and repeated team-local phases.
+Block barriers and the requested-control index calculations are retained. No
+NVIDIA warp-size intrinsics are used. OpenMP, OpenACC and CUDA backend sources
+are unchanged by the HIP addition.
+
+CLI controls are `block_count` and `thread_count`. Backend defaults follow the
+reference's four teams per visible device and a thread limit of 32. AMD full-run
+scripts instead use the same platform configuration as the OpenMP jobs:
+MI210 = 104 blocks x 64 threads; MI300X = 304 blocks x 64 threads. Actual logical
+participants still depend on method: methods 0-4/7 use one useful thread and
+method5 uses one primary thread per block. A wavefront width is a hardware
+property, not a replacement for the configured logical participant count.
+
+Without an observed OpenMP profile, output is labelled
+`hip_static_cyclic_unverified`. This is not a claim that AMD OpenMP chose the
+same owners, participants or synchronization tree. Use `OpenMPProfile=<csv>` or
+`HIP_OPENMP_PROFILE=<csv>` for observations collected on the intended target and
+exact workload. The host reader validates the same profile schema as CUDA;
+chunk boundaries/order remain inferred, not observed runtime region events.
+A profile from a different GPU/compiler must not be assumed representative.
+
+`DeviceTiming=0` is the default. `DeviceTiming=1` enables an independent pass
+AFTER all baseline samples, using HIP events on the kernel's stream. Baseline
+`raw_times.csv` and device-pass `hip_device_times.csv` are separate. The host
+baseline creates no events. Allocation and copies remain outside each event
+interval; event intervals can still include device idle gaps while the host
+submits work, and are not instruction-only timing. Existing device/stream waits
+are retained; the event pass does not turn the workload into a batched graph.
+
+Collect all standard raw-data groups without plotting:
+
+```bash
+bash jobs/hip/run_AMD.sh
+# HIP_MACHINE=MI210 HIP_ARCH=gfx90a bash jobs/hip/run_AMD.sh
+# HIP_DEVICE_TIMING=1 bash jobs/hip/run_AMD.sh  # optional separate event pass
+```
+
+Results use unique directories under `result/<machine>/HIP/<compiler>/`:
+`baseline/<group>/` for host samples and `kernel_execution/<group>/` for optional
+HIP event samples. The launcher archives compiler/source provenance and copies
+the executable. It does not clean other builds or generate figures. A COSMA5
+MI300X Slurm wrapper is in `jobs/hip/run_cosma5.job`; use the site's ROCm environment.
+
+On a ROCm GPU, run the native participant/dataflow checks and driver smoke test:
+
+```bash
+bash tests/run_hip_validation.sh
+```
+
+This checks all 12 methods, per-thread call counts/order, touched array elements,
+atomic/reduction buckets and preservation of host input by the event pass. It
+verifies the explicit HIP contract; complete equivalence with an observed AMD
+OpenMP execution remains a separate comparison. Local CPU runtime mocks verify
+host orchestration and CSV isolation; they are not GPU timing validation:
+
+```bash
+python3 tests/check_hip_driver.py
+python3 tests/check_hip_timing.py
+```

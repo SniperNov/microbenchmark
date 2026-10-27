@@ -1,4 +1,4 @@
 include $(DEFS)
 
-$(BIN): $(SRC)
+$(BIN): $(SRC) src/core/backend.h $(BACKEND_HEADERS) Makefile.backend $(DEFS)
 	$(CC) $(CFLAGS) $(EXTRA_CFLAGS) -I src/core -o $@ $(SRC) $(LDFLAGS) $(LIBS)
