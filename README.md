@@ -451,54 +451,134 @@ python3 tests/check_hip_driver.py
 python3 tests/check_hip_timing.py
 ```
 
-## Complete GH200 CUDA raw-data collection
+## CUDA baseline and Nsight Systems tracing
 
-Run on GH200 with `nvcc` and Python 3 available:
+The current CUDA collection protocol preserves the original benchmark execution:
 
-```bash
-env -u CUDA_OPENMP_PROFILE CUDA_DEVICE_TIMING=1 bash jobs/cuda/run_GH.sh
-```
+1. `baseline/<group>/`: unprofiled host timings, always `DeviceTiming=0`.
+2. `tracing/<group>/`: external Nsight Systems CUDA tracing of the same binary,
+   arguments and original launch/wait sequence, also `DeviceTiming=0`.
+3. `tracing_um/<group>/`: a separate, heavier Unified Memory fault diagnostic.
+4. `event_diagnostic/<group>/`: optional legacy event pass, off by default.
 
-The launcher first runs the native CUDA correctness test for all 12 methods,
-then builds an uninstrumented benchmark and collects the same eight method/N/Delay
-groups defined in `jobs/common.sh`. It requests 132 blocks and 32 threads. Delays
-are the 14 powers of two from 1 to 8192, with 10 samples per delay and 20 inner
-repetitions per sample, matching the existing shared driver configuration. `MAX_ITER`
-and `MAX_ARRAY_SIZE` retain the driver's existing normalization across each group's
-N list; their effective values are recorded in the logs and device CSV.
+There are no kernel/driver changes, added NVTX ranges, profiler start/stop calls,
+CUDA events, graph construction or artificial batching in the traced application.
+Profiler overhead is nonzero: profiled host samples are retained separately and
+must not be pooled with baseline timings. The host-ratio diagnostic compares
+separate runs; it is not a pure profiler-overhead correction factor.
 
-Each invocation creates `result/GH200/CUDA/<compiler>/raw_<time>.<id>/`:
+The original eight method/N/Delay groups, warmups and sampling are unchanged.
+New results still contain 9,940 host samples. Each ordinary trace sweep captures
+397,600 benchmark kernel executions (198,800 measured and 198,800 warmups). Exact
+counts and deterministic shuffled order are checked before associating activity
+with the 9,940 measured samples. Missing events, unexpected kernels, reordered CSV
+rows, missing API correlations or application event timing cause validation to fail.
 
-- `baseline/<group>/raw_times.csv`: host elapsed times from the original timing path.
-- `kernel_execution/<group>/cuda_device_times.csv`: separate-pass same-stream event intervals.
-- `validation/`: native correctness test executable and output.
-- `bin/`, `sources/`, source-control state and compiler logs: run provenance.
-- `COMPLETE.json`: written only after coverage and metadata checks pass.
+### Run on GH200
 
-The standard sweep contains 71 method/N combinations, hence **9,940 host rows and
-9,940 device rows**. The final check rejects missing/duplicate samples, invalid
-values, wrong controls/workload metadata, and mixed output partitions. Recheck with:
-
-```bash
-python3 tests/check_gh200_cuda_results.py /path/to/raw_run
-```
-
-No plots or regression analysis are generated. Event intervals exclude allocations
-and explicit copies; they may include device idle gaps between host submissions.
-The original launch/wait sequence is retained. The event pass does not batch kernels
-into a graph. Native correctness tests are separate from production measurements.
-Performance counters and administrator access are not required.
-
-Without an OpenMP profile, CUDA uses its explicit schedule and records
-`cuda_static_cyclic_unverified`; this does not prove matching OpenMP runtime
-participants, work ownership or synchronization. An optional `CUDA_OPENMP_PROFILE`
-must cover the full sweep's exact workload keys; a small smoke-test profile is
-insufficient. OpenMP and OpenACC production sources are unchanged by this addition.
-
-Local checks (no CUDA GPU validation claim):
+Load the same NVHPC/CUDA environment used for the benchmark. Prefer the matching
+SDK's `nsys`, rather than an older system installation. For example, with NVHPC:
 
 ```bash
-python3 tests/check_cuda_driver.py
-python3 tests/check_cuda_timing.py
-python3 tests/test_gh200_cuda_results.py
+export NSYS_BIN="$(dirname "$(command -v nvc)")/nsys"
+CUDA_TRACE=1 CUDA_TRACE_UM=1 CUDA_DEVICE_TIMING=0 bash jobs/cuda/run_GH.sh
 ```
+
+The GH200 wrapper enables the separate UM diagnostic by default. Set
+`CUDA_TRACE_UM=0` for ordinary CUDA tracing only. `TMPDIR` is placed under the fresh
+result directory, avoiding GH200's nearly full system `/tmp`. Keep results on the
+work filesystem. The optional `CUDA_OPENMP_PROFILE` must cover the entire sweep.
+Absent a profile, actual OpenMP execution equivalence remains unverified.
+
+### A100, H100 and H200
+
+```bash
+sbatch jobs/cuda/run_eidf_a100.job
+sbatch jobs/cuda/run_eidf_h100.job
+sbatch jobs/cuda/run_eidf_h200.job
+```
+
+These wrappers use the same collector. Site-specific allocation/partition/GPU
+selection must supply the requested GPU; the native validation log checks the
+actual device name and stops before collection if the model is wrong. A100 uses
+`sm_80`, while H100/H200/GH200 use `sm_90`. Launch counts remain those in
+`jobs/common.sh`. `nsys`, `nvcc`, Python and suitable resources must exist in the
+job environment. No plotting dependencies or GPU performance counters are used.
+Only GH200 has been tested natively for this tracing workflow so far.
+
+### Trace an already archived binary
+
+This supports the existing GH200 results without recompiling the benchmark:
+
+```bash
+python3 jobs/cuda/trace_nsys.py \
+  --binary /absolute/path/bin/microbenchmark_cuda \
+  --driver-source /absolute/path/sources/src/core/driver.c \
+  --output /absolute/path/fresh_trace_directory \
+  -- API=cuda Method=0,6 N=16382 Delay=1,8192 \
+     block_count=132 thread_count=32 DeviceTiming=0
+```
+
+With no `--baseline`, the helper first runs the identical arguments without nsys.
+An existing matching unprofiled group can be supplied with `--baseline`. The
+original driver snapshot is needed for strict offline warmup/shuffle mapping;
+unsupported scheduling changes fail rather than produce guessed labels. A reused
+baseline's full environment/argument identity is not independently established by
+matching sample keys alone; the suite itself builds and archives both together.
+
+For a complete archived eight-group run, infer the original method/N/Delay,
+launch controls and effective MAX_ITER/MAX_ARRAY_SIZE from its CSVs/logs:
+
+```bash
+python3 jobs/cuda/trace_existing_run.py /absolute/path/to/previous/raw_run --um-faults
+```
+
+This reuses the archived executable and host baseline, writes a fresh timestamped
+`nsys_*` directory below the archived run, and never rewrites the original data.
+Only the necessary profiled executions are run. Both ordinary CUDA and optional
+UM passes are checked for all 9,940 measured samples.
+
+Each capture preserves `trace.nsys-rep`, `trace.sqlite`, command/version metadata,
+profile logs and the profiled process's raw host output. `derived/` contains:
+
+- `kernel_activity.csv`: every GPU activity, with warmups explicitly marked.
+- `kernel_samples.csv`: mean kernel activity duration per original sample, in us,
+  with method/N/Delay/set/run/outer repetition and inner repetition count.
+- `cuda_api_activity.csv`: host-side CUDA calls, with separate start/end/duration.
+- `synchronization_api_activity.csv`: synchronization-call durations.
+- `memory_copy_activity.csv` / `memory_set_activity.csv`, when activities exist.
+- `trace_summary.json`: mapping counts, UM table visibility and interpretation.
+
+A `TRACE_COMPLETE.json` is written only after these checks pass. The full collector
+writes `SUITE_COMPLETE.json` after all eight baseline/trace partitions pass.
+
+### Measurement interpretation
+
+Kernel time is the GPU activity's end minus start, not a pre-launch event span.
+The launch API duration, API-to-GPU start gap and synchronization API duration are
+exported separately. The signed gap from API end can be negative when execution
+overlaps the call; it is not an exact hardware queue residence measurement.
+Synchronization APIs can include waiting for GPU work, so their duration is not
+an isolated synchronization overhead. CPU and GPU intervals can overlap and must
+not be blindly added.
+
+All setup, warmup and teardown memory/API activity remains in the original trace;
+only the derived measured kernel samples omit warmups. Nsight's own device-side
+CUDA-event completion tracing is explicitly disabled when supported, to avoid
+adding that synchronization mechanism. CPU sampling/context-switch tracing is
+disabled; native GH200 runs succeeded without GPU counter privileges.
+
+GH200 hardware-coherent/unified memory does not imply that this explicit
+`cudaMalloc`/`cudaMemcpy` backend performs no transfers. UM-fault collection is a
+separate diagnostic with potentially substantial overhead. No UM rows can mean
+no observed activity or unavailable visibility; it does not establish zero data
+movement or zero coherence cost. Original historical event data are retained as
+a separate diagnostic measurement scope.
+
+HIP on COSMA5 uses AMD/ROCm. Nsight CUDA tracing is not a HIP profiler. The HIP
+backend and MI300X runner are present, but native compilation, validation and
+collection on COSMA5 remain required; ROCm tracing must be selected there.
+
+Relevant vendor guidance:
+[Nsight Systems user guide](https://docs.nvidia.com/nsight-systems/UserGuide/index.html),
+[CUDA activity/launch analysis](https://docs.nvidia.com/nsight-systems/AnalysisGuide/index.html).

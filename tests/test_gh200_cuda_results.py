@@ -77,6 +77,17 @@ class CoverageTest(unittest.TestCase):
         report = check.validate(self.root, device_timing=False)
         self.assertEqual((report['host_rows'], report['device_rows']), (9940, 0))
 
+    def test_a100_topology(self):
+        for path in self.root.rglob('*.csv'):
+            with path.open() as stream:rows=list(csv.DictReader(stream))
+            for row in rows:
+                row['block_count']=108
+                if int(row['method_id']) not in (0,1,2,3,4,7):row['actual_block_count']=108
+            self.write(path,rows)
+        report=check.validate(self.root,blocks=108)
+        self.assertEqual(report['requested_blocks'],108)
+        self.assertEqual(report['device_rows'],9940)
+
 
 if __name__ == '__main__':
     unittest.main()

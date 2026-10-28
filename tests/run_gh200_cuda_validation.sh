@@ -9,7 +9,7 @@ mkdir -p "$out"
 out="$(CDPATH= cd -- "$out" && pwd)"
 printf 'CUDA validation output directory: %s\n' "$out"
 nvcc --version > "$out/compiler.txt" 2>&1
-nvcc -arch=sm_90 -O0 -DMICROBENCHMARK_CUDA -I src/core \
+nvcc -arch="${CUDA_ARCH:-sm_90}" -O0 -DMICROBENCHMARK_CUDA -I src/core \
     tests/check_cuda_device.cu -o "$out/check_cuda_device" > "$out/build.log" 2>&1 || {
     cat "$out/build.log"; exit 1;
 }
