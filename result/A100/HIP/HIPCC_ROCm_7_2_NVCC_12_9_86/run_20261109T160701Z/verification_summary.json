@@ -1,0 +1,100 @@
+{
+  "status": "PASS_COMPLETE_FORMAL_HOST_SWEEP",
+  "api": "HIP",
+  "platform": "NVIDIA A100-SXM4-40GB",
+  "compiler": "HIPCC (NVIDIA backend) -> NVCC12.9.86",
+  "requested_blocks": 108,
+  "requested_threads": 32,
+  "host_rows": 9940,
+  "methods": 12,
+  "groups": 8,
+  "method_N_configurations": 71,
+  "delays": [
+    1,
+    2,
+    4,
+    8,
+    16,
+    32,
+    64,
+    128,
+    256,
+    512,
+    1024,
+    2048,
+    4096,
+    8192
+  ],
+  "sets": 2,
+  "runs": 5,
+  "inner_reps": 20,
+  "warmup_iterations": 10,
+  "outer_reps": 1,
+  "other_groups_MAX_ITER": 3456,
+  "M1to4_MAX_ITER": 65536,
+  "MAX_ARRAY_SIZE": 65536,
+  "row_counts": {
+    "M0_M10": 280,
+    "M1to4": 6160,
+    "M5": 140,
+    "M6": 140,
+    "M7": 140,
+    "M8": 980,
+    "M9": 980,
+    "M11_parreps": 1120
+  },
+  "missing_rows": 0,
+  "duplicate_rows": 0,
+  "nonfinite_or_nonpositive_times": 0,
+  "required_commands": 28,
+  "all_exit_zero": true,
+  "captured_files": 1622,
+  "all_capture_and_source_binary_generated_provenance_hashes_verified": true,
+  "archive_sha256": "358170f1d00924888d6cd6bc7e9cd26444944be0c5fbd2ccb918b52d5c33ff4b",
+  "production_binary_sha256": "5d8bcfa519c6e3f60efe6ecc7dce61877792050c6a1e86b770e121c0d1b4e9a3",
+  "source_sha256": {
+    "tests/check_hip_device.cpp": "c35a2c6f63fc8030e19f66086c7f8861dc9361f0d7d96351f8b69d246cf9faef",
+    "src/core/backend.h": "d46fab9873576188d2b5f28b14851e61a6c96b595a7e242c543e6b5114297f80",
+    "src/core/driver.c": "0df2b99045b54b6bbc575d589f2917e69e2906bbefe5cf65bd0aa3bbb6237092",
+    "src/backends/hip/backend.cpp": "a4abd6dca80c748a683b86da3a3aa1900af381d7bec054be1be90d2eb5760c04",
+    "src/backends/hip/openmp_profile.h": "e119deb81d1c769041dadf8bb52f3565edbf9b8cba5c2bdd9fac9174cd9b732c"
+  },
+  "collector_sha256": "f8b02da28f39a1316551872a9db8803779a399c1919695eeec720b641e9177ce",
+  "hardware_toolchain_and_GPU_identity_match_before_after": true,
+  "archived_pure_validator": "PASS",
+  "independent_grid_and_runtime_validation": "PASS",
+  "started_utc": "2026-11-09T16:07:01.436263+00:00",
+  "completed_utc": "2026-11-09T16:09:49.507304+00:00",
+  "elapsed_seconds": 168.071041,
+  "new_trace": false,
+  "formal_device_events": false,
+  "performance_analysis_performed": false,
+  "correctness_scope": "Exact HIP production binary passed 396 native correctness cases,240 short smoke rows and20 exact-iteration rows before formal collection. No per-formal-sample oracle. Requested geometry is not a production trace or one-block-per-SM placement proof.",
+  "publication_scope": "Original numeric CSVs and nonidentifying configuration/verification only. Full archive,source,binaries and logs remain local.",
+  "hip_platform": "nvidia",
+  "hip_runtime": "cuda",
+  "hip_source_release": "rocm-7.2.0",
+  "hip_reported_version": "7.2.53210-9999",
+  "host_compiler": "GCC/G++13.3.0",
+  "hip_sdk_file_hashes_verified": true,
+  "upstream_commits": {
+    "hip": {
+      "commit": "e7499501f181aea1e33459c4087d383f534e15c7",
+      "release": "rocm-7.2.0"
+    },
+    "hipother": {
+      "commit": "e56867449451fa4e12d068fedf502423a8d29191",
+      "release": "rocm-7.2.0"
+    },
+    "clr": {
+      "commit": "fc0010cf6a5a972d42b276df946510f30343d493",
+      "release": "rocm-7.2.0"
+    },
+    "hipcc": {
+      "commit": "7b800a19466229b8479a78de19143dc33c3ab9b5",
+      "release": "rocm-7.2.0"
+    }
+  },
+  "compile_command_confirms_HIP_backend": true,
+  "elapsed_seconds_scope": "Preflight and formal pipeline; excludes bootstrap/scheduling"
+}
