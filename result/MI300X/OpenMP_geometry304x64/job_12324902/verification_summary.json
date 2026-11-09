@@ -1,0 +1,92 @@
+{
+  "status": "PASS_COMPLETE_FORMAL_HOST_SWEEP",
+  "job_id": "12324902",
+  "date_utc": "2026-11-09",
+  "api": "OpenMP",
+  "hardware": {
+    "model": "AMD Instinct MI300X",
+    "CUs": 304,
+    "wavefront_width": 64
+  },
+  "compiler": "AMD Clang22.0.0git, ROCm7.2",
+  "elapsed_seconds": 2552,
+  "coverage": {
+    "methods": 12,
+    "groups": 8,
+    "method_N_configurations": 71,
+    "host_rows": 9940,
+    "delays": [
+      1,
+      2,
+      4,
+      8,
+      16,
+      32,
+      64,
+      128,
+      256,
+      512,
+      1024,
+      2048,
+      4096,
+      8192
+    ],
+    "sets": 2,
+    "runs": 5,
+    "inner_reps": 20,
+    "warmup_iterations": 10,
+    "outer_reps": 1,
+    "missing_rows": 0,
+    "duplicate_rows": 0,
+    "nonfinite_or_nonpositive_times": 0
+  },
+  "production_binary_sha256": "439eff113ff24f7a1c8f96b822a5b3186f47113eeabc28139227e529eae171ef",
+  "source_sha256": {
+    "src/core/driver.c": "614ea779af44a0d97c1d1a3223a98044b3866dc45411b1f841b92838dacd922c",
+    "src/core/backend.h": "d46fab9873576188d2b5f28b14851e61a6c96b595a7e242c543e6b5114297f80",
+    "src/backends/openmp/backend.c": "73446e04bbf4ae7c66a9d535956505c3e83c25773a91f6e1f1668f8c9b853991",
+    "src/backends/openmp/method9.h": "6901a8846ddc148f6c8a1d5be8259f98c3489056347fb587919e696ef4cdc616",
+    "tests/generate_openmp_probe.py": "3380a056536d43c6d6c10e5092adac9071383f44ad6e333408c75496c38aacba",
+    "tests/check_openmp_device.c": "3c46ad3f5eacd05aef0f4d4334581d7572c4724e2a29df2595be90ab0758927c",
+    "tests/generate_openmp_method9_probe.py": "224ce4aa8ccb83aaf04f55d7a33bcb75f7b1bf9b2691a41759a865b0761ce9e1",
+    "tests/check_openmp_method9.c": "18aed9ae51fa9e7a75b221d53fc6ad7efa2b8dc4b0eee0df4a429807a39fb2ad",
+    "tests/query_hip_geometry.cpp": "cf6646b7abc8c4bf5803fe3aad637fe534e6cdb81ec52050826381a10c2495f5",
+    "tests/run_mi300x_geometry_validation.py": "9b6e0059d5bcbe87411d9b9043fde8bd3906679383974a6d5eaa8fde7bc3a379",
+    "jobs/openmp/run_cosma5_geometry_validation.job": "35ab7417e1c8c3d8a792a3c7599a4f8310285359cec8e61d6f8bb3bf12672bf3"
+  },
+  "collector_sha256": "181ed3ed16f291929c80d9c1da03f4aaa3e867be2c4dcff886b118d71ecb3538",
+  "submission_job_sha256": "1be8295591420c6610c1b30dda28663a79f31f3de7ee7cb67ea8e0b2875318a7",
+  "logical_geometry_from_prior_exact_binary_validation": {
+    "M0-M4,M7": [
+      1,
+      1
+    ],
+    "M5": [
+      304,
+      1
+    ],
+    "M6,M8,M9,M10,M11": [
+      304,
+      64
+    ]
+  },
+  "hardware_and_toolchain_before_after_match": true,
+  "required_commands_all_exit_zero": true,
+  "original_archive_sha256": "4cc96baba57d68718321f8db878ba1214cac8b2e9e9ff98952cee91e5c915968",
+  "original_archive_retained_locally": true,
+  "new_trace_collected": false,
+  "old_data_mixed": false,
+  "new_numerical_oracle_for_formal_samples": false,
+  "prior_trace_note": "Prior exact-binary validation observed M6/8/9 physical304x64 and M10/11 physical304x128 with a runtime management wave,64 logical workers. No one-team-per-CU guarantee.",
+  "publication_scope": "Original unmodified numeric raw CSVs and configuration/verification summary. Original binaries, source archive, runtime logs and machine-identifying metadata remain local. This publication is not a byte-identical copy of the full local archive.",
+  "raw_rows_by_group": {
+    "M0_M10": 280,
+    "M11_parreps": 1120,
+    "M1to4": 6160,
+    "M5": 140,
+    "M6": 140,
+    "M7": 140,
+    "M8": 980,
+    "M9": 980
+  }
+}

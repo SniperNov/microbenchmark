@@ -1,0 +1,18 @@
+{
+  "methods": [
+    9
+  ],
+  "N": [
+    1,
+    2,
+    4,
+    8,
+    16,
+    32,
+    64
+  ],
+  "host_rows": 980,
+  "MAX_ITER": 19456,
+  "MAX_ARRAY_SIZE": 65536,
+  "recorded_timed_region_seconds": 75.98270130157462
+}
