@@ -1,0 +1,27 @@
+{
+  "methods": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "N": [
+    1,
+    4,
+    16,
+    64,
+    256,
+    1024,
+    4096,
+    8192,
+    16382,
+    32768,
+    65536
+  ],
+  "host_rows": 6160,
+  "MAX_ITER": 65536,
+  "MAX_ARRAY_SIZE": 65536,
+  "requested_blocks": 304,
+  "requested_threads": 64,
+  "device_timing": false
+}

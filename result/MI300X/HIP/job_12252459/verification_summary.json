@@ -1,0 +1,103 @@
+{
+  "status": "PASS_COMPLETE_FORMAL_HOST_SWEEP",
+  "job_id": "12252459",
+  "collection_date_utc": "2026-10-31",
+  "api": "HIP",
+  "elapsed_seconds": 2621,
+  "hardware": {
+    "model": "AMD Instinct MI300X",
+    "CUs": 304,
+    "wavefront_width": 64,
+    "architecture": "gfx942"
+  },
+  "toolchain": {
+    "hip_version": "7.2.53211-97f5574fe2",
+    "amd_clang_version": "22.0.0git",
+    "rocm_compiler_build": "roc-7.2.4",
+    "language_mode": "HIP C++17 (C driver compiled with -x hip)",
+    "optimization": "-O0"
+  },
+  "coverage": {
+    "methods": 12,
+    "groups": 8,
+    "method_N_configurations": 71,
+    "host_rows": 9940,
+    "delays": [
+      1,
+      2,
+      4,
+      8,
+      16,
+      32,
+      64,
+      128,
+      256,
+      512,
+      1024,
+      2048,
+      4096,
+      8192
+    ],
+    "sets": 2,
+    "runs": 5,
+    "inner_reps": 20,
+    "warmup_iterations": 10,
+    "outer_reps": 1,
+    "csv_set_indices": [
+      0,
+      1
+    ],
+    "csv_run_indices": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "csv_outerreps_indices": [
+      0
+    ],
+    "missing_rows": 0,
+    "duplicate_rows": 0,
+    "nonfinite_or_nonpositive_times": 0
+  },
+  "runtime_configuration_checked_against_archived_logs": true,
+  "requested_geometry": {
+    "blocks": 304,
+    "threads": 64
+  },
+  "geometry_scope": "CSV geometry columns record requests. Native HIP correctness is separate; exact participant/owner equivalence with OpenMP was not established by these formal host timings.",
+  "production_binary_sha256": "e69f45f7a66d17615afdb93a07185276f63e49110613e92bc3e8152e2ede3399",
+  "source_sha256": {
+    "src/core/driver.c": "614ea779af44a0d97c1d1a3223a98044b3866dc45411b1f841b92838dacd922c",
+    "src/core/backend.h": "d46fab9873576188d2b5f28b14851e61a6c96b595a7e242c543e6b5114297f80",
+    "src/backends/hip/backend.cpp": "a4abd6dca80c748a683b86da3a3aa1900af381d7bec054be1be90d2eb5760c04",
+    "src/backends/hip/openmp_profile.h": "e119deb81d1c769041dadf8bb52f3565edbf9b8cba5c2bdd9fac9174cd9b732c"
+  },
+  "original_archive_sha256": "41cfba8fc8fb3aa1ad53e7c4d0465e49073481a23b425210a8d29da6ae3a0827",
+  "original_archive_transfer_hash_previously_verified": true,
+  "original_archive_retained_locally": true,
+  "native_correctness": {
+    "methods_checked": 12,
+    "recorded_test_configurations": 33,
+    "archived_log_reports_pass": true,
+    "separate_from_formal_sample_grid": true
+  },
+  "formal_device_timing": false,
+  "formal_device_event_rows": 0,
+  "validation_device_event_rows_published": 0,
+  "trace_collection_12325017_included": false,
+  "new_numerical_oracle_for_formal_samples": false,
+  "raw_rows_by_group": {
+    "M0_M10": 280,
+    "M1to4": 6160,
+    "M5": 140,
+    "M6": 140,
+    "M7": 140,
+    "M8": 980,
+    "M9": 980,
+    "M11_parreps": 1120
+  },
+  "old_data_mixed": false,
+  "publication_scope": "Original unmodified formal host-timing CSVs, sanitized group configurations and a newly prepared public verification summary. Original source snapshots, binaries, logs, validation/event data and machine-identifying metadata remain local. This publication is not the complete archival payload."
+}
