@@ -1,0 +1,281 @@
+method_id,method_name,N,block_count,thread_count,set,run,delaylength,outerreps,exec_time_us
+0,"pure delay kernel",16382,108,32,0,0,4,0,10.502441406
+0,"pure delay kernel",16382,108,32,0,0,1024,0,19.877734375
+0,"pure delay kernel",16382,108,32,0,0,1,0,11.649609375
+0,"pure delay kernel",16382,108,32,0,0,32,0,11.945605469
+0,"pure delay kernel",16382,108,32,0,0,64,0,11.031347656
+0,"pure delay kernel",16382,108,32,0,0,2048,0,28.081445313
+0,"pure delay kernel",16382,108,32,0,0,512,0,14.813281250
+0,"pure delay kernel",16382,108,32,0,0,8192,0,80.070117188
+0,"pure delay kernel",16382,108,32,0,0,16,0,10.646679688
+0,"pure delay kernel",16382,108,32,0,0,2,0,19.878710937
+0,"pure delay kernel",16382,108,32,0,0,256,0,12.604296875
+0,"pure delay kernel",16382,108,32,0,0,8,0,11.399609375
+0,"pure delay kernel",16382,108,32,0,0,4096,0,45.087402344
+0,"pure delay kernel",16382,108,32,0,0,128,0,12.522265625
+0,"pure delay kernel",16382,108,32,0,1,1024,0,19.976464844
+0,"pure delay kernel",16382,108,32,0,1,8,0,10.480371094
+0,"pure delay kernel",16382,108,32,0,1,32,0,10.739453125
+0,"pure delay kernel",16382,108,32,0,1,1,0,10.414257813
+0,"pure delay kernel",16382,108,32,0,1,8192,0,79.754980469
+0,"pure delay kernel",16382,108,32,0,1,128,0,11.565429688
+0,"pure delay kernel",16382,108,32,0,1,64,0,10.957812500
+0,"pure delay kernel",16382,108,32,0,1,2048,0,28.460156250
+0,"pure delay kernel",16382,108,32,0,1,512,0,14.773828125
+0,"pure delay kernel",16382,108,32,0,1,256,0,12.568164062
+0,"pure delay kernel",16382,108,32,0,1,2,0,10.464843750
+0,"pure delay kernel",16382,108,32,0,1,4096,0,45.439550781
+0,"pure delay kernel",16382,108,32,0,1,16,0,10.601171875
+0,"pure delay kernel",16382,108,32,0,1,4,0,10.405664062
+0,"pure delay kernel",16382,108,32,0,2,1,0,10.454394531
+0,"pure delay kernel",16382,108,32,0,2,4,0,10.549511719
+0,"pure delay kernel",16382,108,32,0,2,16,0,10.724902344
+0,"pure delay kernel",16382,108,32,0,2,64,0,10.972753906
+0,"pure delay kernel",16382,108,32,0,2,2048,0,27.849511719
+0,"pure delay kernel",16382,108,32,0,2,8,0,10.486914063
+0,"pure delay kernel",16382,108,32,0,2,8192,0,79.888769531
+0,"pure delay kernel",16382,108,32,0,2,2,0,10.463378906
+0,"pure delay kernel",16382,108,32,0,2,256,0,12.587304687
+0,"pure delay kernel",16382,108,32,0,2,1024,0,21.095117188
+0,"pure delay kernel",16382,108,32,0,2,512,0,15.068359375
+0,"pure delay kernel",16382,108,32,0,2,4096,0,45.761718750
+0,"pure delay kernel",16382,108,32,0,2,32,0,11.975195313
+0,"pure delay kernel",16382,108,32,0,2,128,0,12.451464844
+0,"pure delay kernel",16382,108,32,0,3,2,0,10.502441406
+0,"pure delay kernel",16382,108,32,0,3,256,0,12.650878906
+0,"pure delay kernel",16382,108,32,0,3,1,0,10.451269531
+0,"pure delay kernel",16382,108,32,0,3,32,0,10.736914063
+0,"pure delay kernel",16382,108,32,0,3,16,0,10.646093750
+0,"pure delay kernel",16382,108,32,0,3,4096,0,45.728125000
+0,"pure delay kernel",16382,108,32,0,3,128,0,11.567871094
+0,"pure delay kernel",16382,108,32,0,3,512,0,14.733300781
+0,"pure delay kernel",16382,108,32,0,3,8,0,10.559472656
+0,"pure delay kernel",16382,108,32,0,3,2048,0,27.760937500
+0,"pure delay kernel",16382,108,32,0,3,8192,0,80.287011719
+0,"pure delay kernel",16382,108,32,0,3,64,0,11.011914063
+0,"pure delay kernel",16382,108,32,0,3,1024,0,19.204589844
+0,"pure delay kernel",16382,108,32,0,3,4,0,10.633691406
+0,"pure delay kernel",16382,108,32,0,4,16,0,10.604589844
+0,"pure delay kernel",16382,108,32,0,4,64,0,10.914160156
+0,"pure delay kernel",16382,108,32,0,4,4,0,11.312402344
+0,"pure delay kernel",16382,108,32,0,4,32,0,12.136425781
+0,"pure delay kernel",16382,108,32,0,4,1,0,11.477246094
+0,"pure delay kernel",16382,108,32,0,4,512,0,15.851757813
+0,"pure delay kernel",16382,108,32,0,4,2,0,11.323925781
+0,"pure delay kernel",16382,108,32,0,4,256,0,13.738867188
+0,"pure delay kernel",16382,108,32,0,4,8,0,11.621484375
+0,"pure delay kernel",16382,108,32,0,4,128,0,11.876953125
+0,"pure delay kernel",16382,108,32,0,4,1024,0,19.136425781
+0,"pure delay kernel",16382,108,32,0,4,4096,0,45.844824219
+0,"pure delay kernel",16382,108,32,0,4,8192,0,79.765039062
+0,"pure delay kernel",16382,108,32,0,4,2048,0,27.823339844
+0,"pure delay kernel",16382,108,32,1,0,2,0,11.628125000
+0,"pure delay kernel",16382,108,32,1,0,8,0,10.537988281
+0,"pure delay kernel",16382,108,32,1,0,128,0,11.561914062
+0,"pure delay kernel",16382,108,32,1,0,32,0,10.722265625
+0,"pure delay kernel",16382,108,32,1,0,4,0,10.482910156
+0,"pure delay kernel",16382,108,32,1,0,64,0,11.001367187
+0,"pure delay kernel",16382,108,32,1,0,8192,0,96.434863281
+0,"pure delay kernel",16382,108,32,1,0,16,0,10.731347656
+0,"pure delay kernel",16382,108,32,1,0,512,0,15.221679688
+0,"pure delay kernel",16382,108,32,1,0,1024,0,19.024218750
+0,"pure delay kernel",16382,108,32,1,0,2048,0,28.390527344
+0,"pure delay kernel",16382,108,32,1,0,256,0,12.598242188
+0,"pure delay kernel",16382,108,32,1,0,1,0,10.258496094
+0,"pure delay kernel",16382,108,32,1,0,4096,0,45.373437500
+0,"pure delay kernel",16382,108,32,1,1,1,0,10.255468750
+0,"pure delay kernel",16382,108,32,1,1,4,0,10.450390625
+0,"pure delay kernel",16382,108,32,1,1,16,0,10.437304687
+0,"pure delay kernel",16382,108,32,1,1,8192,0,80.391210938
+0,"pure delay kernel",16382,108,32,1,1,256,0,13.233496094
+0,"pure delay kernel",16382,108,32,1,1,64,0,21.621972656
+0,"pure delay kernel",16382,108,32,1,1,2048,0,27.751855469
+0,"pure delay kernel",16382,108,32,1,1,4096,0,45.380957031
+0,"pure delay kernel",16382,108,32,1,1,8,0,10.550585937
+0,"pure delay kernel",16382,108,32,1,1,1024,0,20.332617187
+0,"pure delay kernel",16382,108,32,1,1,32,0,12.053808594
+0,"pure delay kernel",16382,108,32,1,1,512,0,15.551269531
+0,"pure delay kernel",16382,108,32,1,1,2,0,11.637988281
+0,"pure delay kernel",16382,108,32,1,1,128,0,12.703417969
+0,"pure delay kernel",16382,108,32,1,2,2,0,11.688085938
+0,"pure delay kernel",16382,108,32,1,2,8,0,10.540527344
+0,"pure delay kernel",16382,108,32,1,2,256,0,12.620800781
+0,"pure delay kernel",16382,108,32,1,2,2048,0,27.828906250
+0,"pure delay kernel",16382,108,32,1,2,32,0,10.773437500
+0,"pure delay kernel",16382,108,32,1,2,16,0,10.677246094
+0,"pure delay kernel",16382,108,32,1,2,1,0,11.669628906
+0,"pure delay kernel",16382,108,32,1,2,8192,0,80.343066406
+0,"pure delay kernel",16382,108,32,1,2,128,0,12.838769531
+0,"pure delay kernel",16382,108,32,1,2,4,0,11.633007813
+0,"pure delay kernel",16382,108,32,1,2,512,0,16.040136719
+0,"pure delay kernel",16382,108,32,1,2,1024,0,19.340820312
+0,"pure delay kernel",16382,108,32,1,2,64,0,11.011328125
+0,"pure delay kernel",16382,108,32,1,2,4096,0,45.448144531
+0,"pure delay kernel",16382,108,32,1,3,16,0,10.660742188
+0,"pure delay kernel",16382,108,32,1,3,2,0,10.477343750
+0,"pure delay kernel",16382,108,32,1,3,4,0,10.478808594
+0,"pure delay kernel",16382,108,32,1,3,256,0,13.951757813
+0,"pure delay kernel",16382,108,32,1,3,1,0,10.486425781
+0,"pure delay kernel",16382,108,32,1,3,1024,0,19.129003906
+0,"pure delay kernel",16382,108,32,1,3,32,0,10.759472656
+0,"pure delay kernel",16382,108,32,1,3,512,0,14.797851562
+0,"pure delay kernel",16382,108,32,1,3,4096,0,45.793750000
+0,"pure delay kernel",16382,108,32,1,3,8,0,10.770898437
+0,"pure delay kernel",16382,108,32,1,3,64,0,11.038867187
+0,"pure delay kernel",16382,108,32,1,3,2048,0,27.890527344
+0,"pure delay kernel",16382,108,32,1,3,8192,0,79.797656250
+0,"pure delay kernel",16382,108,32,1,3,128,0,11.573925781
+0,"pure delay kernel",16382,108,32,1,4,256,0,12.700000000
+0,"pure delay kernel",16382,108,32,1,4,1024,0,19.583203125
+0,"pure delay kernel",16382,108,32,1,4,32,0,12.067285156
+0,"pure delay kernel",16382,108,32,1,4,64,0,12.164453125
+0,"pure delay kernel",16382,108,32,1,4,2,0,10.491894531
+0,"pure delay kernel",16382,108,32,1,4,16,0,10.660742188
+0,"pure delay kernel",16382,108,32,1,4,128,0,11.528808594
+0,"pure delay kernel",16382,108,32,1,4,512,0,14.727246094
+0,"pure delay kernel",16382,108,32,1,4,4,0,10.550488281
+0,"pure delay kernel",16382,108,32,1,4,2048,0,27.769921875
+0,"pure delay kernel",16382,108,32,1,4,8,0,11.981250000
+0,"pure delay kernel",16382,108,32,1,4,1,0,11.472167969
+0,"pure delay kernel",16382,108,32,1,4,8192,0,79.867187500
+0,"pure delay kernel",16382,108,32,1,4,4096,0,45.100878906
+10,"kernel launch blocks + threads",16382,108,32,0,0,4,0,11.236718750
+10,"kernel launch blocks + threads",16382,108,32,0,0,1024,0,19.913281250
+10,"kernel launch blocks + threads",16382,108,32,0,0,1,0,11.213769531
+10,"kernel launch blocks + threads",16382,108,32,0,0,32,0,11.521289062
+10,"kernel launch blocks + threads",16382,108,32,0,0,64,0,11.749707031
+10,"kernel launch blocks + threads",16382,108,32,0,0,2048,0,28.686621094
+10,"kernel launch blocks + threads",16382,108,32,0,0,512,0,15.959472656
+10,"kernel launch blocks + threads",16382,108,32,0,0,8192,0,80.998339844
+10,"kernel launch blocks + threads",16382,108,32,0,0,16,0,11.410156250
+10,"kernel launch blocks + threads",16382,108,32,0,0,2,0,11.194726562
+10,"kernel launch blocks + threads",16382,108,32,0,0,256,0,13.404296875
+10,"kernel launch blocks + threads",16382,108,32,0,0,8,0,11.233789062
+10,"kernel launch blocks + threads",16382,108,32,0,0,4096,0,46.001660156
+10,"kernel launch blocks + threads",16382,108,32,0,0,128,0,12.548730469
+10,"kernel launch blocks + threads",16382,108,32,0,1,1024,0,20.884082031
+10,"kernel launch blocks + threads",16382,108,32,0,1,8,0,12.167089844
+10,"kernel launch blocks + threads",16382,108,32,0,1,32,0,12.696484375
+10,"kernel launch blocks + threads",16382,108,32,0,1,1,0,11.169238281
+10,"kernel launch blocks + threads",16382,108,32,0,1,8192,0,81.458300781
+10,"kernel launch blocks + threads",16382,108,32,0,1,128,0,12.302148437
+10,"kernel launch blocks + threads",16382,108,32,0,1,64,0,11.871972656
+10,"kernel launch blocks + threads",16382,108,32,0,1,2048,0,29.020605469
+10,"kernel launch blocks + threads",16382,108,32,0,1,512,0,15.855859375
+10,"kernel launch blocks + threads",16382,108,32,0,1,256,0,13.464453125
+10,"kernel launch blocks + threads",16382,108,32,0,1,2,0,11.227246094
+10,"kernel launch blocks + threads",16382,108,32,0,1,4096,0,46.700390625
+10,"kernel launch blocks + threads",16382,108,32,0,1,16,0,11.333398437
+10,"kernel launch blocks + threads",16382,108,32,0,1,4,0,11.271875000
+10,"kernel launch blocks + threads",16382,108,32,0,2,1,0,11.171679687
+10,"kernel launch blocks + threads",16382,108,32,0,2,4,0,11.279296875
+10,"kernel launch blocks + threads",16382,108,32,0,2,16,0,22.652832031
+10,"kernel launch blocks + threads",16382,108,32,0,2,64,0,11.674121094
+10,"kernel launch blocks + threads",16382,108,32,0,2,2048,0,28.593847656
+10,"kernel launch blocks + threads",16382,108,32,0,2,8,0,11.308398437
+10,"kernel launch blocks + threads",16382,108,32,0,2,8192,0,80.838085937
+10,"kernel launch blocks + threads",16382,108,32,0,2,2,0,11.218750000
+10,"kernel launch blocks + threads",16382,108,32,0,2,256,0,13.459375000
+10,"kernel launch blocks + threads",16382,108,32,0,2,1024,0,19.916308594
+10,"kernel launch blocks + threads",16382,108,32,0,2,512,0,16.215625000
+10,"kernel launch blocks + threads",16382,108,32,0,2,4096,0,46.892285156
+10,"kernel launch blocks + threads",16382,108,32,0,2,32,0,11.534863281
+10,"kernel launch blocks + threads",16382,108,32,0,2,128,0,12.294238281
+10,"kernel launch blocks + threads",16382,108,32,0,3,2,0,12.242578125
+10,"kernel launch blocks + threads",16382,108,32,0,3,256,0,14.391601562
+10,"kernel launch blocks + threads",16382,108,32,0,3,1,0,12.251660156
+10,"kernel launch blocks + threads",16382,108,32,0,3,32,0,11.643554688
+10,"kernel launch blocks + threads",16382,108,32,0,3,16,0,11.382519531
+10,"kernel launch blocks + threads",16382,108,32,0,3,4096,0,46.141308594
+10,"kernel launch blocks + threads",16382,108,32,0,3,128,0,12.299218750
+10,"kernel launch blocks + threads",16382,108,32,0,3,512,0,15.614355469
+10,"kernel launch blocks + threads",16382,108,32,0,3,8,0,11.257812500
+10,"kernel launch blocks + threads",16382,108,32,0,3,2048,0,28.606933594
+10,"kernel launch blocks + threads",16382,108,32,0,3,8192,0,81.060937500
+10,"kernel launch blocks + threads",16382,108,32,0,3,64,0,11.792285156
+10,"kernel launch blocks + threads",16382,108,32,0,3,1024,0,19.924414062
+10,"kernel launch blocks + threads",16382,108,32,0,3,4,0,11.512304688
+10,"kernel launch blocks + threads",16382,108,32,0,4,16,0,11.382519531
+10,"kernel launch blocks + threads",16382,108,32,0,4,64,0,12.951953125
+10,"kernel launch blocks + threads",16382,108,32,0,4,4,0,12.208593750
+10,"kernel launch blocks + threads",16382,108,32,0,4,32,0,12.305761719
+10,"kernel launch blocks + threads",16382,108,32,0,4,1,0,11.194726562
+10,"kernel launch blocks + threads",16382,108,32,0,4,512,0,15.545312500
+10,"kernel launch blocks + threads",16382,108,32,0,4,2,0,11.241406250
+10,"kernel launch blocks + threads",16382,108,32,0,4,256,0,13.438964844
+10,"kernel launch blocks + threads",16382,108,32,0,4,8,0,12.478613281
+10,"kernel launch blocks + threads",16382,108,32,0,4,128,0,13.550000000
+10,"kernel launch blocks + threads",16382,108,32,0,4,1024,0,20.226367187
+10,"kernel launch blocks + threads",16382,108,32,0,4,4096,0,46.576660156
+10,"kernel launch blocks + threads",16382,108,32,0,4,8192,0,81.002343750
+10,"kernel launch blocks + threads",16382,108,32,0,4,2048,0,28.510644531
+10,"kernel launch blocks + threads",16382,108,32,1,0,2,0,12.366796875
+10,"kernel launch blocks + threads",16382,108,32,1,0,8,0,12.141503906
+10,"kernel launch blocks + threads",16382,108,32,1,0,128,0,13.486914063
+10,"kernel launch blocks + threads",16382,108,32,1,0,32,0,12.171484375
+10,"kernel launch blocks + threads",16382,108,32,1,0,4,0,11.329980469
+10,"kernel launch blocks + threads",16382,108,32,1,0,64,0,11.757226562
+10,"kernel launch blocks + threads",16382,108,32,1,0,8192,0,81.032324219
+10,"kernel launch blocks + threads",16382,108,32,1,0,16,0,12.193554688
+10,"kernel launch blocks + threads",16382,108,32,1,0,512,0,15.602343750
+10,"kernel launch blocks + threads",16382,108,32,1,0,1024,0,20.405371094
+10,"kernel launch blocks + threads",16382,108,32,1,0,2048,0,29.524609375
+10,"kernel launch blocks + threads",16382,108,32,1,0,256,0,13.480957031
+10,"kernel launch blocks + threads",16382,108,32,1,0,1,0,11.156640625
+10,"kernel launch blocks + threads",16382,108,32,1,0,4096,0,46.604687500
+10,"kernel launch blocks + threads",16382,108,32,1,1,1,0,11.258789062
+10,"kernel launch blocks + threads",16382,108,32,1,1,4,0,11.272363281
+10,"kernel launch blocks + threads",16382,108,32,1,1,16,0,11.369042969
+10,"kernel launch blocks + threads",16382,108,32,1,1,8192,0,80.696777344
+10,"kernel launch blocks + threads",16382,108,32,1,1,256,0,13.408789063
+10,"kernel launch blocks + threads",16382,108,32,1,1,64,0,11.713085938
+10,"kernel launch blocks + threads",16382,108,32,1,1,2048,0,28.580859375
+10,"kernel launch blocks + threads",16382,108,32,1,1,4096,0,46.391796875
+10,"kernel launch blocks + threads",16382,108,32,1,1,8,0,11.305371094
+10,"kernel launch blocks + threads",16382,108,32,1,1,1024,0,30.274023437
+10,"kernel launch blocks + threads",16382,108,32,1,1,32,0,11.431640625
+10,"kernel launch blocks + threads",16382,108,32,1,1,512,0,17.789941406
+10,"kernel launch blocks + threads",16382,108,32,1,1,2,0,20.881054688
+10,"kernel launch blocks + threads",16382,108,32,1,1,128,0,12.461035156
+10,"kernel launch blocks + threads",16382,108,32,1,2,2,0,11.471191406
+10,"kernel launch blocks + threads",16382,108,32,1,2,8,0,11.277832031
+10,"kernel launch blocks + threads",16382,108,32,1,2,256,0,13.393261719
+10,"kernel launch blocks + threads",16382,108,32,1,2,2048,0,28.598339844
+10,"kernel launch blocks + threads",16382,108,32,1,2,32,0,11.488769531
+10,"kernel launch blocks + threads",16382,108,32,1,2,16,0,11.244824219
+10,"kernel launch blocks + threads",16382,108,32,1,2,1,0,12.455468750
+10,"kernel launch blocks + threads",16382,108,32,1,2,8192,0,80.682812500
+10,"kernel launch blocks + threads",16382,108,32,1,2,128,0,12.348828125
+10,"kernel launch blocks + threads",16382,108,32,1,2,4,0,11.236230469
+10,"kernel launch blocks + threads",16382,108,32,1,2,512,0,15.658496094
+10,"kernel launch blocks + threads",16382,108,32,1,2,1024,0,19.885253906
+10,"kernel launch blocks + threads",16382,108,32,1,2,64,0,11.779785156
+10,"kernel launch blocks + threads",16382,108,32,1,2,4096,0,65.217187500
+10,"kernel launch blocks + threads",16382,108,32,1,3,16,0,11.361523438
+10,"kernel launch blocks + threads",16382,108,32,1,3,2,0,11.231835937
+10,"kernel launch blocks + threads",16382,108,32,1,3,4,0,11.278808594
+10,"kernel launch blocks + threads",16382,108,32,1,3,256,0,13.702343750
+10,"kernel launch blocks + threads",16382,108,32,1,3,1,0,11.210156250
+10,"kernel launch blocks + threads",16382,108,32,1,3,1024,0,19.887207031
+10,"kernel launch blocks + threads",16382,108,32,1,3,32,0,11.494824219
+10,"kernel launch blocks + threads",16382,108,32,1,3,512,0,16.086230469
+10,"kernel launch blocks + threads",16382,108,32,1,3,4096,0,46.323242188
+10,"kernel launch blocks + threads",16382,108,32,1,3,8,0,11.272851562
+10,"kernel launch blocks + threads",16382,108,32,1,3,64,0,11.738281250
+10,"kernel launch blocks + threads",16382,108,32,1,3,2048,0,28.595898438
+10,"kernel launch blocks + threads",16382,108,32,1,3,8192,0,81.213281250
+10,"kernel launch blocks + threads",16382,108,32,1,3,128,0,12.323828125
+10,"kernel launch blocks + threads",16382,108,32,1,4,256,0,13.241503906
+10,"kernel launch blocks + threads",16382,108,32,1,4,1024,0,20.657812500
+10,"kernel launch blocks + threads",16382,108,32,1,4,32,0,11.515332031
+10,"kernel launch blocks + threads",16382,108,32,1,4,64,0,11.780761719
+10,"kernel launch blocks + threads",16382,108,32,1,4,2,0,11.324902344
+10,"kernel launch blocks + threads",16382,108,32,1,4,16,0,11.390136719
+10,"kernel launch blocks + threads",16382,108,32,1,4,128,0,12.662304688
+10,"kernel launch blocks + threads",16382,108,32,1,4,512,0,15.560253906
+10,"kernel launch blocks + threads",16382,108,32,1,4,4,0,12.031738281
+10,"kernel launch blocks + threads",16382,108,32,1,4,2048,0,29.036230469
+10,"kernel launch blocks + threads",16382,108,32,1,4,8,0,11.317871094
+10,"kernel launch blocks + threads",16382,108,32,1,4,1,0,11.150097656
+10,"kernel launch blocks + threads",16382,108,32,1,4,8192,0,80.813476562
+10,"kernel launch blocks + threads",16382,108,32,1,4,4096,0,45.968554688
