@@ -1,0 +1,20 @@
+{
+  "README.md": "e284d3b12cdee73f88e99c1801a20861d91734ed935dd0c88d244be9fc2294f0",
+  "baseline/M0_M10/GROUP_COMPLETE.json": "cd558f8446e08405bac484514a0d221b33c68779bed3dab83d433418b0d252a2",
+  "baseline/M0_M10/raw_times.csv": "cca08d30a13a36a35488487ada57a71d54ea9718293c08f117bc420fef08e99c",
+  "baseline/M11_parreps/GROUP_COMPLETE.json": "93d9119c4239ff5e935d93945ac12fa07431a09e800d423b9c723cc164344ae9",
+  "baseline/M11_parreps/raw_times.csv": "0f97d3577ea6e6f4c621ebda432492f1004d9679c34b2cdd38494460a739e30e",
+  "baseline/M1to4/GROUP_COMPLETE.json": "5b637af61de3610c6c290c310218ad38b0f488d8825cf13d4669c40b6a30be30",
+  "baseline/M1to4/raw_times.csv": "d4a969ed07d05cf6d1f0717378e6b7c8137738d3d7c1cc6d892f9e3838fdfa85",
+  "baseline/M5/GROUP_COMPLETE.json": "577522adbf57931d5cb3298df02e3201a39676ae9fb4847d7e99b71796058978",
+  "baseline/M5/raw_times.csv": "ba56ca665fc7d360c9d3a58be65a037b2d4aa2c40486ffba8fdc85ab54ec1d88",
+  "baseline/M6/GROUP_COMPLETE.json": "92d7e61280145ce949fa80f0069c8cba5d0864b9bc5bdf813face2b24b003e67",
+  "baseline/M6/raw_times.csv": "ad2c4e5482c6a5d3f8c6627c093045f65d3694df670ae2e74cbd4ad184ac7b91",
+  "baseline/M7/GROUP_COMPLETE.json": "99c96d2d7217e0a0bdc87d009caa72c58e3eb5030f07cd9421534c1caafdcda2",
+  "baseline/M7/raw_times.csv": "0157382340c6028c7a2b6a3e94e9c28a92e7d99d2d5e698ed4c3782209f474d5",
+  "baseline/M8/GROUP_COMPLETE.json": "b5171c118fb01f5af8683426cd5ba43d632e3eeb07f10a7b19d14c884e7c270c",
+  "baseline/M8/raw_times.csv": "8f81919b9aa83a5fc8f90ed58e97cb3868877b2db57f7a8065fe44cc072b1616",
+  "baseline/M9/GROUP_COMPLETE.json": "4aeec963fbcc0fa8f3f10e28604e58d063be7a84cd3d9ca851d506db72dddc72",
+  "baseline/M9/raw_times.csv": "de1b1b933358508f6e9d9981ac337dc8bccc1037af364ae1db7e8c09819c4fce",
+  "verification_summary.json": "adfad91f536a7bfbfd61a2be681a25af7c5ea5210f89ebf671a8b10aa068797a"
+}
