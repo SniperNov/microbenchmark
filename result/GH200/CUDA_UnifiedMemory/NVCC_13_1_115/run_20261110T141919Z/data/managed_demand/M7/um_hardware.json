@@ -1,0 +1,1 @@
+{"name":"NVIDIA GH200 480GB","sm_count":132,"warp_size":32,"managed":1,"concurrent":1,"compiled_cuda":13010,"memory_mode":"managed_demand"}

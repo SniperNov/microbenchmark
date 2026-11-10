@@ -1,0 +1,23 @@
+{
+  "status": "PASS",
+  "gpu": "NVIDIA GH200 480GB",
+  "compiler": "NVCC 13.1.115",
+  "rows_by_mode": {
+    "managed_demand": 9940,
+    "managed_prefetch": 9940,
+    "managed_advice_prefetch": 9940
+  },
+  "total_rows": 29820,
+  "sha256_manifests_verified": {
+    "SOURCE_SHA256.json": 11,
+    "ARTIFACT_SHA256.json": 179
+  },
+  "binary_sha256": "72b6bcaf08459f9bd1e6e74fb765a9059c62536a6cb0e96e1d7c891be7ecfc21",
+  "all_commands_exit_zero": true,
+  "native_cases_per_mode": 33,
+  "smoke_rows_per_mode": 240,
+  "exact_iter_rows_per_mode": 20,
+  "independent_grid_and_archived_data_checker": "PASS",
+  "performance_analysis": false,
+  "note": "Initial manifest status remains validating; final COMPLETE, full records and hashes independently verified. UM timing semantics differ from explicit memory baseline."
+}

@@ -1,0 +1,13 @@
+{
+  "README.md": "a0130d4afa2a5c12573f2990c36fc3257ddcd0e2d702f9cf05507d3c2f2d0087",
+  "run_suite.py": "611c3f02caf1a7ef5c4284cb41f36f9066e2c6db9811a71523964b622e4e1ee8",
+  "BASE_SOURCE_SHA256.json": "ca2fdf599dc0c134f6997e722b0f11d4dc8989b36baa06974e4a6d7dd8a5e68f",
+  "tests/check_cuda_device.cu": "ee8ab70a8ee6bdca110bcd54cee0f8b334d0a00340151ffc38b4a4cf0b46d5e2",
+  "tests/fake_cuda_runtime.h": "89d285d20bbc80489c90b02ab7ab7751552b13a2c5451fdee5141767b5d533b8",
+  "tests/check_managed_host.py": "ccbb8b7cf172cd20434448603e7ea8542143531a2d867fbb486150ac1f83c601",
+  "src/core/backend.h": "8c76128e6a92e221e8818b670ca9359c088176e6d266628b6b29d5c2df85e4ef",
+  "src/core/driver.c": "001c3366b2f2b10966277ea86035f1e229aa46cff1b8874d12435603e3770ef3",
+  "src/backends/cuda/openmp_profile.h": "3a8821fe34fb07ef3d3367b829ec84c620e8477fec088f0b2dfba66ee9236ba5",
+  "src/backends/cuda/backend.cu": "6529584a2371f211964d297c249b8aa154fb571bf239c0b46ceb525657614a8f",
+  "src/backends/cuda/backend_managed.cu": "2b2973edab46f411667ba8420ca78cdd97c62fec3aa8b084dc4dbe993ee6b46c"
+}

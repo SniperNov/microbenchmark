@@ -1,0 +1,7 @@
+{
+  "rows": 9940,
+  "methods": 12,
+  "groups": 8,
+  "configurations": 71,
+  "memory_mode": "managed_prefetch"
+}

@@ -1,0 +1,281 @@
+method_id,method_name,N,block_count,thread_count,set,run,delaylength,outerreps,exec_time_us,memory_mode
+0,"pure delay kernel",16382,132,32,0,0,4,0,7.500900269,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,0,1024,0,13.707350159,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,0,1,0,7.825700378,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,0,32,0,7.753699493,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,0,64,0,7.739300537,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,0,2048,0,20.158600616,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,0,512,0,10.784099579,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,0,8192,0,57.280599976,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,0,16,0,7.868849945,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,0,2,0,7.840049744,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,0,256,0,9.355300140,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,0,8,0,7.692849731,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,0,4096,0,32.414700317,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,0,128,0,8.267250061,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,1,1024,0,13.691300201,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,1,8,0,7.720050049,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,1,32,0,7.798450470,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,1,1,0,7.491299438,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,1,8192,0,57.002200317,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,1,128,0,8.340850067,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,1,64,0,7.867299652,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,1,2048,0,20.363449860,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,1,512,0,10.684899902,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,1,256,0,9.009700012,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,1,2,0,7.609649658,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,1,4096,0,32.589149475,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,1,16,0,7.804900360,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,1,4,0,7.782500458,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,2,1,0,7.718499756,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,2,4,0,7.764900208,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,2,16,0,7.736100006,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,2,64,0,7.907250214,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,2,2048,0,20.075399780,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,2,8,0,7.680099487,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,2,8192,0,56.424599457,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,2,2,0,7.627299500,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,2,256,0,9.032100677,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,2,1024,0,13.616149902,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,2,512,0,10.668900299,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,2,4096,0,32.440349579,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,2,32,0,7.668849945,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,2,128,0,8.449700165,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,3,2,0,7.448049927,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,3,256,0,9.177699280,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,3,1,0,7.587249756,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,3,32,0,7.691249847,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,3,16,0,7.592099762,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,3,4096,0,32.552349854,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,3,128,0,8.286500549,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,3,512,0,10.665750122,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,3,8,0,7.612899780,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,3,2048,0,20.216199493,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,3,8192,0,56.461399841,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,3,64,0,8.200099945,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,3,1024,0,13.830550385,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,3,4,0,7.497700500,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,4,16,0,7.710500336,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,4,64,0,7.846500397,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,4,4,0,8.038500214,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,4,32,0,7.822500610,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,4,1,0,7.548850250,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,4,512,0,10.633699799,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,4,2,0,7.492900085,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,4,256,0,9.182500458,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,4,8,0,7.500900269,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,4,128,0,8.206500244,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,4,1024,0,13.825749969,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,4,4096,0,32.561949921,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,4,8192,0,56.672599792,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,0,4,2048,0,20.229049683,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,0,2,0,7.684850311,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,0,8,0,7.492849731,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,0,128,0,8.264100647,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,0,32,0,7.726499939,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,0,4,0,7.521699524,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,0,64,0,7.971300507,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,0,8192,0,57.061399841,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,0,16,0,7.664099884,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,0,512,0,10.576100159,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,0,1024,0,13.876950073,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,0,2048,0,20.052999878,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,0,256,0,9.024100494,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,0,1,0,7.524900055,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,0,4096,0,32.286750031,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,1,1,0,7.665699768,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,1,4,0,7.476900482,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,1,16,0,7.649700165,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,1,8192,0,56.587799835,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,1,256,0,9.108899689,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,1,64,0,8.105699921,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,1,2048,0,20.196999359,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,1,4096,0,32.653150177,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,1,8,0,7.728050232,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,1,1024,0,13.684950256,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,1,32,0,7.785649872,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,1,512,0,10.689700317,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,1,2,0,7.550499725,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,1,128,0,8.310499573,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,2,2,0,7.547299957,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,2,8,0,7.627250671,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,2,256,0,9.121700287,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,2,2048,0,20.259400177,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,2,32,0,7.608099365,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,2,16,0,7.513699341,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,2,1,0,7.560099792,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,2,8192,0,56.674199677,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,2,128,0,8.251300049,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,2,4,0,7.444899750,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,2,512,0,10.502499390,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,2,1024,0,13.550550079,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,2,64,0,8.056100464,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,2,4096,0,32.435550690,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,3,16,0,7.624100494,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,3,2,0,7.568099976,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,3,4,0,7.520100403,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,3,256,0,9.112100220,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,3,1,0,7.753700256,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,3,1024,0,13.630550385,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,3,32,0,7.808100128,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,3,512,0,10.524900055,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,3,4096,0,32.685150146,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,3,8,0,7.708850098,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,3,64,0,7.931299591,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,3,2048,0,20.369850159,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,3,8192,0,57.035799408,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,3,128,0,8.529699707,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,4,256,0,9.094499969,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,4,1024,0,14.249749756,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,4,32,0,7.760050201,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,4,64,0,8.032049561,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,4,2,0,7.582499695,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,4,16,0,7.568099976,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,4,128,0,8.331300354,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,4,512,0,10.838500214,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,4,4,0,7.521649933,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,4,2048,0,20.198650360,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,4,8,0,7.424049377,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,4,1,0,7.780849457,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,4,8192,0,56.794199371,managed_advice_prefetch
+0,"pure delay kernel",16382,132,32,1,4,4096,0,32.371549988,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,0,4,0,8.240100098,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,0,1024,0,14.112149811,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,0,1,0,8.009700012,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,0,32,0,8.092900085,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,0,64,0,8.148899841,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,0,2048,0,20.677000427,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,0,512,0,10.825699615,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,0,8192,0,56.803800201,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,0,16,0,7.886499786,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,0,2,0,7.683300018,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,0,256,0,9.492900085,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,0,8,0,7.817699432,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,0,4096,0,32.723550415,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,0,128,0,8.684899902,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,1,1024,0,14.068949890,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,1,8,0,8.020850372,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,1,32,0,8.196849823,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,1,1,0,7.864049530,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,1,8192,0,57.327050018,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,1,128,0,8.636900330,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,1,64,0,8.246500397,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,1,2048,0,20.369799805,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,1,512,0,10.944149780,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,1,256,0,9.328099823,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,1,2,0,7.768100739,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,1,4096,0,32.713950348,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,1,16,0,7.820899963,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,1,4,0,7.820899963,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,2,1,0,7.836849976,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,2,4,0,7.982450104,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,2,16,0,7.912100220,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,2,64,0,8.129700470,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,2,2048,0,20.323450470,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,2,8,0,7.838449860,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,2,8192,0,57.275799561,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,2,2,0,7.836899567,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,2,256,0,9.396900177,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,2,1024,0,14.000150299,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,2,512,0,10.961750031,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,2,4096,0,32.587550354,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,2,32,0,7.988899994,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,2,128,0,8.699300385,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,3,2,0,7.825650024,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,3,256,0,9.222499847,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,3,1,0,7.872049713,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,3,32,0,8.038449860,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,3,16,0,7.806449890,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,3,4096,0,32.617949677,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,3,128,0,8.598450470,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,3,512,0,10.881700134,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,3,8,0,7.849700165,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,3,2048,0,20.672200012,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,3,8192,0,57.007000732,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,3,64,0,8.273699951,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,3,1024,0,14.206549835,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,3,4,0,7.960099792,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,4,16,0,8.139300537,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,4,64,0,8.382499695,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,4,4,0,7.825700378,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,4,32,0,7.984100342,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,4,1,0,7.643250275,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,4,512,0,10.873699951,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,4,2,0,7.737699890,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,4,256,0,9.414499664,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,4,8,0,8.025699615,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,4,128,0,8.585699463,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,4,1024,0,14.056150055,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,4,4096,0,32.734750366,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,4,8192,0,56.680599976,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,0,4,2048,0,20.782600403,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,0,2,0,7.976100159,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,0,8,0,7.864100647,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,0,128,0,8.523300171,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,0,32,0,8.056100464,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,0,4,0,7.974499512,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,0,64,0,8.099250031,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,0,8192,0,57.248600006,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,0,16,0,7.942500305,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,0,512,0,10.979299927,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,0,1024,0,14.132950592,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,0,2048,0,20.768199921,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,0,256,0,9.404899597,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,0,1,0,7.976100159,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,0,4096,0,32.832350159,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,1,1,0,8.310500336,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,1,4,0,7.894499969,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,1,16,0,7.876899719,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,1,8192,0,57.315800476,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,1,256,0,9.256099701,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,1,64,0,8.332900238,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,1,2048,0,20.464199829,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,1,4096,0,32.822750092,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,1,8,0,7.803249359,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,1,1024,0,13.984099579,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,1,32,0,8.160050201,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,1,512,0,10.947299957,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,1,2,0,7.828900146,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,1,128,0,8.472100067,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,2,2,0,7.953700256,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,2,8,0,7.865650177,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,2,256,0,9.564900208,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,2,2048,0,20.510599518,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,2,32,0,8.089700317,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,2,16,0,7.896100616,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,2,1,0,7.958499908,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,2,8192,0,56.951000214,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,2,128,0,8.497650146,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,2,4,0,7.952050018,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,2,512,0,11.160150146,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,2,1024,0,14.115350342,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,2,64,0,8.297700500,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,2,4096,0,32.104350281,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,3,16,0,8.043300629,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,3,2,0,7.740899658,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,3,4,0,7.905699921,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,3,256,0,9.646499634,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,3,1,0,7.820899963,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,3,1024,0,14.043350220,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,3,32,0,8.062500000,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,3,512,0,10.764900208,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,3,4096,0,33.086750031,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,3,8,0,7.932849884,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,3,64,0,8.344050598,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,3,2048,0,20.437000275,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,3,8192,0,57.186199951,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,3,128,0,8.825700378,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,4,256,0,9.404900360,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,4,1024,0,14.203350067,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,4,32,0,7.830500031,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,4,64,0,7.998450470,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,4,2,0,7.809649658,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,4,16,0,7.902449799,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,4,128,0,8.494499969,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,4,512,0,10.860950470,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,4,4,0,7.864099884,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,4,2048,0,20.384200287,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,4,8,0,7.976100159,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,4,1,0,7.875299835,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,4,8192,0,57.733399963,managed_advice_prefetch
+10,"kernel launch blocks + threads",16382,132,32,1,4,4096,0,32.709149933,managed_advice_prefetch

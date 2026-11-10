@@ -1,0 +1,7 @@
+{
+  "src/core/driver.c": "0df2b99045b54b6bbc575d589f2917e69e2906bbefe5cf65bd0aa3bbb6237092",
+  "src/core/backend.h": "d46fab9873576188d2b5f28b14851e61a6c96b595a7e242c543e6b5114297f80",
+  "src/backends/cuda/backend.cu": "6529584a2371f211964d297c249b8aa154fb571bf239c0b46ceb525657614a8f",
+  "src/backends/cuda/openmp_profile.h": "3a8821fe34fb07ef3d3367b829ec84c620e8477fec088f0b2dfba66ee9236ba5",
+  "tests/check_cuda_device.cu": "103348491ef8295f2e919574f6399e7e4918890c24ba0f8674aee9b7997f3d0c"
+}
