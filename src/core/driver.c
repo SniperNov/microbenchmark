@@ -1,3 +1,5 @@
+#include <errno.h>
+#include <limits.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -419,6 +421,115 @@ static void compute_offloading_time(double *intercept_avg, double *intercept_err
     fclose(file);
 }
 
+// Explicit scalar workload limits must survive CLI parsing unchanged.
+static int parse_workload_limit(const char *value, const char *name, int minimum, int *result)
+{
+    char *end = NULL;
+    errno = 0;
+    long parsed = strtol(value, &end, 10);
+    if (errno == ERANGE || end == value || *end != '\0' || parsed < minimum || parsed > INT_MAX)
+    {
+        fprintf(stderr, "ERROR: %s must be an integer in [%d, %d].\n", name, minimum, INT_MAX);
+        return 0;
+    }
+    *result = (int)parsed;
+    return 1;
+}
+
+// OpenACC M5, M7, M10 and M11 have method-specific array requirements.
+static int configure_openacc_workload(const int *methods, int num_methods,
+                                     const int *Ns, int num_Ns,
+                                     const int *control_as, int num_control_as,
+                                     const int *control_bs, int num_control_bs,
+                                     int explicit_max_iter, int explicit_max_array_size)
+{
+    int maxN = 0;
+    for (int ni = 0; ni < num_Ns; ++ni)
+    {
+        if (Ns[ni] <= 0) { fprintf(stderr, "ERROR: N must be positive.\n"); return 1; }
+        if (Ns[ni] > maxN) maxN = Ns[ni];
+    }
+    long long max_prod = 0;
+    for (int a = 0; a < num_control_as; ++a)
+    for (int b = 0; b < num_control_bs; ++b)
+    {
+        if (control_as[a] <= 0 || control_bs[b] <= 0)
+        {
+            fprintf(stderr, "ERROR: launch controls must be positive.\n");
+            return 1;
+        }
+        long long product = (long long)control_as[a] * control_bs[b];
+        if (product > max_prod) max_prod = product;
+    }
+
+    // Preserve legacy automatic sizing only when MAX_ITER was omitted.
+    // N is a mapping/reduction/repetition parameter, not an iteration lower
+    // bound. Likewise an explicit work loop may leave launch lanes idle.
+    if (!explicit_max_iter)
+    {
+        long long automatic_iter = MAX_ITER_DEF;
+        if (max_prod > automatic_iter) automatic_iter = max_prod;
+        if (maxN > automatic_iter) automatic_iter = maxN;
+        if (automatic_iter > INT_MAX)
+        {
+            fprintf(stderr, "ERROR: automatic MAX_ITER exceeds INT_MAX.\n");
+            return 1;
+        }
+        g_max_iter = (int)automatic_iter;
+    }
+
+    long long required_array_size = 1; // Every backend may touch a[0].
+    for (int mi = 0; mi < (num_methods ? num_methods : backend_num_methods()); ++mi)
+    {
+        int method = num_methods ? methods[mi] : mi;
+        if (method < 0 || method >= backend_num_methods())
+        {
+            fprintf(stderr, "ERROR: unsupported method %d.\n", method);
+            return 1;
+        }
+        long long required = 1;
+        if (method >= 1 && method <= 4) required = maxN; // a[0:N] mapping/copy
+        if (method == 6 || method == 8 || method == 9)
+        {
+            if (g_max_iter > required) required = g_max_iter; // a[0:MAX_ITER]
+        }
+        for (int ca = 0; ca < num_control_as; ++ca)
+        for (int cb = 0; cb < num_control_bs; ++cb)
+        {
+            const long long teams = control_as[ca];
+            const long long threads = control_bs[cb];
+            long long shape_required = 1;
+            // Preserve non-overlapping element ownership for explicit shapes.
+            if (method == 5) shape_required = teams;
+            if (method == 10 || method == 11) shape_required = teams * threads;
+            if (shape_required > required) required = shape_required;
+        }
+        if (required > required_array_size) required_array_size = required;
+    }
+    if (!explicit_max_array_size)
+    {
+        // Retain historical default allocation dimensions, extending only if
+        // an explicit work loop needs more. Explicit allocations are not raised.
+        if (MAX_ARRAY_SIZE_DEF > required_array_size) required_array_size = MAX_ARRAY_SIZE_DEF;
+        if (maxN > required_array_size) required_array_size = maxN;
+        if (max_prod > required_array_size) required_array_size = max_prod;
+    }
+    if (required_array_size > INT_MAX)
+    {
+        fprintf(stderr, "ERROR: required MAX_ARRAY_SIZE exceeds INT_MAX.\n");
+        return 1;
+    }
+    if (explicit_max_array_size && g_max_array_size < required_array_size)
+    {
+        fprintf(stderr, "ERROR: explicit MAX_ARRAY_SIZE (%d) is below the selected workload requirement (%lld).\n",
+                g_max_array_size, required_array_size);
+        return 1;
+    }
+    if (!explicit_max_array_size) g_max_array_size = (int)required_array_size;
+
+    return 0;
+}
+
 int main(int argc, char **argv)
 {
     // High-level flow:
@@ -428,6 +539,8 @@ int main(int argc, char **argv)
     int methods[MAX_METHODS], Ns[NUM_SIZES], control_as[NUM_SIZES], control_bs[NUM_SIZES];
     int num_methods = 0, num_Ns = 1, num_control_as = 1, num_control_bs = 1;
     backend_config_t defaults;
+    const int is_openacc = strcmp(backend_name(), "openacc") == 0;
+    int explicit_max_iter = 0, explicit_max_array_size = 0;
 
     backend_default_config(&defaults);
     Ns[0] = N_DEF;
@@ -479,12 +592,30 @@ int main(int argc, char **argv)
         }
         else if (key_matches(argv[i], "MAX_ITER"))
         {
-            g_max_iter = atoi(value_for(argv[i]));
+            if (is_openacc)
+            {
+                if (!parse_workload_limit(value_for(argv[i]), "MAX_ITER", 0, &g_max_iter))
+                    return 1;
+                explicit_max_iter = 1;
+            }
+            else
+            {
+                g_max_iter = atoi(value_for(argv[i]));
+            }
             printf("MAX_ITER set to %d\n", g_max_iter);
         }
         else if (key_matches(argv[i], "MAX_ARRAY_SIZE"))
         {
-            g_max_array_size = atoi(value_for(argv[i]));
+            if (is_openacc)
+            {
+                if (!parse_workload_limit(value_for(argv[i]), "MAX_ARRAY_SIZE", 1, &g_max_array_size))
+                    return 1;
+                explicit_max_array_size = 1;
+            }
+            else
+            {
+                g_max_array_size = atoi(value_for(argv[i]));
+            }
             printf("MAX_ARRAY_SIZE set to %d\n", g_max_array_size);
         }
     }
@@ -500,38 +631,48 @@ int main(int argc, char **argv)
         num_control_bs = 1;
     }
 
-    int maxN = 0;
-    for (int ni = 0; ni < num_Ns; ++ni)
-        if (Ns[ni] > maxN)
-            maxN = Ns[ni];
-
-    int max_prod = 0;
-    for (int a = 0; a < num_control_as; ++a)
-        for (int b = 0; b < num_control_bs; ++b)
-            if (control_as[a] * control_bs[b] > max_prod)
-                max_prod = control_as[a] * control_bs[b];
-
-    int required_iter = MAX_ITER_DEF;
-    if (max_prod > required_iter)
-        required_iter = max_prod;
-    if (maxN > required_iter)
-        required_iter = maxN;
-    if (g_max_iter < required_iter)
-        g_max_iter = required_iter;
-
-    int required_array_size = MAX_ARRAY_SIZE_DEF;
-    if (maxN > required_array_size)
-        required_array_size = maxN;
-    if (max_prod > required_array_size)
-        required_array_size = max_prod;
-    if (g_max_array_size < required_array_size)
-        g_max_array_size = required_array_size;
-
-    if (g_max_iter > g_max_array_size)
+    if (is_openacc)
     {
-        fprintf(stderr, "ERROR: MAX_ITER (%d) > MAX_ARRAY_SIZE (%d).\n",
-                g_max_iter, g_max_array_size);
-        return 1;
+        if (configure_openacc_workload(methods, num_methods, Ns, num_Ns,
+                                       control_as, num_control_as, control_bs, num_control_bs,
+                                       explicit_max_iter, explicit_max_array_size) != 0)
+            return 1;
+    }
+    else
+    {
+        int maxN = 0;
+        for (int ni = 0; ni < num_Ns; ++ni)
+            if (Ns[ni] > maxN)
+                maxN = Ns[ni];
+
+        int max_prod = 0;
+        for (int a = 0; a < num_control_as; ++a)
+            for (int b = 0; b < num_control_bs; ++b)
+                if (control_as[a] * control_bs[b] > max_prod)
+                    max_prod = control_as[a] * control_bs[b];
+
+        int required_iter = MAX_ITER_DEF;
+        if (max_prod > required_iter)
+            required_iter = max_prod;
+        if (maxN > required_iter)
+            required_iter = maxN;
+        if (g_max_iter < required_iter)
+            g_max_iter = required_iter;
+
+        int required_array_size = MAX_ARRAY_SIZE_DEF;
+        if (maxN > required_array_size)
+            required_array_size = maxN;
+        if (max_prod > required_array_size)
+            required_array_size = max_prod;
+        if (g_max_array_size < required_array_size)
+            g_max_array_size = required_array_size;
+
+        if (g_max_iter > g_max_array_size)
+        {
+            fprintf(stderr, "ERROR: MAX_ITER (%d) > MAX_ARRAY_SIZE (%d).\n",
+                    g_max_iter, g_max_array_size);
+            return 1;
+        }
     }
 
     generate_delays();

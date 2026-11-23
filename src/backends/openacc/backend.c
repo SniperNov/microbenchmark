@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/time.h>
+#include <stdint.h>
 #include <openacc.h>
 #include "backend.h"
 
@@ -12,7 +13,7 @@ static const char *method_names[] = {
     "create(a[0:N])",
     "parallel (scalar)",
     "parallel loop",
-    "async parallel loop + wait",
+    "async serial + wait",
     "parallel loop atomic",
     "parallel loop reduction",
     "parallel num_gangs + num_workers",
@@ -133,7 +134,26 @@ double backend_run_method(int method, double *a, int N, int delay,
         for (int i = 0; i < N; ++i)
             tmp[i] = 0.0;
 
-#pragma acc data copy(a[0:max_array_size], tmp[0:N])
+        double *reduction_private = NULL;
+        size_t reduction_size = 1;
+        if (method == 9)
+        {
+            if (gang_count <= 0 || worker_count <= 0 || N <= 0 ||
+                (size_t)gang_count > SIZE_MAX / (size_t)worker_count / (size_t)N / sizeof(double))
+            {
+                fprintf(stderr, "Invalid OpenACC array reduction workspace size\n");
+                exit(EXIT_FAILURE);
+            }
+            reduction_size = (size_t)gang_count * worker_count * N;
+        }
+        reduction_private = (double *)malloc(reduction_size * sizeof(double));
+        if (!reduction_private)
+        {
+            fprintf(stderr, "Allocation failed for OpenACC array reduction workspace\n");
+            exit(EXIT_FAILURE);
+        }
+
+#pragma acc data copy(a[0:max_array_size], tmp[0:N]) create(reduction_private[0:reduction_size])
         {
             start = get_time_usec();
 
@@ -142,18 +162,16 @@ double backend_run_method(int method, double *a, int N, int delay,
                 switch (method)
                 {
                 case 0:
-                    // Baseline OpenACC parallel launch with only the delay kernel.
-#pragma acc parallel present(a[0:max_array_size])
-                    {
-                        delay_kernel(delay, a);
-                    }
+#pragma acc serial present(a[0:max_array_size])
+                    delay_kernel(delay, a);
                     break;
 
                 case 5:
-                    // Scalar parallel launch, analogous to OpenMP teams(scalar).
-#pragma acc parallel num_gangs(gang_count) present(a[0:max_array_size])
+#pragma acc parallel num_gangs(gang_count) num_workers(1) vector_length(1) present(a[0:max_array_size])
                     {
-                        delay_kernel(delay, a);
+#pragma acc loop gang
+                        for (int team=0; team<gang_count; ++team)
+                            delay_kernel(delay, &a[(long long)team * max_array_size / gang_count]);
                     }
                     break;
 
@@ -165,10 +183,9 @@ double backend_run_method(int method, double *a, int N, int delay,
                     break;
 
                 case 7:
-                    // Async launch plus explicit wait.
-#pragma acc parallel loop num_gangs(gang_count) vector_length(worker_count) async(1) present(a[0:max_array_size])
-                    for (int i = 0; i < max_iter; ++i)
-                        delay_kernel(delay, &a[i]);
+                    // One asynchronous scalar device operation, then explicit wait.
+#pragma acc serial async(1) present(a[0:max_array_size])
+                    delay_kernel(delay, a);
 #pragma acc wait(1)
                     break;
 
@@ -184,48 +201,85 @@ double backend_run_method(int method, double *a, int N, int delay,
                     break;
 
                 case 9:
-                {
-                    // Reduction path using an OpenACC scalar reduction.
-                    double reduction_sum = 0.0;
-#pragma acc parallel loop num_gangs(gang_count) vector_length(worker_count) reduction(+ : reduction_sum) present(a[0:max_array_size])
-                    for (int i = 0; i < max_iter; ++i)
+                    // NVHPC OpenACC supports scalar reductions. Keep N private
+                    // counts per lane and reduce one count at a time.
+#pragma acc parallel num_gangs(gang_count) vector_length(worker_count) present(a[0:max_array_size], tmp[0:N], reduction_private[0:reduction_size])
                     {
-                        delay_kernel(delay, &a[i]);
-                        reduction_sum += 1.0;
-                    }
-                    if (reduction_sum < 0.0)
-                        printf("%f\n", reduction_sum);
-                    break;
-                }
-
-                case 10:
-                    // Explicit gang/worker launch with a worker-level loop.
-#pragma acc parallel num_gangs(gang_count) num_workers(worker_count) present(a[0:max_array_size])
-                    {
-#pragma acc loop worker
-                        for (int i = 0; i < worker_count; ++i)
-                            delay_kernel(delay, &a[i]);
-                    }
-                    break;
-
-                case 11:
-                {
-                    // Repeated worker loop, matching the OpenMP repeated inner parallel case.
-                    int parreps = N;
-#pragma acc parallel num_gangs(gang_count) num_workers(worker_count) present(a[0:max_array_size])
-                    {
-                        for (int r = 0; r < parreps; ++r)
+#pragma acc loop gang
+                        for (int team = 0; team < gang_count; ++team)
                         {
-#pragma acc loop worker
-                            for (int i = 0; i < worker_count; ++i)
+                            size_t base = (size_t)team * worker_count * N;
+#pragma acc loop vector
+                            for (int lane = 0; lane < worker_count; ++lane)
                             {
-                                int idx = i % max_array_size;
-                                delay_kernel(delay, &a[idx]);
+                                size_t local = base + (size_t)lane * N;
+#pragma acc loop seq
+                                for (int j = 0; j < N; ++j)
+                                    reduction_private[local + j] = 0.0;
+#pragma acc loop seq
+                                for (long long i = (long long)team * worker_count + lane;
+                                     i < max_iter; i += (long long)gang_count * worker_count)
+                                {
+                                    delay_kernel(delay, &a[i]);
+                                    reduction_private[local + i % N] += 1.0;
+                                }
+                            }
+
+#pragma acc loop seq
+                            for (int j = 0; j < N; ++j)
+                            {
+                                double sum = 0.0;
+#pragma acc loop vector reduction(+:sum)
+                                for (int lane = 0; lane < worker_count; ++lane)
+                                    sum += reduction_private[base + (size_t)lane * N + j];
+
+                                // Only one update per gang for this count.
+#pragma acc atomic update
+                                tmp[j] += sum;
                             }
                         }
                     }
                     break;
-                }
+
+                case 10:
+#pragma acc parallel num_gangs(gang_count) num_workers(worker_count) vector_length(1) present(a[0:max_array_size])
+                    {
+#pragma acc loop gang
+                        for (int team=0; team<gang_count; ++team) {
+#pragma acc loop worker
+                            for (int lane=0; lane<worker_count; ++lane)
+                                delay_kernel(delay, &a[team*(max_array_size/gang_count)+lane]);
+                        }
+                    }
+                    break;
+
+                case 11:
+#pragma acc parallel num_gangs(gang_count) num_workers(worker_count) vector_length(1) present(a[0:max_array_size])
+                    {
+#pragma acc loop gang
+                        for (int team = 0; team < gang_count; ++team)
+                        {
+                            int finished = worker_count;
+#pragma acc loop seq
+                            for (int r = 0; r < N; ++r)
+                            {
+                                // The result belongs to this gang. Round r+1
+                                // depends on completion of every worker in r.
+                                if (finished == worker_count)
+                                {
+                                    finished = 0;
+#pragma acc loop worker reduction(+:finished)
+                                    for (int lane = 0; lane < worker_count; ++lane)
+                                    {
+                                        int index = (team * worker_count + lane) % max_array_size;
+                                        delay_kernel(delay, &a[index]);
+                                        ++finished;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    break;
                 }
 
                 a[0] += 1.0;
@@ -239,6 +293,7 @@ double backend_run_method(int method, double *a, int N, int delay,
             end = get_time_usec();
         }
 
+        free(reduction_private);
         free(tmp);
     }
 
