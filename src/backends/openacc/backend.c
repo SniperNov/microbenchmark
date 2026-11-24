@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/time.h>
-#include <stdint.h>
 #include <openacc.h>
 #include "backend.h"
 
@@ -134,26 +133,7 @@ double backend_run_method(int method, double *a, int N, int delay,
         for (int i = 0; i < N; ++i)
             tmp[i] = 0.0;
 
-        double *reduction_private = NULL;
-        size_t reduction_size = 1;
-        if (method == 9)
-        {
-            if (gang_count <= 0 || worker_count <= 0 || N <= 0 ||
-                (size_t)gang_count > SIZE_MAX / (size_t)worker_count / (size_t)N / sizeof(double))
-            {
-                fprintf(stderr, "Invalid OpenACC array reduction workspace size\n");
-                exit(EXIT_FAILURE);
-            }
-            reduction_size = (size_t)gang_count * worker_count * N;
-        }
-        reduction_private = (double *)malloc(reduction_size * sizeof(double));
-        if (!reduction_private)
-        {
-            fprintf(stderr, "Allocation failed for OpenACC array reduction workspace\n");
-            exit(EXIT_FAILURE);
-        }
-
-#pragma acc data copy(a[0:max_array_size], tmp[0:N]) create(reduction_private[0:reduction_size])
+#pragma acc data copy(a[0:max_array_size], tmp[0:N])
         {
             start = get_time_usec();
 
@@ -201,45 +181,29 @@ double backend_run_method(int method, double *a, int N, int delay,
                     break;
 
                 case 9:
-                    // NVHPC OpenACC supports scalar reductions. Keep N private
-                    // counts per lane and reduce one count at a time.
-#pragma acc parallel num_gangs(gang_count) vector_length(worker_count) present(a[0:max_array_size], tmp[0:N], reduction_private[0:reduction_size])
+                {
+                    // Match the OpenMP scalar total, reducing within each gang first.
+                    double reduction_sum = 0.0;
+#pragma acc parallel loop gang num_gangs(gang_count) vector_length(worker_count) reduction(+ : reduction_sum) present(a[0:max_array_size])
+                    for (int team = 0; team < gang_count; ++team)
                     {
-#pragma acc loop gang
-                        for (int team = 0; team < gang_count; ++team)
+                        double team_sum = 0.0;
+#pragma acc loop vector reduction(+:team_sum)
+                        for (int lane = 0; lane < worker_count; ++lane)
                         {
-                            size_t base = (size_t)team * worker_count * N;
-#pragma acc loop vector
-                            for (int lane = 0; lane < worker_count; ++lane)
+                            for (long long i = (long long)team * worker_count + lane;
+                                 i < max_iter; i += (long long)gang_count * worker_count)
                             {
-                                size_t local = base + (size_t)lane * N;
-#pragma acc loop seq
-                                for (int j = 0; j < N; ++j)
-                                    reduction_private[local + j] = 0.0;
-#pragma acc loop seq
-                                for (long long i = (long long)team * worker_count + lane;
-                                     i < max_iter; i += (long long)gang_count * worker_count)
-                                {
-                                    delay_kernel(delay, &a[i]);
-                                    reduction_private[local + i % N] += 1.0;
-                                }
-                            }
-
-#pragma acc loop seq
-                            for (int j = 0; j < N; ++j)
-                            {
-                                double sum = 0.0;
-#pragma acc loop vector reduction(+:sum)
-                                for (int lane = 0; lane < worker_count; ++lane)
-                                    sum += reduction_private[base + (size_t)lane * N + j];
-
-                                // Only one update per gang for this count.
-#pragma acc atomic update
-                                tmp[j] += sum;
+                                delay_kernel(delay, &a[i]);
+                                team_sum += 1.0;
                             }
                         }
+                        reduction_sum += team_sum;
                     }
+                    if (reduction_sum < 0.0)
+                        printf("%f\n", reduction_sum);
                     break;
+                }
 
                 case 10:
 #pragma acc parallel num_gangs(gang_count) num_workers(worker_count) vector_length(1) present(a[0:max_array_size])
@@ -293,7 +257,6 @@ double backend_run_method(int method, double *a, int N, int delay,
             end = get_time_usec();
         }
 
-        free(reduction_private);
         free(tmp);
     }
 
